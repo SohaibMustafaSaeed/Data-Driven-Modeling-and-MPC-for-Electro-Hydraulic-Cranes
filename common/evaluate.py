@@ -32,7 +32,7 @@ def main():
     p.add_argument('--mode', choices=['both', 'measured', 'recursive'], default='recursive')
     p.add_argument('--recursive', action='store_true', help='Recursive-only alias')
     p.add_argument('--chunk-rows', type=int, default=20000)
-    p.add_argument('--reinit-every', type=int, default=20, help='Reset recursive latent state from measured rows every N predictions; 0 keeps continuous rollout')
+    p.add_argument('--reinit-every', type=int, default=200, help='Reset recursive latent state from measured rows every N predictions; 0 keeps continuous rollout')
     p.add_argument('--latency-repeats', type=int, default=3000)
     p.add_argument('--max-rows', type=int, help='Explicit prefix limit; default entire retained CSV')
     p.add_argument('--show', action=argparse.BooleanOptionalAction, default=True)

@@ -15,12 +15,12 @@ Final Codes/
 │   ├── artifacts/
 │   └── results/
 ├── GRU Latent/
-│   ├── gru2.py
+│   ├── gru.py
 │   ├── test.py
 │   ├── artifacts/
 │   └── results/
 ├── LSTM/
-│   ├── lstm4.py
+│   ├── LSTM.py
 │   ├── test.py
 │   ├── artifacts/
 │   └── results/
@@ -44,7 +44,7 @@ Final Codes/
 
 All four full-state models and the independent mechanical plant include completed
 trained checkpoints. Transformer completed 60 epochs, and all four models have
-full-record cached evaluations with matched reset-500 horizons.
+full-record cached evaluations with matched reset-200 horizons.
 
 ## Installation
 
@@ -178,16 +178,15 @@ bands, with interactive zoom for detail. See [whole-recording coverage](FULL_REC
 
 
 ```powershell
-python "GRU Latent/test.py" --reinit-every 20
-python "LSTM/test.py" --reinit-every 20
-python "Compact Recurrent/test.py" --reinit-every 20
-python "Transformers/test.py" --reinit-every 20
+python "GRU Latent/test.py" --reinit-every 200
+python "LSTM/test.py" --reinit-every 200
+python "Compact Recurrent/test.py" --reinit-every 200
+python "Transformers/test.py" --reinit-every 200
 ```
 
-Default test recording: Simulation_Output_53.csv. Each command evaluates measured
-one-step prediction and recursive prediction with the selected reset interval.
-Omit --reinit-every for continuous recursive evaluation; --mode measured or
---mode recursive selects one mode. These testing commands perform evaluation;
+Default test recording: Simulation_Output_53.csv. Each command evaluates recursive prediction with the selected reset interval.
+Use --reinit-every 0 explicitly for continuous recursive evaluation.
+Use --mode measured --reinit-every 0 for measured-input one-step testing. These testing commands perform evaluation;
 the comparison command below reuses matching completed evaluations.
 
 Results go to each model's results/<recording>/checkpoint_<SHA256 prefix>/<mode>/.
@@ -200,29 +199,31 @@ recording result. --checkpoint, --dataset-dir, and --output-dir override default
 ## Compare all four models and open separate plots
 
 ```powershell
-python compare_models.py --reinit-every 20
+python compare_models.py --reinit-every 200
 ```
 
 The comparison prints all per-feature metrics and saved timing summaries for
-measured one-step, continuous recursive, and reset-500 evaluation. Matching saved
+the selected reset-200 evaluation. Matching saved
 results are reused. Missing evaluations are generated once; --saved-only disables
-that inference. Default popups are 88 separate figures for reset-20: one model
+that inference. Default popups are 88 separate figures for reset-200: one model
 versus recorded truth for each of 22 states. Close every window to finish.
 
 ```powershell
-python compare_models.py --reinit-every 20 --plot-mode recursive
-python compare_models.py --reinit-every 20 --plot-mode all
-python compare_models.py --reinit-every 20 --no-show
+python compare_models.py --reinit-every 200 --plot-mode mpc
+python compare_models.py --reinit-every 200 --plot-mode all
+python compare_models.py --reinit-every 200 --no-show
 ```
 
---plot-mode all opens 264 figures for all three modes. Figures are also saved
+--plot-mode all opens all scenarios requested by --mode. The default reset-only
+mode opens 88 model/state figures; --mode both --plot-mode all explicitly includes
+three scenarios and opens 264 model/state figures. Figures are also saved
 under results/comparison/. Display thinning does not change the saved full-row
 metrics. Checkpoint hashes, feature order, scaler, timestep, target range, reset
 horizon, test source, and training split metadata are checked. Different historical
 training objectives and benchmark dates remain visible in the printed provenance.
 
-Bundled results include reset-500 for all four models. Historical Compact
-reset-20 results are retained separately. Saved evaluation metadata uses project-relative checkpoint paths and
+Bundled main results use reset-200 for all four models. Reset-20, reset-500 and
+continuous rollouts are retained as historical diagnostics. Saved evaluation metadata uses project-relative checkpoint paths and
 raw:/prepared: dataset paths; the original weights and prediction arrays are unchanged.
 Embedded checkpoint metadata retains the historical training paths for provenance.
 
@@ -245,17 +246,17 @@ state increments and uses no hydraulic/electrical inputs. Mechanical feedback
 corrects the predictor after each committed action. The plant is not used inside
 optimizer candidate rollouts.
 
-Show the packaged fixed MPC experiment immediately, without re-solving or needing
+Show the completed full-recording MPC experiment immediately, without re-solving or needing
 raw data:
 
 ```powershell
-python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/verified_one_second_v2"
+python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/full_csv_patu_100ms"
 ```
 
-Run a new one-second experiment with a reference generated by the mechanical plant:
+Repeat the completed full-recording experiment with a reachable mechanical-plant reference:
 
 ```powershell
-python "MPC offline Model/offline_mpc.py" --duration 1 --reference-mode plant-generated
+python "MPC offline Model/offline_mpc.py" --full-recording --reference-mode plant-generated --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --output-dir "MPC offline Model/results/full_csv_patu_100ms" --overwrite
 ```
 
 To assess tracking of the original recording, use --reference-mode recorded.

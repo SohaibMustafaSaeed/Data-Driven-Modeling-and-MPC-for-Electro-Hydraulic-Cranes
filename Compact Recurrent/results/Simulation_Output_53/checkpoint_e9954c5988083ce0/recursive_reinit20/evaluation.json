@@ -53,6 +53,5 @@
   },
   "reset_protocol": "two measured states; cold memory reset each horizon; only commands and predicted states within horizon",
   "timing_excludes": "JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting",
-  "command_smoothing": "centered Savitzky-Golay 51 rows, offline",
-  "path_metadata_updated_only": true
+  "command_smoothing": "centered Savitzky-Golay 51 rows, offline"
 }

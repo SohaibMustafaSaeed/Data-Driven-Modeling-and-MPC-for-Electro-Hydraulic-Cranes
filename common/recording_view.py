@@ -97,8 +97,8 @@ class RecordingTrace:
             self.busy = False
 
 
-def plot_recording_pair(ax, actual, predicted, count, dt, first_time, name, budget=6000):
-    traces = [RecordingTrace(ax, actual, count, dt, first_time, 'Actual: mean and full min/max envelope', 'black', budget),
+def plot_recording_pair(ax, actual, predicted, count, dt, first_time, name, budget=6000, actual_label='Actual'):
+    traces = [RecordingTrace(ax, actual, count, dt, first_time, actual_label + ': mean and full min/max envelope', 'black', budget),
               RecordingTrace(ax, predicted, count, dt, first_time, name + ': mean and full min/max envelope', 'tab:blue', budget, '--')]
     if not hasattr(ax.figure, '_recording_traces'):
         ax.figure._recording_traces = []

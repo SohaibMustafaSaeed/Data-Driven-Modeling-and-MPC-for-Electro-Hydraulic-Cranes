@@ -1,0 +1,58 @@
+{
+  "mode": "recursive",
+  "tag": "recursive_reinit200",
+  "checkpoint": "Transformers/artifacts/best_model.pt",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "architecture": "transformer",
+  "epoch": 19,
+  "timing_history_tokens": 64,
+  "inference_backend": "numba",
+  "core_precision": "float32",
+  "benchmark_environment": {
+    "cpu": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "machine": "AMD64",
+    "python": "3.12.10",
+    "numba": "0.67.0",
+    "numpy": "2.5.3",
+    "torch": "2.14.0+cpu"
+  },
+  "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4",
+  "predictions": 8199999,
+  "initial_measured_rows": 2,
+  "dt_s": 1e-05,
+  "excluded_seconds": 18.0,
+  "reinit_every": 200,
+  "latent_resets": 41000,
+  "latency": {
+    "mean_us": 19.5139,
+    "median_us": 18.6,
+    "p95_us": 23.2,
+    "max_us": 83.6,
+    "deadline_us": 10.0,
+    "deadline_miss_percent": 100.0,
+    "RTF": 1.95139,
+    "repeats": 3000
+  },
+  "throughput": {
+    "inference_seconds": 108.96225460036658,
+    "simulated_seconds": 81.99999000000001,
+    "amortized_us_per_step": 13.288081449810734,
+    "RTF": 1.3288081449810734,
+    "chunk_rows": 20000,
+    "reinit_every": 200
+  },
+  "max_rows": null,
+  "horizon_latency": {
+    "horizon_steps": 200,
+    "includes": "physical input normalization, memory reset, all rollout steps and physical output reconstruction",
+    "median_us": 2558.1499999999996,
+    "mean_us": 2606.3334,
+    "p95_us": 2704.685,
+    "repeats": 1000,
+    "benchmark_protocol": "four models sequentially; after full MPC and inference jobs completed; JIT warmup excluded"
+  },
+  "reset_protocol": "two measured states; cold memory reset each horizon; only commands and predicted states within horizon",
+  "timing_excludes": "JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting",
+  "command_smoothing": "centered Savitzky-Golay 51 rows, offline"
+}

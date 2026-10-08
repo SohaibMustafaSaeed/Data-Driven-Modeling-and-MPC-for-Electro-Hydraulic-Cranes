@@ -245,7 +245,7 @@ class FullRecordingSession:
             self.distance_max = max(self.distance_max, float(distance.max()))
             self.final_distance = float(distance[-1])
         self.cursor = end
-        if k % 1000 == 0:
+        if k % max(1, int(round(1. / (self.block * self.dt)))) == 0:
             self.m.write_json(self.out / 'recording_coverage.json', dict(full_retained_recording=False, expected_microsteps=self.count, scored_microsteps=self.cursor, status='in_progress'))
         observed_previous = plant.previous[:4].astype(float) * plant.std[:4] + plant.mean[:4]
         observed_current = plant.current[:4].astype(float) * plant.std[:4] + plant.mean[:4]
@@ -292,7 +292,7 @@ class FullRecordingSession:
         for selected, title, filename in [([0, 1, 2, 3], 'Both booms: whole CSV', 'both_booms_full_csv.png'), ([0, 2], 'Lift boom: whole CSV', 'lift_full_csv.png'), ([1, 3], 'Jib boom: whole CSV', 'jib_full_csv.png')]:
             fig, axes = plt.subplots(len(selected), 1, figsize=(12, 3 * len(selected)), layout='constrained')
             for ax, j in zip(np.atleast_1d(axes), selected):
-                plot_recording_pair(ax, scalar_source(self.target, j), scalar_source(self.plant, j), self.count, self.dt, first, 'Mechanical plant')
+                plot_recording_pair(ax, scalar_source(self.target, j), scalar_source(self.plant, j), self.count, self.dt, first, 'MPC mechanical plant', actual_label='Reference')
                 ax.set_title(self.m.MECHANICAL_COLS[j])
                 ax.legend(fontsize=8)
                 ax.grid(alpha=.3)
@@ -301,12 +301,73 @@ class FullRecordingSession:
         if self.geometry:
             fig, axes = plt.subplots(4, 1, figsize=(12, 12), layout='constrained')
             for j, ax in enumerate(axes):
-                plot_recording_pair(ax, scalar_source(self.target_tip, j), scalar_source(self.actual_tip, j), self.count, self.dt, first, 'Plant end effector')
+                plot_recording_pair(ax, scalar_source(self.target_tip, j), scalar_source(self.actual_tip, j), self.count, self.dt, first, 'MPC mechanical-plant end effector', actual_label='Reference')
                 ax.set_title(self.tip_meter.names[j])
                 ax.legend(fontsize=8)
                 ax.grid(alpha=.3)
             fig.suptitle(f'End-effector tracking across the entire retained CSV: {self.count:,} samples')
             fig.savefig(self.out / 'end_effector_full_csv.png', dpi=130)
+            self.trajectory_plots(first)
+
+    def trajectory_plots(self, first):
+        import matplotlib.pyplot as plt
+        from matplotlib.collections import PolyCollection
+
+        def path(ax, read, label, color, style='-'):
+            stride = max(1, int(np.ceil(self.count / 6000)))
+            averages, lower, upper = [], [], []
+            for begin in range(0, self.count, stride * 128):
+                end = min(begin + stride * 128, self.count)
+                values = np.asarray(read(begin, end))[:, :2]
+                ids = np.arange(0, len(values), stride)
+                sizes = np.diff(np.r_[ids, len(values)])
+                averages.append(np.add.reduceat(values, ids, axis=0) / sizes[:, None])
+                lower.append(np.minimum.reduceat(values, ids, axis=0))
+                upper.append(np.maximum.reduceat(values, ids, axis=0))
+            average, low, high = map(np.concatenate, (averages, lower, upper))
+            rectangles = np.stack((low, np.column_stack((high[:, 0], low[:, 1])), high,
+                                   np.column_stack((low[:, 0], high[:, 1]))), axis=1)
+            ax.add_collection(PolyCollection(rectangles, facecolor=color, edgecolor='none', alpha=.15))
+            ax.plot(average[:, 0], average[:, 1], style, color=color, label=label)
+            ax.autoscale_view()
+
+        paths = [
+            ('Lift boom tip', 'lift',
+             lambda b, e: self.geometry.evaluate(self.target[b:e])[0],
+             lambda b, e: self.geometry.evaluate(self.plant[b:e])[0]),
+            ('Jib tip / end effector', 'jib',
+             lambda b, e: self.target_tip[b:e], lambda b, e: self.actual_tip[b:e])]
+        fig, ax = plt.subplots(figsize=(10, 8), layout='constrained')
+        for title, boom, reference, actual in paths:
+            color = 'tab:blue' if boom == 'lift' else 'tab:green'
+            path(ax, reference, title + ': reference', color, '--')
+            path(ax, actual, title + ': MPC mechanical plant', color)
+        ax.set(xlabel='World horizontal x [m]', ylabel='World vertical z [m]',
+               title=f'Both boom trajectories: all {self.count:,} internal samples')
+        ax.set_aspect('equal', adjustable='datalim')
+        ax.grid(alpha=.25)
+        ax.legend(fontsize=8)
+        fig.savefig(self.out / 'both_boom_trajectories_full_csv.png', dpi=150)
+        for title, boom, reference, actual in paths:
+            fig, ax = plt.subplots(figsize=(10, 8), layout='constrained')
+            path(ax, reference, 'Reference trajectory', 'black', '--')
+            path(ax, actual, 'MPC trajectory: independent mechanical plant', 'tab:blue')
+            ax.set(xlabel='World horizontal x [m]', ylabel='World vertical z [m]',
+                   title=f'{title}: reference versus MPC across the entire retained CSV')
+            ax.set_aspect('equal', adjustable='datalim')
+            ax.grid(alpha=.25)
+            ax.legend(fontsize=8)
+            fig.savefig(self.out / f'{boom}_boom_trajectory_full_csv.png', dpi=150)
+        fig, axes = plt.subplots(2, 1, figsize=(12, 7), layout='constrained')
+        for j, ax in enumerate(axes):
+            zero = lambda b, e: np.zeros(e - b)
+            error = lambda b, e, col=j: self.actual_tip[b:e, col] - self.target_tip[b:e, col]
+            plot_recording_pair(ax, zero, error, self.count, self.dt, first, 'MPC position error', actual_label='Zero error')
+            ax.set_ylabel(('Horizontal x error [m]', 'Vertical z error [m]')[j])
+            ax.grid(alpha=.25)
+            ax.legend(fontsize=8)
+        fig.suptitle('Reference-to-MPC end-effector error across the entire retained CSV')
+        fig.savefig(self.out / 'end_effector_error_full_csv.png', dpi=150)
 
 
 def show_full_results(module, folder, show, geometry):
@@ -333,5 +394,5 @@ def show_full_results(module, folder, show, geometry):
     session.plots(coverage['startup_rows_excluded'] * session.dt)
     with np.load(folder / 'mpc_mechanical_plant_arrays.npz') as arrays:
         config = module.read_report(folder / 'config.json')
-        module.make_plots(folder, arrays['time_seconds'], arrays['reference_physical'], arrays['plant_mechanical_physical'], arrays['predictor_one_interval_mechanical_physical'], arrays['applied_commands_physical'], arrays['solve_seconds'], arrays['cost'], config['control_interval_seconds'], np.asarray(config['command_bounds']['low']), np.asarray(config['command_bounds']['high']), show, arrays['predictor_horizons_mechanical_physical'], arrays['teacher_reference_horizons_physical'], arrays['recorded_commands_physical'], geometry, arrays['reference_end_effector_physical'] if 'reference_end_effector_physical' in arrays.files else None)
+        module.make_plots(folder, arrays['time_seconds'], arrays['reference_physical'], arrays['plant_mechanical_physical'], arrays['predictor_one_interval_mechanical_physical'], arrays['applied_commands_physical'], arrays['solve_seconds'], arrays['cost'], config['control_interval_seconds'], np.asarray(config['command_bounds']['low']), np.asarray(config['command_bounds']['high']), show, arrays['predictor_horizons_mechanical_physical'], arrays['teacher_reference_horizons_physical'], arrays['recorded_commands_physical'], geometry, arrays['reference_end_effector_physical'] if 'reference_end_effector_physical' in arrays.files else None, full_recording=True)
     plt.close('all')

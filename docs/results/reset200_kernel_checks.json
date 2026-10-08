@@ -1,0 +1,38 @@
+[
+  {
+    "model": "gru",
+    "steps": 200,
+    "predictions": 433,
+    "blocks": 3,
+    "tail": 33,
+    "original_kernel_bitwise_identical": true,
+    "future_measured_states_ignored": true
+  },
+  {
+    "model": "LSTM",
+    "steps": 200,
+    "predictions": 433,
+    "blocks": 3,
+    "tail": 33,
+    "original_kernel_bitwise_identical": true,
+    "future_measured_states_ignored": true
+  },
+  {
+    "model": "transformer",
+    "steps": 200,
+    "predictions": 433,
+    "blocks": 3,
+    "tail": 33,
+    "original_kernel_bitwise_identical": true,
+    "future_measured_states_ignored": true
+  },
+  {
+    "model": "trainCompactLatent",
+    "steps": 200,
+    "predictions": 433,
+    "blocks": 3,
+    "tail": 33,
+    "original_kernel_bitwise_identical": true,
+    "future_measured_states_ignored": true
+  }
+]

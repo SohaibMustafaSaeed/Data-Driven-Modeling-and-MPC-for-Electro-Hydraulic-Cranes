@@ -1,0 +1,58 @@
+{
+  "mode": "recursive",
+  "tag": "recursive_reinit200",
+  "checkpoint": "Compact Recurrent/artifacts/best_model.pt",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "architecture": "compact",
+  "epoch": 59,
+  "timing_history_tokens": null,
+  "inference_backend": "numba",
+  "core_precision": "float32",
+  "benchmark_environment": {
+    "cpu": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "machine": "AMD64",
+    "python": "3.12.10",
+    "numba": "0.67.0",
+    "numpy": "2.5.3",
+    "torch": "2.14.0+cpu"
+  },
+  "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6",
+  "predictions": 8199999,
+  "initial_measured_rows": 2,
+  "dt_s": 1e-05,
+  "excluded_seconds": 18.0,
+  "reinit_every": 200,
+  "latent_resets": 41000,
+  "latency": {
+    "mean_us": 3.226933333333333,
+    "median_us": 2.9,
+    "p95_us": 6.2,
+    "max_us": 48.7,
+    "deadline_us": 10.0,
+    "deadline_miss_percent": 0.36666666666666664,
+    "RTF": 0.32269333333333333,
+    "repeats": 3000
+  },
+  "throughput": {
+    "inference_seconds": 10.27626010007225,
+    "simulated_seconds": 81.99999000000001,
+    "amortized_us_per_step": 1.253202604057909,
+    "RTF": 0.1253202604057909,
+    "chunk_rows": 20000,
+    "reinit_every": 200
+  },
+  "max_rows": null,
+  "horizon_latency": {
+    "horizon_steps": 200,
+    "includes": "physical input normalization, memory reset, all rollout steps and physical output reconstruction",
+    "median_us": 250.6,
+    "mean_us": 255.95990000000003,
+    "p95_us": 268.215,
+    "repeats": 1000,
+    "benchmark_protocol": "four models sequentially; after full MPC and inference jobs completed; JIT warmup excluded"
+  },
+  "reset_protocol": "two measured states; cold memory reset each horizon; only commands and predicted states within horizon",
+  "timing_excludes": "JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting",
+  "command_smoothing": "centered Savitzky-Golay 51 rows, offline"
+}

@@ -1,0 +1,13 @@
+All internal samples:
+    feature     RMSE      MAE  max_abs_error       R2
+   tip_x[m] 0.015647 0.014027       0.026274 0.997073
+   tip_z[m] 0.010194 0.009711       0.014410 0.999365
+tip_vx[m/s] 0.002615 0.002014       0.011274 0.995108
+tip_vz[m/s] 0.001865 0.001389       0.007744 0.997786
+{
+  "position_RMSE_m": 0.0186743112785136,
+  "position_MAE_m": 0.01729364370353184,
+  "position_max_error_m": 0.028018713495358276,
+  "final_position_error_m": 0.026842365591428708,
+  "scored_microsteps": 8199999
+}

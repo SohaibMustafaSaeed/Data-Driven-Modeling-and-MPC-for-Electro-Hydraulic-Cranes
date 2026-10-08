@@ -42,19 +42,19 @@ Both original and Final Codes entrypoints are updated. The original entrypoint
 uses your existing dataset and trained artifacts without path configuration:
 
 ```powershell
-& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\mpc_surrogate_mechanical_plant.py" --tracking-space cartesian --reference-mode plant-generated --duration 1 --output-dir "MPC based Controller\full state model\mpc_mechanical_plant_runs\cartesian_patu" --overwrite
+& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\mpc_surrogate_mechanical_plant.py" --tracking-space cartesian --reference-mode plant-generated --full-recording --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --output-dir "MPC based Controller\full state model\mpc_mechanical_plant_runs\full_csv_patu_100ms" --overwrite
 ```
 
 The exact geometry above loads automatically. This command creates a reachable
 plant-generated reference and maps it through forward kinematics. `--overwrite`
 archives an existing experiment folder before replacing it. It never replaces
 the trained checkpoints. Solver execution remains offline and can take minutes
-for a one-second episode; progress and solver timing are printed.
+for the complete retained recording; progress and solver timing are printed.
 
 To print results and reopen all plots later without solving again:
 
 ```powershell
-& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\mpc_surrogate_mechanical_plant.py" --plot-results "MPC based Controller\full state model\mpc_mechanical_plant_runs\cartesian_patu"
+& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\mpc_surrogate_mechanical_plant.py" --plot-results "MPC based Controller\full state model\mpc_mechanical_plant_runs\full_csv_patu_100ms"
 ```
 
 ## Run from the portable project root
@@ -63,8 +63,8 @@ Set IMOTION_DATA_ROOT and IMOTION_PREPROCESSED_DIR as described in RUNNING.md,
 or preprocess the dataset under this project's data folder. Then:
 
 ```powershell
-python "MPC offline Model/offline_mpc.py" --tracking-space cartesian --reference-mode plant-generated --duration 1 --output-dir "MPC offline Model/results/cartesian_patu" --overwrite
-python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/cartesian_patu"
+python "MPC offline Model/offline_mpc.py" --tracking-space cartesian --reference-mode plant-generated --full-recording --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --output-dir "MPC offline Model/results/full_csv_patu_100ms" --overwrite
+python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/full_csv_patu_100ms"
 ```
 
 For the original recording's trajectory, choose `--reference-mode recorded`.
@@ -141,13 +141,13 @@ Default comparison directories now use a short combined checkpoint identifier,
 with full model/checkpoint provenance saved inside. Existing evaluations are reused.
 
 ```powershell
-& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\compareModels.py" --reinit-every 500 --saved-only
+& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\compareModels.py" --reinit-every 200 --saved-only
 ```
 
 This prints all four models' metrics and opens 88 separate model/state plots.
-Add `--plot-mode recursive` for continuous rollout plots or `--plot-mode all`
-for 264 windows across all three modes. In the portable project use
-`python compare_models.py --reinit-every 500 --saved-only`.
+Use `--mode recursive --plot-mode recursive` explicitly for continuous diagnostics,
+or `--mode both --plot-mode all` for 264 model/state windows across three scenarios. In the portable project use
+`python compare_models.py --reinit-every 200 --saved-only`.
 
 ## Verification
 
@@ -155,5 +155,17 @@ Exact PATU vectors, absolute/relative angle options, analytic velocities against
 finite differences, physical-unit Cartesian objective reconstruction, and reference
 interpolation were checked. Short native-kernel MPC integrations ran through both
 entrypoints. The full-record original comparison completed all three scenarios
-from cached results without inference. Short integration accuracy is not a new
-one-second MPC performance claim; run the command above to evaluate that episode.
+from cached results without inference. The new full-recording experiment completed 820 control updates and scored every
+retained sample; its results are featured in the main README.
+
+
+## Featured completed experiment
+
+The main README now shows reference versus MPC-controlled independent mechanical
+plant across every retained sample. The tested control interval is 100 ms and
+horizon is 200 ms; these are explicitly supplied settings, not the script defaults.
+The original-space command above writes to the original results directory, whereas
+the published run lives in Final Codes/MPC offline Model/results/full_csv_patu_100ms.
+The four full-state model comparison uses 200 internal samples (2 ms) before a
+measured reset, and does not define the controller horizon. Solver timing, iteration
+limit failures and all-sample tracking metrics are reported in the main README.

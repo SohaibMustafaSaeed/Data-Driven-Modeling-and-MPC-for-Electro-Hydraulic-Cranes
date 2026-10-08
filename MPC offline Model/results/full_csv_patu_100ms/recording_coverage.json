@@ -1,0 +1,15 @@
+{
+  "full_retained_recording": true,
+  "retained_rows": 8200001,
+  "initialization_rows": 2,
+  "predicted_and_scored_microsteps": 8199999,
+  "expected_microsteps": 8199999,
+  "control_updates": 820,
+  "internal_sample_time_s": 1e-05,
+  "control_block_samples": 10000,
+  "last_control_block_samples": 9999,
+  "first_prediction_csv_time_s": 18.00002,
+  "last_prediction_csv_time_s": 100.0,
+  "startup_rows_excluded": 1800000,
+  "metrics_resolution": "every internal microstep, not just control endpoints"
+}

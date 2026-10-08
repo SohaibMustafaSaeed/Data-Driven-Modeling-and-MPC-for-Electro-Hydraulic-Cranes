@@ -36,7 +36,7 @@ from mechanical_compact import MechanicalPlant, held_command as warm_plant_kerne
 def default_checkpoint():
     checkpoint = ROOT / 'GRU Latent/artifacts/best_model.pt'
     if not checkpoint.is_file():
-        raise FileNotFoundError('GRU checkpoint missing; train GRU Latent/gru2.py first')
+        raise FileNotFoundError('GRU checkpoint missing; train GRU Latent/gru.py first')
     return checkpoint
 
 def load_surrogate(checkpoint):
@@ -215,7 +215,7 @@ def require_completed(checkpoint, ck, parser, label):
     if expected is not None and (not path.is_file() or len(json.loads(path.read_text())) < expected):
         parser.error(f'{label} training is incomplete: {checkpoint.parent}')
 
-def make_plots(out, time_grid, reference, plant_states, predicted, commands, solve_times, costs, dt_control, low, high, show, horizon_forecasts=None, horizon_references=None, recorded_commands=None, geometry=None, desired_tip=None):
+def make_plots(out, time_grid, reference, plant_states, predicted, commands, solve_times, costs, dt_control, low, high, show, horizon_forecasts=None, horizon_references=None, recorded_commands=None, geometry=None, desired_tip=None, full_recording=False):
     import matplotlib
     matplotlib.use('TkAgg' if show else 'Agg')
     import matplotlib.pyplot as plt
@@ -234,7 +234,7 @@ def make_plots(out, time_grid, reference, plant_states, predicted, commands, sol
         ax.legend(fontsize=8)
     fig.suptitle('Full-state MPC controlling a separate mechanical surrogate plant')
     fig.savefig(out / 'reference_prediction_plant.png', dpi=150)
-    if horizon_forecasts is not None:
+    if horizon_forecasts is not None and not full_recording:
         K, N, _ = horizon_forecasts.shape
         sample = min(K // 2, max(0, K - N))
         horizon_time = time_grid[sample] + np.arange(1, N + 1) * dt_control
@@ -531,7 +531,7 @@ def main():
     plant.restore(initial_plant_snapshot)
     previous_command = current[CI].astype(float) * std[CI] + mean[CI]
     rollout = make_blocked_rollout(trainer) if session is None else session.rollout
-    predictor_name = getattr(trainer, 'ARCHITECTURE', 'compact_latent')
+    predictor_name = {'gru2': 'GRU', 'lstm4': 'LSTM', 'transformer': 'Transformer', 'compact_latent': 'Compact Recurrent'}.get(getattr(trainer, 'ARCHITECTURE', 'compact_latent'), 'Compact Recurrent')
     print(f"Model={predictor_name}; checkpoint epoch={ck['epoch']}; parameters={sum((p.numel() for p in model.parameters())):,}", flush=True)
     print(f'CSV segment={csv_start:.6f}..{csv_start + actual_duration:.6f}s; duration={actual_duration:g}s; internal dt={dt * 1000000.0:g}us; control interval={control_dt * 1000.0:g}ms; horizon={a.horizon * control_dt * 1000.0:g}ms; decision blocks={a.moves} ({2 * a.moves} variables)', flush=True)
     print(f'Bounds [V]: lift={low[0]:.6g}..{high[0]:.6g}, jib={low[1]:.6g}..{high[1]:.6g}; neutral={neutral.tolist()}', flush=True)
@@ -717,6 +717,6 @@ def main():
         import matplotlib
         matplotlib.use('Agg' if a.no_show else 'TkAgg')
         session.plots(offset)
-    make_plots(out, time_grid, target, plant_trace, predictor_trace, commands, solve_times, costs, control_dt, low, high, not a.no_show, horizon_forecasts, teacher_refs, recorded_commands, geometry, tip_reference[:episode_steps + 1] if tip_reference is not None else None)
+    make_plots(out, time_grid, target, plant_trace, predictor_trace, commands, solve_times, costs, control_dt, low, high, not a.no_show, horizon_forecasts, teacher_refs, recorded_commands, geometry, tip_reference[:episode_steps + 1] if tip_reference is not None else None, full_recording=full_recording)
 if __name__ == '__main__':
     main()

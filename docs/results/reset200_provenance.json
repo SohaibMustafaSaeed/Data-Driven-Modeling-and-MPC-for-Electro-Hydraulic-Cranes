@@ -1,0 +1,28 @@
+{
+  "method": "200 recursive internal steps followed by measured-state and memory reset",
+  "dataset": "Simulation_Output_53.csv",
+  "predictions": 8199999,
+  "horizon_duration_ms": 2.0,
+  "reset_blocks": 41000,
+  "weights_unchanged": true,
+  "R2_display": "1 - R2 in scientific notation to expose near-one values",
+  "trajectory_results": "MPC trajectories are evaluated separately using the independent mechanical plant",
+  "checkpoints": [
+    {
+      "model": "GRU",
+      "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25"
+    },
+    {
+      "model": "LSTM",
+      "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0"
+    },
+    {
+      "model": "Transformer",
+      "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4"
+    },
+    {
+      "model": "Compact Recurrent",
+      "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6"
+    }
+  ]
+}

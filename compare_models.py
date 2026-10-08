@@ -86,7 +86,7 @@ def plot_each_model_feature(runs, tables, names, tag, out, points, no_show, plt)
             predicted_source = scalar_source(run['prediction'], j)
             plot_recording_pair(ax, actual_source, predicted_source, count, run['dt'], run['offset'] + run['start'] * run['dt'], name, points)
             row = table.iloc[j]
-            ax.set_title(f'{name} vs actual: {feature}' + chr(10) + f'{tag} | RMSE={row.RMSE:.6g} | MAE={row.MAE:.6g} | R2={row.R2:.6g} | NRMSE={row.NRMSE_train_std:.6g}')
+            ax.set_title(f'{name} vs actual: {feature}' + chr(10) + f'{tag} | RMSE={row.RMSE:.6g} | MAE={row.MAE:.6g} | 1-R2={1-row.R2:.3e} | NRMSE={row.NRMSE_train_std:.6g}')
             ax.set_xlabel('CSV time [s]')
             ax.set_ylabel(feature)
             ax.legend()
@@ -114,7 +114,7 @@ def main():
     p.add_argument('--test-file', default='Simulation_Output_53.csv')
     p.add_argument('--output-dir', type=Path)
     p.add_argument('--mode', choices=['reset', 'both', 'measured', 'recursive'], default='reset')
-    p.add_argument('--reinit-every', type=int, help='Recursive reset horizon; default is 20 internal prediction samples')
+    p.add_argument('--reinit-every', type=int, help='Recursive reset horizon; default is 200 internal prediction samples')
     p.add_argument('--saved-only', action='store_true', help='Load cached results only; no inference')
     p.add_argument('--allow-prefix', action='store_true', help='Permit explicitly limited evaluations; both must cover identical targets')
     a = p.parse_args()
@@ -139,7 +139,7 @@ def main():
             p.error(f'Training has not completed: {checkpoint.parent}')
         loaded.append(ck)
     if a.reinit_every is None:
-        a.reinit_every = 20
+        a.reinit_every = 200
     if a.reinit_every < 1:
         p.error('--reinit-every must be positive')
     stem = Path(a.test_file).stem
@@ -243,6 +243,8 @@ def main():
             emit('EXPLICIT PREFIX COMPARISON; not a full-record result')
         for name, folder, run in zip(names, folders, runs):
             table = pd.read_csv(folder / 'metrics.csv')
+            table['R2_deficit'] = 1 - table.R2
+            table['RMSE_relative_to_persistence'] = table.RMSE / table.persistence_RMSE.replace(0, np.nan)
             if table.feature.tolist() != OUTPUT_COLS:
                 raise ValueError('Metric feature order differs')
             if not np.isfinite(table[['RMSE', 'MAE', 'max_abs_error', 'NRMSE_train_std']]).all().all():

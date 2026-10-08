@@ -1,0 +1,79 @@
+{
+  "exact_reproduction_pass": false,
+  "held_reproduction_pass": false,
+  "held_commands_in_mpc_bounds": true,
+  "reproduction_gate_pass": false,
+  "angle_rmse_tolerance_rad": 0.002,
+  "velocity_rmse_tolerance_rad_s": 0.002,
+  "full_retained_recording": true,
+  "microsteps": 8199999,
+  "control_steps": 820,
+  "last_control_block_microsteps": 9999,
+  "metrics": [
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetalift[rad]",
+      "RMSE": 0.0318204697,
+      "MAE": 0.0265489244,
+      "max_abs_error": 0.0592785224,
+      "R2": 0.95695415
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetajib[rad]",
+      "RMSE": 0.0289124414,
+      "MAE": 0.0249548828,
+      "max_abs_error": 0.0594059023,
+      "R2": 0.9637754909
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0050216605,
+      "MAE": 0.0037492294,
+      "max_abs_error": 0.0238787474,
+      "R2": 0.8987101393
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.005240443,
+      "MAE": 0.0037841868,
+      "max_abs_error": 0.0197735608,
+      "R2": 0.9296581945
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetalift[rad]",
+      "RMSE": 0.0317955564,
+      "MAE": 0.0264603217,
+      "max_abs_error": 0.0602584211,
+      "R2": 0.9570215276
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetajib[rad]",
+      "RMSE": 0.0293958682,
+      "MAE": 0.0253232655,
+      "max_abs_error": 0.0613176873,
+      "R2": 0.962553989
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0052120224,
+      "MAE": 0.0038572595,
+      "max_abs_error": 0.0251625974,
+      "R2": 0.8908851602
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.0055914592,
+      "MAE": 0.0039790858,
+      "max_abs_error": 0.0216895921,
+      "R2": 0.9199193044
+    }
+  ],
+  "lookahead_after_csv_end": "recorded target holds final pose and zero velocity; plant-generated target continues final held command"
+}

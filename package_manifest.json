@@ -65,7 +65,12 @@
     "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/measured_one_step",
     "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive",
     "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit500",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit500"
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit500",
+    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive_reinit200",
+    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit200",
+    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit200",
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit200",
+    "MPC offline Model/results/full_csv_patu_100ms"
   ],
   "source_workspace": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV",
   "checkpoint_weights_modified": false,
@@ -83,7 +88,7 @@
     "prediction_copies": "matching_size_shape_dtype_and_1000_sample_rows_each",
     "full_training_or_full_evaluation_rerun": false
   },
-  "bundled_result_bytes": 18811412566,
+  "bundled_result_bytes": 27616603537,
   "kinematic_mpc": {
     "geometry_source": "User-supplied PATU assembly vectors and base frame",
     "geometry_file": "MPC offline Model/geometry_patu.json",
@@ -102,15 +107,15 @@
   },
   "whole_recording": {
     "startup_trim_unchanged": true,
-    "coverage_report": "docs/results/full_recording_coverage.csv",
-    "verified_model_cases": 12,
+    "coverage_report": "docs/results/reset200_recording_coverage.csv",
+    "verified_model_cases": 4,
     "predictions_per_case": 8199999,
     "all_sample_minmax_envelopes": true,
     "per_second_error_metrics": true,
     "mpc_default": "whole retained CSV unless duration explicitly supplied",
     "mpc_metrics_resolution": "all internal microsteps",
     "mpc_tail_test": "253 samples, exact 53-sample final block",
-    "completed_full_recording_mpc_performance_run": false
+    "completed_full_recording_mpc_performance_run": true
   },
   "main_model_analysis": {
     "public_names": [
@@ -119,15 +124,39 @@
       "Transformer",
       "Compact Recurrent"
     ],
-    "reset_horizon_steps": 20,
-    "horizon_seconds": 0.0002,
+    "reset_horizon_steps": 200,
+    "horizon_seconds": 0.002,
     "predictions_per_model": 8199999,
-    "reset_blocks": 410000,
-    "last_block_steps": 19,
+    "reset_blocks": 41000,
+    "last_block_steps": 199,
     "full_recording": true,
     "recurrent_state_reset_from_two_measured_rows": true,
     "predictions_recomputed": true,
-    "end_effector_trajectory_scope": "whole CSV; FK of actual/predicted states; not closed-loop MPC",
-    "sequential_matched_20_step_cpu_benchmarks": true
+    "end_effector_trajectory_scope": "reference versus MPC-controlled independent mechanical plant; whole CSV",
+    "sequential_matched_200_step_cpu_benchmarks": true
+  },
+  "main_mpc_analysis": {
+    "full_recording": true,
+    "controller": "GRU",
+    "plant": "mechanical Compact Recurrent",
+    "plant_parameters": 1060,
+    "control_interval_seconds": 0.1,
+    "horizon_seconds": 0.2,
+    "control_updates": 820,
+    "scored_microsteps": 8199999,
+    "last_control_block_samples": 9999,
+    "reference": "explicit plant-generated held-recorded-command replay",
+    "results": "MPC offline Model/results/full_csv_patu_100ms"
+  },
+  "new_analysis_validation": {
+    "model_checkpoints_unchanged": true,
+    "mechanical_checkpoint_unchanged": true,
+    "all_four_reset200_full_recording": true,
+    "reset_kernel_original_bitwise_match": true,
+    "future_measurement_perturbation_invariant": true,
+    "MPC_full_recording_complete": true,
+    "scored_microsteps": 8199999,
+    "MPC_reference": "plant-generated",
+    "MPC_optimizer_maxiter": 5
   }
 }

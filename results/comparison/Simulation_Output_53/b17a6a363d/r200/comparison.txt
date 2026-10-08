@@ -1,0 +1,299 @@
+GRU vs LSTM vs Transformer vs Compact Recurrent: cached evaluations. Error metrics use physical units per state; NRMSE uses training std.
+Timings are warm CPU benchmarks from saved evaluations; benchmark dates may differ.
+Single-call time and amortized chunk throughput are separate. R2 is undefined for constant truth.
+[
+  {
+    "model": "GRU",
+    "compute_budget": {
+      "warm_window_multiply_adds": 3584,
+      "dot_product_flops": 7168,
+      "excludes": "bias, gate operations, activation, initialization and buffer copies",
+      "temporal_memory_bytes": 64
+    },
+    "checkpoint": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\GRU Latent\\artifacts\\best_model.pt",
+    "best_epoch": 35,
+    "parameters": 4098,
+    "model_config": {
+      "hidden": 16,
+      "latent_dim": 12,
+      "decoder_dim": 16,
+      "use_skip": true
+    },
+    "checkpoint_selection": "weighted normalized MSE at 500 steps",
+    "training_loss_weights": {
+      "speedref[rad/s]": 1.0,
+      "speedpmsm[rad/s]": 1.0,
+      "iqref[A]": 1.0,
+      "udref[V]": 1.0,
+      "uqref[V]": 1.0,
+      "id[A]": 1.0,
+      "iq[A]": 1.0,
+      "psid[Wb]": 1.0,
+      "psiq[Wb]": 1.0,
+      "pumppressure[Pa]": 1.0,
+      "plinepistonlift[Pa]": 1.0,
+      "plinerodlift[Pa]": 1.0,
+      "ppistonsidelift[Pa]": 1.0,
+      "prodsidelift[Pa]": 1.0,
+      "thetalift[rad]": 4.0,
+      "plinepistonjib[Pa]": 1.0,
+      "plinerodjib[Pa]": 1.0,
+      "ppistonjib[Pa]": 1.0,
+      "prodjib[Pa]": 1.0,
+      "thetajib[rad]": 4.0,
+      "thetaliftdot[rad/s]": 4.0,
+      "thetajibdot[rad/s]": 4.0
+    }
+  },
+  {
+    "model": "LSTM",
+    "compute_budget": {
+      "warm_window_multiply_adds": 4032,
+      "dot_product_flops": 8064,
+      "excludes": "bias, gate operations, activation, initialization and buffer copies",
+      "temporal_memory_bytes": 128
+    },
+    "checkpoint": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\LSTM\\artifacts\\best_model.pt",
+    "best_epoch": 39,
+    "parameters": 4946,
+    "model_config": {
+      "hidden": 16,
+      "latent_dim": 12,
+      "decoder_dim": 16,
+      "use_skip": true
+    },
+    "checkpoint_selection": "weighted normalized MSE at 500 steps",
+    "training_loss_weights": {
+      "speedref[rad/s]": 1.0,
+      "speedpmsm[rad/s]": 1.0,
+      "iqref[A]": 1.0,
+      "udref[V]": 1.0,
+      "uqref[V]": 1.0,
+      "id[A]": 1.0,
+      "iq[A]": 1.0,
+      "psid[Wb]": 1.0,
+      "psiq[Wb]": 1.0,
+      "pumppressure[Pa]": 1.0,
+      "plinepistonlift[Pa]": 1.0,
+      "plinerodlift[Pa]": 1.0,
+      "ppistonsidelift[Pa]": 1.0,
+      "prodsidelift[Pa]": 1.0,
+      "thetalift[rad]": 4.0,
+      "plinepistonjib[Pa]": 1.0,
+      "plinerodjib[Pa]": 1.0,
+      "ppistonjib[Pa]": 1.0,
+      "prodjib[Pa]": 1.0,
+      "thetajib[rad]": 4.0,
+      "thetaliftdot[rad/s]": 4.0,
+      "thetajibdot[rad/s]": 4.0
+    }
+  },
+  {
+    "model": "Transformer",
+    "compute_budget": {
+      "warm_window_multiply_adds": 38784,
+      "dot_product_flops": 77568,
+      "excludes": "normalization, bias, positional addition, activation, softmax and buffer copies",
+      "temporal_memory_bytes": 4352,
+      "history_steps": 64
+    },
+    "checkpoint": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\Transformers\\artifacts\\best_model.pt",
+    "best_epoch": 19,
+    "parameters": 4710,
+    "model_config": {
+      "d_model": 16,
+      "n_heads": 2,
+      "n_layers": 1,
+      "feedforward_dim": 32,
+      "history": 64,
+      "decoder_dim": 16,
+      "dropout": 0.0
+    },
+    "checkpoint_selection": "weighted normalized MSE at 500 steps",
+    "training_loss_weights": {
+      "speedref[rad/s]": 1.0,
+      "speedpmsm[rad/s]": 1.0,
+      "iqref[A]": 1.0,
+      "udref[V]": 1.0,
+      "uqref[V]": 1.0,
+      "id[A]": 1.0,
+      "iq[A]": 1.0,
+      "psid[Wb]": 1.0,
+      "psiq[Wb]": 1.0,
+      "pumppressure[Pa]": 1.0,
+      "plinepistonlift[Pa]": 1.0,
+      "plinerodlift[Pa]": 1.0,
+      "ppistonsidelift[Pa]": 1.0,
+      "prodsidelift[Pa]": 1.0,
+      "thetalift[rad]": 4.0,
+      "plinepistonjib[Pa]": 1.0,
+      "plinerodjib[Pa]": 1.0,
+      "ppistonjib[Pa]": 1.0,
+      "prodjib[Pa]": 1.0,
+      "thetajib[rad]": 4.0,
+      "thetaliftdot[rad/s]": 4.0,
+      "thetajibdot[rad/s]": 4.0
+    }
+  },
+  {
+    "model": "Compact Recurrent",
+    "compute_budget": {
+      "warm_window_multiply_adds": 4000,
+      "dot_product_flops": 8000,
+      "temporal_memory_bytes": 32,
+      "excludes": "initialization, activation, bias and buffer copies"
+    },
+    "checkpoint": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\Compact Recurrent\\artifacts\\best_model.pt",
+    "best_epoch": 59,
+    "parameters": 4246,
+    "model_config": {
+      "latent_dim": 8,
+      "hidden": 32
+    },
+    "checkpoint_selection": "original training criterion",
+    "training_loss_weights": {}
+  }
+]
+Shared training settings: {"angle_weight": [4.0, 4.0, 4.0, null], "velocity_weight": [4.0, 4.0, 4.0, null], "medium_horizon": [500, 500, 500, null], "medium_probability": [0.6, 0.6, 0.6, null], "long_probability": [0.2, 0.2, 0.2, null], "selection_horizon": [500, 500, 500, null], "val_horizons": [[100, 500, 1000, 10000, 100000], [100, 500, 1000, 10000, 100000], [100, 500, 1000, 10000, 100000], [10000, 100000]]}
+History: GRU/LSTM keep gated memory; Transformer keeps a fixed encoded-token window, initially empty. All scoring starts with two measured rows. Transformer latency uses a fully populated window.
+FULL-RECORDING COVERAGE: GRU/recursive_reinit200: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=41,000
+FULL-RECORDING COVERAGE: LSTM/recursive_reinit200: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=41,000
+FULL-RECORDING COVERAGE: Transformer/recursive_reinit200: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=41,000
+FULL-RECORDING COVERAGE: Compact Recurrent/recursive_reinit200: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=41,000
+
+===== recursive_reinit200: 8,199,999 targets; retained rows start at 2; dt=10 us =====
+
+GRU:
+               mode model             feature           MAE          RMSE         R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+recursive_reinit200   GRU     speedref[rad/s] 1.2445529e-06 1.8453865e-06        NaN  9.6169597e-06    1.8453865e-06                 0
+recursive_reinit200   GRU    speedpmsm[rad/s] 7.5456477e-13 1.1667278e-12        NaN  1.4267698e-11    1.9638208e-05     9.7275374e-12
+recursive_reinit200   GRU            iqref[A] 1.7061937e-09 2.6219521e-09          1  1.9446287e-08    4.5647448e-06     6.8688527e-08
+recursive_reinit200   GRU            udref[V]  5.297872e-09 8.3928315e-09          1  6.4693216e-08    4.6860022e-06     2.1418478e-07
+recursive_reinit200   GRU            uqref[V]  4.974321e-10 7.4870633e-10          1  4.8908078e-09    4.7630123e-06     1.8789286e-08
+recursive_reinit200   GRU               id[A] 1.5207308e-12 2.4834675e-12          1  3.0804484e-11    1.7914329e-05     2.2690787e-11
+recursive_reinit200   GRU               iq[A] 1.2275065e-09 2.0064878e-09          1  1.7255517e-08    3.4931658e-06     6.8690448e-08
+recursive_reinit200   GRU            psid[Wb] 1.7945009e-06 2.4913404e-06        NaN  1.2510748e-05    2.4913404e-06     8.7670713e-14
+recursive_reinit200   GRU            psiq[Wb] 6.2009611e-12 9.2092507e-12          1  5.9835558e-11    4.8437195e-06     2.2736538e-10
+recursive_reinit200   GRU    pumppressure[Pa]  0.0078935904   0.011946141          1    0.082075249    5.1532589e-06         0.2772206
+recursive_reinit200   GRU plinepistonlift[Pa]     697.10042     1426.7668 0.99999881      33703.986    0.00080776746         1503.4032
+recursive_reinit200   GRU    plinerodlift[Pa]     341.23113     581.27636 0.99999989      6627.3234     0.0002404401         778.92624
+recursive_reinit200   GRU ppistonsidelift[Pa]     697.01394      1426.618 0.99999881      33713.477    0.00080730578         1503.3312
+recursive_reinit200   GRU    prodsidelift[Pa]     341.31392     581.33063 0.99999989      6617.5485    0.00024053499         778.75455
+recursive_reinit200   GRU      thetalift[rad] 8.7390205e-07 1.1972335e-06          1  6.1825996e-06    8.2411163e-06     1.8788048e-05
+recursive_reinit200   GRU  plinepistonjib[Pa]     486.45427     804.66925  0.9999997      10748.234    0.00028588279         954.04731
+recursive_reinit200   GRU     plinerodjib[Pa]     974.63999     1642.3216 0.99999956      17444.247    0.00033913095         1699.3193
+recursive_reinit200   GRU      ppistonjib[Pa]     486.37401     804.75918  0.9999997      10751.387    0.00028587552         954.21208
+recursive_reinit200   GRU         prodjib[Pa]     974.65307     1642.1419 0.99999956      17439.472    0.00033911934          1699.017
+recursive_reinit200   GRU       thetajib[rad] 1.1110977e-06 1.6712653e-06          1  1.1523532e-05    6.7513545e-06     2.4581401e-05
+recursive_reinit200   GRU thetaliftdot[rad/s] 1.6170643e-05 3.2823988e-05 0.99999567  0.00056611637     0.0020910661     3.3400491e-05
+recursive_reinit200   GRU  thetajibdot[rad/s] 3.1340087e-05 5.6565016e-05 0.99999179  0.00090887303     0.0032190849     5.5227865e-05
+
+LSTM:
+               mode model             feature           MAE          RMSE         R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+recursive_reinit200  LSTM     speedref[rad/s] 2.0061716e-06 2.6346791e-06        NaN  1.1458482e-05    2.6346791e-06                 0
+recursive_reinit200  LSTM    speedpmsm[rad/s] 6.3160734e-13 9.4935065e-13        NaN  1.1112888e-11    1.5979344e-05     9.7275374e-12
+recursive_reinit200  LSTM            iqref[A] 1.5462198e-09  2.424828e-09          1   2.506106e-08    4.2215573e-06     6.8688527e-08
+recursive_reinit200  LSTM            udref[V] 4.1834824e-09 6.6051925e-09          1   4.953408e-08    3.6879028e-06     2.1418478e-07
+recursive_reinit200  LSTM            uqref[V] 6.7253691e-10 9.5054931e-10          1  6.6711436e-09    6.0470679e-06     1.8789286e-08
+recursive_reinit200  LSTM               id[A] 1.2044673e-12 1.9877934e-12          1  2.4921224e-11    1.4338817e-05     2.2690787e-11
+recursive_reinit200  LSTM               iq[A]   3.41276e-09 4.8385636e-09          1  2.5814801e-08    8.4236272e-06     6.8690448e-08
+recursive_reinit200  LSTM            psid[Wb] 3.0605511e-06 4.0781539e-06        NaN  1.6557805e-05    4.0781539e-06     8.7670713e-14
+recursive_reinit200  LSTM            psiq[Wb] 5.8367294e-12 8.6541891e-12          1   6.357528e-11    4.5517779e-06     2.2736538e-10
+recursive_reinit200  LSTM    pumppressure[Pa]  0.0076980057   0.011225769          1     0.10169593    4.8425088e-06         0.2772206
+recursive_reinit200  LSTM plinepistonlift[Pa]     742.31432     1472.2252 0.99999873      34359.355    0.00083350384         1503.4032
+recursive_reinit200  LSTM    plinerodlift[Pa]     315.98668      563.4904  0.9999999      6483.8024    0.00023308309         778.92624
+recursive_reinit200  LSTM ppistonsidelift[Pa]     742.13488      1471.995 0.99999873      34367.151    0.00083298405         1503.3312
+recursive_reinit200  LSTM    prodsidelift[Pa]     316.19842     563.63724  0.9999999      6474.0709    0.00023321406         778.75455
+recursive_reinit200  LSTM      thetalift[rad] 6.6906251e-07 9.6068102e-07          1  8.7803305e-06    6.6128155e-06     1.8788048e-05
+recursive_reinit200  LSTM  plinepistonjib[Pa]     447.16381     755.73327 0.99999974      10150.308    0.00026849682         954.04731
+recursive_reinit200  LSTM     plinerodjib[Pa]     933.33901     1638.5476 0.99999956      17893.385    0.00033835165         1699.3193
+recursive_reinit200  LSTM      ppistonjib[Pa]     447.07333     755.82467 0.99999974      10152.372    0.00026849246         954.21208
+recursive_reinit200  LSTM         prodjib[Pa]     933.26189     1638.2814 0.99999956      17889.731     0.0003383221          1699.017
+recursive_reinit200  LSTM       thetajib[rad] 9.1825238e-07 1.2821766e-06          1  5.8429176e-06    5.1795662e-06     2.4581401e-05
+recursive_reinit200  LSTM thetaliftdot[rad/s] 1.5582127e-05 3.2918875e-05 0.99999565  0.00057192756     0.0020971109     3.3400491e-05
+recursive_reinit200  LSTM  thetajibdot[rad/s] 3.1836056e-05 5.7126591e-05 0.99999163  0.00088841182     0.0032510439     5.5227865e-05
+
+Transformer:
+               mode       model             feature           MAE          RMSE         R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+recursive_reinit200 Transformer     speedref[rad/s] 7.4741636e-07 1.0576591e-06        NaN  5.0071644e-06    1.0576591e-06                 0
+recursive_reinit200 Transformer    speedpmsm[rad/s] 1.2564466e-12  1.622525e-12        NaN  8.0717655e-12    2.7310126e-05     9.7275374e-12
+recursive_reinit200 Transformer            iqref[A] 1.6460385e-09 2.6045513e-09          1  2.8895539e-08    4.5344504e-06     6.8688527e-08
+recursive_reinit200 Transformer            udref[V] 6.3122191e-09 9.3028968e-09          1  8.0279371e-08    5.1941225e-06     2.1418478e-07
+recursive_reinit200 Transformer            uqref[V] 1.0347526e-09  1.514004e-09          1  8.2825409e-09    9.6315733e-06     1.8789286e-08
+recursive_reinit200 Transformer               id[A] 2.9187324e-12 3.7478389e-12          1  1.6393803e-11    2.7034789e-05     2.2690787e-11
+recursive_reinit200 Transformer               iq[A] 2.0631798e-09 2.9839584e-09          1  1.9035848e-08    5.1948791e-06     6.8690448e-08
+recursive_reinit200 Transformer            psid[Wb] 3.3291263e-07 4.6546073e-07        NaN  1.8632869e-06    4.6546073e-07     8.7670713e-14
+recursive_reinit200 Transformer            psiq[Wb] 5.9634885e-12 9.3005378e-12          1   6.935485e-11     4.891733e-06     2.2736538e-10
+recursive_reinit200 Transformer    pumppressure[Pa]  0.0074247011   0.010963304          1    0.074613864    4.7292885e-06         0.2772206
+recursive_reinit200 Transformer plinepistonlift[Pa]     726.71971     1449.1258 0.99999877      33213.328    0.00082042608         1503.4032
+recursive_reinit200 Transformer    plinerodlift[Pa]     415.91353     655.02541 0.99999986      6846.2072    0.00027094578         778.92624
+recursive_reinit200 Transformer ppistonsidelift[Pa]     726.91881     1448.9818 0.99999877      33216.585    0.00081996117         1503.3312
+recursive_reinit200 Transformer    prodsidelift[Pa]     415.97015     655.02863 0.99999986      6835.9343    0.00027102873         778.75455
+recursive_reinit200 Transformer      thetalift[rad] 7.3231788e-07 1.1258118e-06          1  7.2043737e-06    7.7494877e-06     1.8788048e-05
+recursive_reinit200 Transformer  plinepistonjib[Pa]     482.86258     854.11733 0.99999966      10526.444     0.0003034507         954.04731
+recursive_reinit200 Transformer     plinerodjib[Pa]     976.27166     1634.8241 0.99999956      16755.529    0.00033758276         1699.3193
+recursive_reinit200 Transformer      ppistonjib[Pa]     483.05939     854.44642 0.99999966      10529.567    0.00030352597         954.21208
+recursive_reinit200 Transformer         prodjib[Pa]     975.76589     1634.4846 0.99999956       16751.96    0.00033753803          1699.017
+recursive_reinit200 Transformer       thetajib[rad] 1.5146817e-06 2.1928409e-06          1  9.3103056e-06    8.8583464e-06     2.4581401e-05
+recursive_reinit200 Transformer thetaliftdot[rad/s] 1.6218956e-05 3.3220551e-05 0.99999557  0.00057696779     0.0021163294     3.3400491e-05
+recursive_reinit200 Transformer  thetajibdot[rad/s] 2.9759782e-05 5.5574434e-05 0.99999208  0.00084659706     0.0031627114     5.5227865e-05
+
+Compact Recurrent:
+               mode             model             feature           MAE          RMSE         R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+recursive_reinit200 Compact Recurrent     speedref[rad/s] 6.1838851e-06 9.3957316e-06        NaN  5.4257871e-05    9.3957316e-06                 0
+recursive_reinit200 Compact Recurrent    speedpmsm[rad/s] 5.7161485e-13 8.0651885e-13        NaN  9.4644292e-12    1.3575218e-05     9.7275374e-12
+recursive_reinit200 Compact Recurrent            iqref[A] 3.4488572e-09 4.9465269e-09          1  2.4787169e-08    8.6117641e-06     6.8688527e-08
+recursive_reinit200 Compact Recurrent            udref[V] 7.1859761e-09 1.0999537e-08          1  5.1455661e-08    6.1414141e-06     2.1418478e-07
+recursive_reinit200 Compact Recurrent            uqref[V] 7.9119698e-10 1.0743119e-09          1  4.9469691e-09    6.8344027e-06     1.8789286e-08
+recursive_reinit200 Compact Recurrent               id[A] 1.0219612e-12 1.5930949e-12          1  1.7054843e-11    1.1491685e-05     2.2690787e-11
+recursive_reinit200 Compact Recurrent               iq[A]  8.316083e-09 1.1015788e-08          1  4.9267238e-08    1.9177777e-05     6.8690448e-08
+recursive_reinit200 Compact Recurrent            psid[Wb] 5.2622646e-06  7.653488e-06        NaN  3.3304902e-05     7.653488e-06     8.7670713e-14
+recursive_reinit200 Compact Recurrent            psiq[Wb] 1.6549967e-11 2.3273676e-11          1  1.0199243e-10    1.2241078e-05     2.2736538e-10
+recursive_reinit200 Compact Recurrent    pumppressure[Pa]   0.037937299   0.057350222          1      0.2047736    2.4739416e-05         0.2772206
+recursive_reinit200 Compact Recurrent plinepistonlift[Pa]     667.96328     1423.7444 0.99999881      34885.493    0.00080605629         1503.4032
+recursive_reinit200 Compact Recurrent    plinerodlift[Pa]      308.2349     516.10724 0.99999991      5743.7187    0.00021348344         778.92624
+recursive_reinit200 Compact Recurrent ppistonsidelift[Pa]     667.72756     1423.5142 0.99999882      34894.062    0.00080554938         1503.3312
+recursive_reinit200 Compact Recurrent    prodsidelift[Pa]     308.35521     516.26337 0.99999991      5739.8281    0.00021361235         778.75455
+recursive_reinit200 Compact Recurrent      thetalift[rad] 6.7640401e-07 1.0541412e-06          1  9.5942862e-06    7.2561455e-06     1.8788048e-05
+recursive_reinit200 Compact Recurrent  plinepistonjib[Pa]     321.77727     578.84998 0.99999984      7820.6798    0.00020565375         954.04731
+recursive_reinit200 Compact Recurrent     plinerodjib[Pa]     844.74952     1445.8248 0.99999966      14631.068    0.00029855538         1699.3193
+recursive_reinit200 Compact Recurrent      ppistonjib[Pa]     321.60662      579.1043 0.99999985      7839.2031    0.00020571588         954.21208
+recursive_reinit200 Compact Recurrent         prodjib[Pa]     844.35117     1445.4901 0.99999966      14630.546     0.0002985087          1699.017
+recursive_reinit200 Compact Recurrent       thetajib[rad] 1.0998423e-06 1.7985577e-06          1  1.2054706e-05    7.2655735e-06     2.4581401e-05
+recursive_reinit200 Compact Recurrent thetaliftdot[rad/s] 1.5621422e-05 3.2979037e-05 0.99999563  0.00056703469     0.0021009436     3.3400491e-05
+recursive_reinit200 Compact Recurrent  thetajibdot[rad/s]  3.190664e-05  5.697148e-05 0.99999167  0.00091178259     0.0032422166     5.5227865e-05
+
+MPC state metrics (angles and angular velocities):
+               mode             model             feature           MAE          RMSE         R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+recursive_reinit200               GRU      thetalift[rad] 8.7390205e-07 1.1972335e-06          1  6.1825996e-06    8.2411163e-06     1.8788048e-05
+recursive_reinit200               GRU       thetajib[rad] 1.1110977e-06 1.6712653e-06          1  1.1523532e-05    6.7513545e-06     2.4581401e-05
+recursive_reinit200               GRU thetaliftdot[rad/s] 1.6170643e-05 3.2823988e-05 0.99999567  0.00056611637     0.0020910661     3.3400491e-05
+recursive_reinit200               GRU  thetajibdot[rad/s] 3.1340087e-05 5.6565016e-05 0.99999179  0.00090887303     0.0032190849     5.5227865e-05
+recursive_reinit200              LSTM      thetalift[rad] 6.6906251e-07 9.6068102e-07          1  8.7803305e-06    6.6128155e-06     1.8788048e-05
+recursive_reinit200              LSTM       thetajib[rad] 9.1825238e-07 1.2821766e-06          1  5.8429176e-06    5.1795662e-06     2.4581401e-05
+recursive_reinit200              LSTM thetaliftdot[rad/s] 1.5582127e-05 3.2918875e-05 0.99999565  0.00057192756     0.0020971109     3.3400491e-05
+recursive_reinit200              LSTM  thetajibdot[rad/s] 3.1836056e-05 5.7126591e-05 0.99999163  0.00088841182     0.0032510439     5.5227865e-05
+recursive_reinit200       Transformer      thetalift[rad] 7.3231788e-07 1.1258118e-06          1  7.2043737e-06    7.7494877e-06     1.8788048e-05
+recursive_reinit200       Transformer       thetajib[rad] 1.5146817e-06 2.1928409e-06          1  9.3103056e-06    8.8583464e-06     2.4581401e-05
+recursive_reinit200       Transformer thetaliftdot[rad/s] 1.6218956e-05 3.3220551e-05 0.99999557  0.00057696779     0.0021163294     3.3400491e-05
+recursive_reinit200       Transformer  thetajibdot[rad/s] 2.9759782e-05 5.5574434e-05 0.99999208  0.00084659706     0.0031627114     5.5227865e-05
+recursive_reinit200 Compact Recurrent      thetalift[rad] 6.7640401e-07 1.0541412e-06          1  9.5942862e-06    7.2561455e-06     1.8788048e-05
+recursive_reinit200 Compact Recurrent       thetajib[rad] 1.0998423e-06 1.7985577e-06          1  1.2054706e-05    7.2655735e-06     2.4581401e-05
+recursive_reinit200 Compact Recurrent thetaliftdot[rad/s] 1.5621422e-05 3.2979037e-05 0.99999563  0.00056703469     0.0021009436     3.3400491e-05
+recursive_reinit200 Compact Recurrent  thetajibdot[rad/s]  3.190664e-05  5.697148e-05 0.99999167  0.00091178259     0.0032422166     5.5227865e-05
+
+All saved timing metrics:
+               mode             model backend core_precision  history_tokens   mean_us  median_us  p95_us  max_us  deadline_us  deadline_miss_percent      RTF  repeats  inference_seconds  simulated_seconds  chunk_us_per_prediction  chunk_RTF  chunk_rows  reset_horizon_steps  reset_horizon_median_us  reset_horizon_mean_us  reset_horizon_p95_us
+recursive_reinit200               GRU   numba        float32             NaN  3.683267        3.5     4.0    57.5         10.0               0.533333 0.368327     3000          11.863207           81.99999                 1.446733   0.144673       20000                  200                   300.20               307.1398               318.805
+recursive_reinit200              LSTM   numba        float32             NaN  4.360167        3.6     8.9   145.7         10.0               1.566667 0.436017     3000          13.245894           81.99999                 1.615353   0.161535       20000                  200                   338.00               341.7284               351.025
+recursive_reinit200       Transformer   numba        float32            64.0 19.513900       18.6    23.2    83.6         10.0             100.000000 1.951390     3000         108.962255           81.99999                13.288081   1.328808       20000                  200                  2646.55              2677.0748              2784.820
+recursive_reinit200 Compact Recurrent   numba        float32             NaN  3.226933        2.9     6.2    48.7         10.0               0.366667 0.322693     3000          10.276260           81.99999                 1.253203   0.125320       20000                  200                   260.15               265.6552               274.030
+
+SUMMARY (lower NRMSE and time is better):
+               mode             model  parameters  warm_window_MACs  temporal_memory_bytes  mean_NRMSE_train_std  control_mean_NRMSE  control_rms_NRMSE  rms_NRMSE_train_std  median_call_us  mean_call_us  p95_call_us  chunk_us_per_prediction  chunk_RTF  reset_horizon_median_us  reset_horizon_mean_us  reset_horizon_p95_us
+recursive_reinit200               GRU        4098              3584                     64         0.00039729971        0.0013312859       0.0019193214        0.00086732053             3.5     3.6832667            4                1.4467327 0.14467327                    300.2               307.1398               318.805
+recursive_reinit200              LSTM        4946              4032                    128         0.00039887276        0.0013399868       0.0019343753        0.00087485918             3.6     4.3601667          8.9                1.6153531 0.16153531                      338               341.7284               351.025
+recursive_reinit200       Transformer        4710             38784                   4352         0.00040227963        0.0013239122       0.0019027436        0.00086307673            18.6       19.5139         23.2                13.288081  1.3288081                  2646.55              2677.0748               2784.82
+recursive_reinit200 Compact Recurrent        4246              4000                     32         0.00038748541        0.0013394205       0.0019317115        0.00086813506             2.9     3.2269333          6.2                1.2532026 0.12532026                   260.15               265.6552                274.03
+
+Saved direct comparison: C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\MPC based Controller\Final Codes\results\comparison\Simulation_Output_53\b17a6a363d\r200
