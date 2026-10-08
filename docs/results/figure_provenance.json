@@ -53,11 +53,29 @@
       "epoch": null,
       "report_modified_for_portable_paths": true,
       "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "Transformer",
+      "mode": "measured_one_step",
+      "source_result": "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/measured_one_step",
+      "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4",
+      "epoch": 19,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "Transformer",
+      "mode": "recursive",
+      "source_result": "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive",
+      "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4",
+      "epoch": 19,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
     }
   ],
   "selected_mpc_run": "MPC offline Model/results/verified_one_second_v2",
   "mpc_reference_mode": "plant-generated",
   "display_points": 6000,
   "metrics_recomputed": false,
-  "transformer_full_training_available": false
+  "transformer_full_training_available": true
 }

@@ -1,0 +1,13 @@
+{
+  "lift_length": 2.88615,
+  "jib_length": 2.04970,
+  "jib_angle_mode": "absolute",
+  "base_x": -0.09,
+  "base_z": 1.4261,
+  "lift_vector": [2.886080943, 0.019892554],
+  "jib_vector": [2.035, 0.245],
+  "lift_offset_deg": 0.0,
+  "jib_offset_deg": 0.0,
+  "lift_sign": 1.0,
+  "jib_sign": 1.0
+}

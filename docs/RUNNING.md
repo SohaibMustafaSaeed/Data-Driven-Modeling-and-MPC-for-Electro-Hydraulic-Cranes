@@ -8,44 +8,43 @@ Run the commands below from this directory using Python 3.12.
 
 ```text
 Final Codes/
-â”œâ”€â”€ Data Preprocessing/preprocess_dataset.py
-â”œâ”€â”€ Transformers/
-â”‚   â”œâ”€â”€ transformer.py
-â”‚   â”œâ”€â”€ test.py
-â”‚   â”œâ”€â”€ artifacts/
-â”‚   â””â”€â”€ results/
-â”œâ”€â”€ GRU Latent/
-â”‚   â”œâ”€â”€ gru2.py
-â”‚   â”œâ”€â”€ test.py
-â”‚   â”œâ”€â”€ artifacts/
-â”‚   â””â”€â”€ results/
-â”œâ”€â”€ LSTM/
-â”‚   â”œâ”€â”€ lstm4.py
-â”‚   â”œâ”€â”€ test.py
-â”‚   â”œâ”€â”€ artifacts/
-â”‚   â””â”€â”€ results/
-â”œâ”€â”€ Compact Recurrent/
-â”‚   â”œâ”€â”€ trainCompactLatent.py
-â”‚   â”œâ”€â”€ test.py
-â”‚   â”œâ”€â”€ artifacts/
-â”‚   â””â”€â”€ results/
-â”œâ”€â”€ MPC offline Model/
-â”‚   â”œâ”€â”€ offline_mpc.py
-â”‚   â”œâ”€â”€ reference_replay.py     # Recorded-command reproduction helpers
-â”‚   â”œâ”€â”€ plant/                 # Mechanical model, trainer, and evaluator
-â”‚   â”œâ”€â”€ artifacts/mechanical_plant/
-â”‚   â””â”€â”€ results/
-â”œâ”€â”€ common/                    # Shared data, evaluation, and path utilities
-â”œâ”€â”€ compare_models.py
-â”œâ”€â”€ requirements.txt
-â”œâ”€â”€ requirements-lock.txt
-â””â”€â”€ package_manifest.json
+├── Data Preprocessing/preprocess_dataset.py
+├── Transformers/
+│   ├── transformer.py
+│   ├── test.py
+│   ├── artifacts/
+│   └── results/
+├── GRU Latent/
+│   ├── gru2.py
+│   ├── test.py
+│   ├── artifacts/
+│   └── results/
+├── LSTM/
+│   ├── lstm4.py
+│   ├── test.py
+│   ├── artifacts/
+│   └── results/
+├── Compact Recurrent/
+│   ├── trainCompactLatent.py
+│   ├── test.py
+│   ├── artifacts/
+│   └── results/
+├── MPC offline Model/
+│   ├── offline_mpc.py
+│   ├── reference_replay.py     # Recorded-command reproduction helpers
+│   ├── plant/                 # Mechanical model, trainer, and evaluator
+│   ├── artifacts/mechanical_plant/
+│   └── results/
+├── common/                    # Shared data, evaluation, and path utilities
+├── compare_models.py
+├── requirements.txt
+├── requirements-lock.txt
+└── package_manifest.json
 ```
 
-GRU2, LSTM4, full-state Compact, and the independent mechanical plant include
-completed trained checkpoints. **The full Transformer checkpoint is absent.**
-Its artifacts/STATUS.json records this; no smoke checkpoint is presented as a
-fully trained model. Train it before running the four-model comparison.
+All four full-state models and the independent mechanical plant include completed
+trained checkpoints. Transformer completed 60 epochs, and all four models have
+full-record cached evaluations with matched reset-500 horizons.
 
 ## Installation
 
@@ -65,8 +64,8 @@ By default, put the raw recordings in this layout:
 
 ```text
 data/
-â”œâ”€â”€ Train/Simulation_Output_00.csv ...
-â””â”€â”€ Test/Simulation_Output_53.csv ...
+├── Train/Simulation_Output_00.csv ...
+└── Test/Simulation_Output_53.csv ...
 ```
 
 Alternatively, set the directory containing Train and Test:
@@ -140,10 +139,10 @@ All four retain a direct linear residual skip; their temporal memory mechanisms
 differ. The packaged training/inference implementations preserve the original
 architectures and checkpoint formats.
 
-Train the missing Transformer:
+To retrain Transformer while preserving the included checkpoint:
 
 ```powershell
-python "Transformers/transformer.py" --epochs 60
+python "Transformers/transformer.py" --epochs 60 --output-dir "Transformers/artifacts/retrained"
 ```
 
 The other artifacts directories already contain trained models. To retrain:
@@ -217,13 +216,17 @@ metrics. Checkpoint hashes, feature order, scaler, timestep, target range, reset
 horizon, test source, and training split metadata are checked. Different historical
 training objectives and benchmark dates remain visible in the printed provenance.
 
-Bundled GRU/LSTM results include reset-500; bundled Compact results include
-reset-20, so Compact reset-500 must be evaluated once. Full Transformer results
-are absent. Saved evaluation metadata uses project-relative checkpoint paths and
+Bundled results include reset-500 for all four models. Historical Compact
+reset-20 results are retained separately. Saved evaluation metadata uses project-relative checkpoint paths and
 raw:/prepared: dataset paths; the original weights and prediction arrays are unchanged.
 Embedded checkpoint metadata retains the historical training paths for provenance.
 
 ## Offline MPC
+
+The default objective now tracks the Cartesian end effector using exact PATU
+local link vectors and absolute boom angles. See [Cartesian MPC](CARTESIAN_MPC.md)
+for geometry, commands, objective weights, ten popup plots, and Cartesian metrics.
+Use --tracking-space joint to select the original joint objective.
 
 The full-state GRU predicts candidate futures. A separately trained, mechanical-only
 Compact model acts as the independent simulated plant. Its 12 features are four
@@ -271,7 +274,7 @@ python "MPC offline Model/plant/testMechanicalCompact.py" --mpc-horizons 100 500
 
 The original source project remains intact. package_manifest.json lists copied
 checkpoints, hashes, and result folders. The historical full-state predictions
-occupy approximately 13 GB; the large .npy files require Git LFS. This directory
+occupy approximately 19 GB; the large .npy files require Git LFS. This directory
 includes .gitattributes for .pt/.npy/.npz and .gitignore for datasets, environments,
 temporary files, and compiled caches.
 

@@ -148,7 +148,8 @@ def main():
     transformer_root, transformer_hash = result_root(checkpoints[2], stem, a.transformer_results)
     compact_root, compact_hash = result_root(checkpoints[3], stem, a.compact_results, legacy_compact=True)
     roots = [left_root, right_root, transformer_root, compact_root]
-    out = a.output_dir or ROOT / 'results/comparison' / stem / f'gru_{left_hash[:10]}_lstm_{right_hash[:10]}_tf_{transformer_hash[:10]}_compact_{compact_hash[:10]}' / f'reinit{a.reinit_every}'
+    comparison_id = hashlib.sha256('|'.join((left_hash, right_hash, transformer_hash, compact_hash)).encode()).hexdigest()[:10]
+    out = (a.output_dir or ROOT / 'results/comparison' / stem / comparison_id / f'r{a.reinit_every}').resolve()
     scenarios = []
     if a.mode in ('both', 'measured'):
         scenarios.append(('measured_one_step', 'measured_one_step'))
@@ -255,7 +256,7 @@ def main():
             for name, table in zip(names[1:], tables[1:]):
                 delta[f'{metric}_change_{name}_minus_GRU2'] = table[metric].to_numpy() - tables[0][metric].to_numpy()
         folder = out / tag
-        folder.mkdir(exist_ok=True)
+        folder.mkdir(parents=True, exist_ok=True)
         pd.concat(tables).to_csv(folder / 'metrics.csv', index=False)
         pd.DataFrame(timings).to_csv(folder / 'timing.csv', index=False)
         delta.to_csv(folder / 'metric_differences.csv', index=False)

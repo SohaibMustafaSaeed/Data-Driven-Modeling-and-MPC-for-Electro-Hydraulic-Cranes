@@ -25,7 +25,16 @@
       ]
     },
     "transformer": {
-      "status": "full_training_checkpoint_missing"
+      "status": "trained",
+      "checkpoint": "Transformers/artifacts/best_model.pt",
+      "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4",
+      "copied_files": [
+        "best_model.pt",
+        "latest_model.pt",
+        "best_numba_weights.npz",
+        "config.json",
+        "training_history.json"
+      ]
     },
     "compact": {
       "status": "trained",
@@ -52,7 +61,11 @@
     "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit20",
     "MPC offline Model/results/20261008T124105_070293Z",
     "MPC offline Model/results/verified_one_second",
-    "MPC offline Model/results/verified_one_second_v2"
+    "MPC offline Model/results/verified_one_second_v2",
+    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/measured_one_step",
+    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive",
+    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit500",
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit500"
   ],
   "source_workspace": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV",
   "checkpoint_weights_modified": false,
@@ -70,5 +83,14 @@
     "prediction_copies": "matching_size_shape_dtype_and_1000_sample_rows_each",
     "full_training_or_full_evaluation_rerun": false
   },
-  "bundled_result_bytes": 13034908706
+  "bundled_result_bytes": 18811412566,
+  "kinematic_mpc": {
+    "geometry_source": "User-supplied PATU assembly vectors and base frame",
+    "geometry_file": "MPC offline Model/geometry_patu.json",
+    "default_tracking_space": "cartesian",
+    "booms_use_absolute_angles": true,
+    "intrinsic_geometry_offsets_not_added_twice": true,
+    "tests": "exact vectors, analytic velocities, physical-unit objective, short native MPC integrations",
+    "full_one_second_cartesian_performance_evaluation": false
+  }
 }

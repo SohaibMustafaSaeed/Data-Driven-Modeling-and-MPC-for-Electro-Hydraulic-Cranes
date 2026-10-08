@@ -2,7 +2,10 @@
 
 Full-state neural dynamics models and offline model predictive control for an
 electro-hydraulic crane. The controller uses a full-state GRU predictor and a
-separately trained mechanical Compact model as its simulated plant.
+separately trained mechanical Compact model as its simulated plant. Cartesian
+end-effector MPC uses the exact PATU geometry and both absolute boom angles;
+see the [Cartesian MPC guide](docs/CARTESIAN_MPC.md). The saved one-second MPC
+gallery below preserves the earlier joint-cost experiment.
 
 **Start here:** [Run the code](docs/RUNNING.md) · [MPC tracking metrics](docs/results/mpc_tracking_metrics.csv) · [Full-state comparison metrics](docs/results/full_state_all_metrics.csv).
 
@@ -89,12 +92,12 @@ and numerical arrays are in [the MPC result folder](MPC%20offline%20Model/result
 
 ## Full-state surrogate comparison
 
-GRU2, LSTM4, and Compact Recurrent predict 22 state increments from 48 features:
+GRU2, LSTM4, Transformer, and Compact Recurrent predict 22 state increments from 48 features:
 current states/commands plus their recent differences. Predicted increments are
 added to current states; each architecture retains a direct linear residual skip.
-A small causal residual Transformer is also implemented, but its **full trained
-checkpoint and results are not yet available**, so it is not assigned a performance
-rank or shown as a trained competitor below.
+The small causal residual Transformer has completed 60 training epochs. Its
+trained checkpoint and full-record cached evaluations are included alongside
+the recurrent models.
 
 These saved results cover the same held-out `Simulation_Output_53.csv`, with
 8,199,999 predictions over approximately 82 seconds after an 18-second startup
@@ -108,12 +111,13 @@ deviation; the table reports arithmetic means across the stated features.
 | GRU2 | 4,098 | 0.331832 | 0.411378 | 3.40 |
 | LSTM4 | 4,946 | 0.415755 | 0.491226 | 3.50 |
 | Compact Recurrent | 4,246 | 0.303304 | 0.317991 | 3.00 |
+| Transformer | 4,710 | 0.560138 | 0.808358 | 18.20 |
 
 ![Full-state recursive accuracy and saved CPU latency](docs/figures/full_state_accuracy_timing.png)
 
 In this recording, Compact Recurrent has the lowest average normalized rollout
 error and lowest saved median call time. GRU2 improves the average rollout error
-over LSTM4, although the individual-state ranking varies. This is a comparison
+over LSTM4 and Transformer, although the individual-state ranking varies. This is a comparison
 of the existing trained checkpoints: Compact used a different historical training
 curriculum and checkpoint-selection objective. Saved timing benchmarks were
 collected at different times and use warm Numba float32 CPU kernels; they are
@@ -141,14 +145,18 @@ Angle errors are in rad; angular-velocity errors are in rad/s.
 | Compact Recurrent | Jib angle | 0.0774265 | 0.0571931 | 0.739573 |
 | Compact Recurrent | Lift angular velocity | 0.00558097 | 0.00435992 | 0.874848 |
 | Compact Recurrent | Jib angular velocity | 0.00460857 | 0.00372724 | 0.945514 |
+| Transformer | Lift angle | 0.0291036 | 0.0224616 | 0.963993 |
+| Transformer | Jib angle | 0.37228 | 0.330936 | -5.020690 |
+| Transformer | Lift angular velocity | 0.00825405 | 0.00652647 | 0.726251 |
+| Transformer | Jib angular velocity | 0.0176312 | 0.0130742 | 0.202532 |
 
 The full [metric CSV](docs/results/full_state_all_metrics.csv) also includes
 measured-input one-step errors, maximum absolute error, normalized RMSE, and a
 persistence baseline. Tiny errors at a 10 µs one-step interval should be assessed
 against that baseline and the recursive rollout, rather than interpreted as proof
-of long-horizon accuracy. Reset-20 Compact results and reset-500 GRU/LSTM results
-are bundled separately; those unequal reset horizons are not combined into this
-ranking.
+of long-horizon accuracy. Matched reset-500 evaluations are also available for all
+four models. Historical reset-20 Compact results are retained separately and are
+not combined with reset-500 results in a ranking.
 
 ## Run the project
 
@@ -181,11 +189,10 @@ Run a new offline MPC experiment:
 python "MPC offline Model/offline_mpc.py" --duration 1 --reference-mode plant-generated
 ```
 
-Train the missing Transformer, then compare all four models:
+Compare all four models using the existing saved evaluations:
 
 ```powershell
-python "Transformers/transformer.py" --epochs 60
-python compare_models.py --reinit-every 500
+python compare_models.py --reinit-every 500 --saved-only
 ```
 
 The comparison reuses matching saved evaluations and computes missing evaluations
@@ -210,7 +217,7 @@ against the selected prepared dataset. Training, short evaluation, 88 comparison
 plots, saved-MPC plotting, and a three-action MPC integration were checked during
 packaging. These checks are not a new full training or full accuracy experiment.
 
-The saved prediction arrays occupy approximately **13 GB** and are stored using
+The saved prediction arrays occupy approximately **19 GB** and are stored using
 Git LFS, along with checkpoints and numerical archives. To clone the complete
 project, install Git LFS and run:
 

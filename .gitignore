@@ -227,3 +227,12 @@ __pycache__/
 *.nbi
 *.tmp
 *.incomplete.npy
+
+data/
+.venv/
+__pycache__/
+*.pyc
+*.nbc
+*.nbi
+*.tmp
+*.incomplete.npy

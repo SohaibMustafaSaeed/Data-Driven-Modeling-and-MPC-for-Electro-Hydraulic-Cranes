@@ -17,6 +17,9 @@ from scipy.optimize import minimize
 from common.data import DEFAULT_DATASET_DIR, INPUT_COLS, OUTPUT_COLS, COMMAND_INDICES, STATE_INDICES, write_json
 from common.evaluation import load_test
 from common.project import read_report
+from dataclasses import asdict
+from crane_kinematics import (PlanarGeometry, add_geometry_arguments, geometry_from_args,
+                              read_cartesian_reference, save_kinematic_results, make_boom_plots)
 SCRIPT_DIR = Path(__file__).resolve().parent
 RESULT_DIR = SCRIPT_DIR / 'results'
 MECHANICAL_COLS = ('thetalift[rad]', 'thetajib[rad]', 'thetaliftdot[rad/s]', 'thetajibdot[rad/s]')
@@ -122,7 +125,7 @@ def expand_moves(decision, assignment, center, halfwidth):
 
 class MPCObjective:
 
-    def __init__(self, rollout, previous, current, memory, reference, previous_command, center, halfwidth, neutral, assignment, block, mean, std, weights, cost_weights, terminal_angle_weight=0.0, terminal_velocity_weight=0.0, tracking_scales=None):
+    def __init__(self, rollout, previous, current, memory, reference, previous_command, center, halfwidth, neutral, assignment, block, mean, std, weights, cost_weights, terminal_angle_weight=0.0, terminal_velocity_weight=0.0, tracking_scales=None, geometry=None, cartesian_reference=None, cartesian_weights=None, cartesian_scales=None):
         self.rollout = rollout
         self.previous = previous
         self.current = current
@@ -139,6 +142,17 @@ class MPCObjective:
         self.weights = weights
         self.cost_weights = np.r_[cost_weights, terminal_angle_weight, terminal_velocity_weight]
         self.error_ratio = np.ones(4) if tracking_scales is None else std[MECH_INPUT] / np.asarray(tracking_scales, float)
+        self.geometry = geometry
+        if geometry is not None:
+            physical_reference = self.reference * std[MECH_INPUT] + mean[MECH_INPUT]
+            self.cartesian_reference = geometry.end_effector(physical_reference) if cartesian_reference is None else np.asarray(cartesian_reference, float)
+            self.cartesian_scales = np.ones(4) if cartesian_scales is None else np.asarray(cartesian_scales, float)
+            selected_weights = np.asarray([1.0, 0.1, 5.0, 1.0] if cartesian_weights is None else cartesian_weights, float)
+            if self.cartesian_reference.shape != self.reference.shape or self.cartesian_scales.shape != (4,) or not np.isfinite(self.cartesian_scales).all() or np.any(self.cartesian_scales <= 0):
+                raise ValueError('Cartesian reference must match horizon x 4; scales must be positive and finite')
+            if selected_weights.shape != (4,) or not np.isfinite(selected_weights).all() or np.any(selected_weights < 0):
+                raise ValueError('Four Cartesian weights must be finite and nonnegative')
+            self.cost_weights = np.r_[self.cost_weights, selected_weights]
         self.best_cost = np.inf
         self.best_decision = None
         self.best_components = None
@@ -156,6 +170,10 @@ class MPCObjective:
         effort = (commands - self.neutral) / self.halfwidth
         change = np.diff(np.vstack((self.previous_command, commands)), axis=0) / self.halfwidth
         components = np.asarray([np.mean(error[:, :2] ** 2), np.mean(error[:, 2:] ** 2), np.mean(effort ** 2), np.mean(change ** 2), np.sum(error[-1, :2] ** 2), np.sum(error[-1, 2:] ** 2)])
+        if self.geometry is not None:
+            physical = states[:, MECH_OUTPUT].astype(float) * self.std[MECH_INPUT] + self.mean[MECH_INPUT]
+            cartesian = (self.geometry.end_effector(physical) - self.cartesian_reference) / self.cartesian_scales
+            components = np.r_[components, np.mean(cartesian[:, :2] ** 2), np.mean(cartesian[:, 2:] ** 2), np.sum(cartesian[-1, :2] ** 2), np.sum(cartesian[-1, 2:] ** 2)]
         cost = float(components @ self.cost_weights)
         if not math.isfinite(cost):
             self.invalid_calls += 1
@@ -197,14 +215,16 @@ def require_completed(checkpoint, ck, parser, label):
     if expected is not None and (not path.is_file() or len(json.loads(path.read_text())) < expected):
         parser.error(f'{label} training is incomplete: {checkpoint.parent}')
 
-def make_plots(out, time_grid, reference, plant_states, predicted, commands, solve_times, costs, dt_control, low, high, show, horizon_forecasts=None, horizon_references=None, recorded_commands=None):
+def make_plots(out, time_grid, reference, plant_states, predicted, commands, solve_times, costs, dt_control, low, high, show, horizon_forecasts=None, horizon_references=None, recorded_commands=None, geometry=None, desired_tip=None):
     import matplotlib
     matplotlib.use('TkAgg' if show else 'Agg')
     import matplotlib.pyplot as plt
     plt.ioff()
+    external_reference = geometry is not None and desired_tip is not None and not np.allclose(desired_tip, geometry.end_effector(reference), rtol=0.0, atol=1e-10)
+    joint_label = 'Joint guide (external Cartesian target)' if external_reference else 'Desired reference'
     fig, axes = plt.subplots(2, 2, figsize=(14, 9), sharex=True, layout='constrained')
     for j, ax in enumerate(axes.flat):
-        ax.plot(time_grid, reference[:, j], color='black', label='Desired reference')
+        ax.plot(time_grid, reference[:, j], color='black', label=joint_label)
         ax.plot(time_grid, predicted[:, j], '--', color='tab:orange', label='Full surrogate: one-control-step forecast')
         ax.plot(time_grid, plant_states[:, j], color='tab:blue', label='Mechanical Compact plant')
         ax.set_title(MECHANICAL_COLS[j])
@@ -220,7 +240,7 @@ def make_plots(out, time_grid, reference, plant_states, predicted, commands, sol
         horizon_time = time_grid[sample] + np.arange(1, N + 1) * dt_control
         fig, axes = plt.subplots(2, 2, figsize=(14, 9), sharex=True, layout='constrained')
         for j, ax in enumerate(axes.flat):
-            ax.plot(horizon_time, horizon_references[sample, :, j], color='black', label='Desired horizon')
+            ax.plot(horizon_time, horizon_references[sample, :, j], color='black', label='Joint guide horizon' if external_reference else 'Desired horizon')
             ax.plot(horizon_time, horizon_forecasts[sample, :, j], '--', color='tab:orange', label='Full-model fixed plan')
             available = min(N, K - sample)
             ax.plot(horizon_time[:available], plant_states[sample + 1:sample + 1 + available, j], color='tab:blue', label='Plant with later replanning')
@@ -263,20 +283,29 @@ def make_plots(out, time_grid, reference, plant_states, predicted, commands, sol
     axes[1].legend()
     axes[1].grid(alpha=0.3)
     fig.savefig(out / 'solve_time_and_cost.png', dpi=150)
+    make_boom_plots(out, time_grid, reference, plant_states, predicted, commands, geometry, desired_tip)
     if show:
         print('Close ALL plot windows to finish the script.', flush=True)
         plt.show(block=True)
     plt.close('all')
 
-def show_saved_results(folder, show=True):
+def show_saved_results(folder, show=True, geometry=None):
     folder = Path(folder).resolve()
     config = read_report(folder / 'config.json')
+    if geometry is None and config.get('geometry'):
+        geometry = PlanarGeometry(**config['geometry'])
+    if geometry is None and (folder / 'kinematics_config.json').is_file():
+        geometry = PlanarGeometry(**json.loads((folder / 'kinematics_config.json').read_text()))
     print((folder / 'results.txt').read_text(encoding='utf-8'), flush=True)
     with np.load(folder / 'mpc_mechanical_plant_arrays.npz') as a:
-        make_plots(folder, a['time_seconds'], a['reference_physical'], a['plant_mechanical_physical'], a['predictor_one_interval_mechanical_physical'], a['applied_commands_physical'], a['solve_seconds'], a['cost'], config['control_interval_seconds'], np.asarray(config['command_bounds']['low']), np.asarray(config['command_bounds']['high']), show, a['predictor_horizons_mechanical_physical'], a['teacher_reference_horizons_physical'], a['recorded_commands_physical'] if 'recorded_commands_physical' in a.files else None)
+        desired_tip = a['reference_end_effector_physical'] if 'reference_end_effector_physical' in a.files else None
+        if geometry is not None:
+            save_kinematic_results(folder, a['time_seconds'], a['reference_physical'], a['plant_mechanical_physical'], a['predictor_one_interval_mechanical_physical'], geometry, desired_tip, config.get('tracking_space', 'joint'))
+        make_plots(folder, a['time_seconds'], a['reference_physical'], a['plant_mechanical_physical'], a['predictor_one_interval_mechanical_physical'], a['applied_commands_physical'], a['solve_seconds'], a['cost'], config['control_interval_seconds'], np.asarray(config['command_bounds']['low']), np.asarray(config['command_bounds']['high']), show, a['predictor_horizons_mechanical_physical'], a['teacher_reference_horizons_physical'], a['recorded_commands_physical'] if 'recorded_commands_physical' in a.files else None, geometry, desired_tip)
 
 def main():
     p = argparse.ArgumentParser(description='iMotion residual dynamics')
+    add_geometry_arguments(p)
     p.add_argument('--plot-results', type=Path, help='Print and open plots from a saved run, without solving again')
     p.add_argument('--checkpoint', '--full-checkpoint', dest='checkpoint', type=Path)
     p.add_argument('--mechanical-checkpoint', type=Path, default=DEFAULT_PLANT_CHECKPOINT)
@@ -291,8 +320,8 @@ def main():
     p.add_argument('--replay-only', action='store_true')
     p.add_argument('--reachability-angle-tolerance', type=float, default=0.002)
     p.add_argument('--reachability-velocity-tolerance', type=float, default=0.002)
-    p.add_argument('--terminal-angle-weight', type=float, default=20.0)
-    p.add_argument('--terminal-velocity-weight', type=float, default=5.0)
+    p.add_argument('--terminal-angle-weight', type=float)
+    p.add_argument('--terminal-velocity-weight', type=float)
     p.add_argument('--tracking-scales', type=float, nargs=4, help='Physical angle/velocity error scales; default training std')
     p.add_argument('--duration', type=float, default=1.0, help='Requested reference episode seconds')
     p.add_argument('--start-seconds', type=float, help='Time within retained data; default selects joint mechanical motion')
@@ -302,8 +331,8 @@ def main():
     p.add_argument('--maxiter', type=int, default=15)
     p.add_argument('--fd-step', type=float, default=0.03, help='SLSQP finite-difference step in [-1,1] decision units, to avoid float32 quantization')
     p.add_argument('--ftol', type=float, default=1e-08)
-    p.add_argument('--angle-weight', type=float, default=10.0)
-    p.add_argument('--velocity-weight', type=float, default=1.0)
+    p.add_argument('--angle-weight', type=float)
+    p.add_argument('--velocity-weight', type=float)
     p.add_argument('--effort-weight', type=float, default=0.0001)
     p.add_argument('--smoothness-weight', type=float, default=0.001)
     p.add_argument('--lift-bounds', type=float, nargs=2, metavar=('LOW', 'HIGH'))
@@ -314,9 +343,22 @@ def main():
     p.add_argument('--threads', type=int, default=2)
     p.add_argument('--no-show', action='store_true', help='Save plots without opening windows')
     a = p.parse_args()
+    saved_geometry = read_report(a.plot_results / 'config.json').get('geometry') if a.plot_results else None
+    geometry = geometry_from_args(a, p, saved_geometry)
     if a.plot_results is not None:
-        show_saved_results(a.plot_results, show=not a.no_show)
+        show_saved_results(a.plot_results, show=not a.no_show, geometry=geometry)
         return
+    if a.cartesian_reference is not None and a.tracking_space != 'cartesian':
+        p.error('--cartesian-reference requires --tracking-space cartesian')
+    joint_defaults = (10.0, 1.0, 20.0, 5.0) if a.tracking_space == 'joint' else (0.0, 0.0, 0.0, 0.0)
+    for key, value in zip(('angle_weight', 'velocity_weight', 'terminal_angle_weight', 'terminal_velocity_weight'), joint_defaults):
+        if getattr(a, key) is None:
+            setattr(a, key, value)
+    cartesian_weights = np.asarray([a.position_weight, a.cartesian_velocity_weight, a.terminal_position_weight, a.terminal_cartesian_velocity_weight], float)
+    if not np.isfinite(cartesian_weights).all() or (cartesian_weights < 0).any() or (a.tracking_space == 'cartesian' and cartesian_weights[:2].sum() <= 0):
+        p.error('Cartesian weights must be finite, nonnegative and enable position or velocity tracking')
+    if not all(math.isfinite(value) and value > 0 for value in (a.position_scale, a.cartesian_velocity_scale)):
+        p.error('Cartesian error scales must be positive metres and m/s')
     if min(a.block_steps, a.horizon, a.moves, a.maxiter, a.bound_samples_per_file, a.progress_every, a.threads) < 1:
         p.error('Counts must be positive')
     if a.moves > a.horizon:
@@ -326,7 +368,7 @@ def main():
     if a.start_seconds is not None and (not math.isfinite(a.start_seconds) or a.start_seconds < 0):
         p.error('Invalid start-seconds')
     cost_weights = np.asarray([a.angle_weight, a.velocity_weight, a.effort_weight, a.smoothness_weight], float)
-    if not np.isfinite(cost_weights).all() or (cost_weights < 0).any() or a.angle_weight + a.velocity_weight <= 0:
+    if not np.isfinite(cost_weights).all() or (cost_weights < 0).any() or (a.tracking_space == 'joint' and a.angle_weight + a.velocity_weight <= 0):
         p.error('Cost weights must be nonnegative with positive tracking weight')
     if not all((math.isfinite(v) and v >= 0 for v in (a.terminal_angle_weight, a.terminal_velocity_weight))):
         p.error('Terminal weights must be finite and nonnegative')
@@ -428,7 +470,7 @@ def main():
     print('Recorded commands for this exact segment:')
     print(command_stats.to_string(index=False))
     command_stats.to_csv(out / 'recorded_command_statistics.csv', index=False)
-    if a.replay_only or (a.reference_mode == 'recorded' and (not replay_report['reproduction_gate_pass']) and (not a.allow_reference_mismatch)):
+    if a.replay_only or (a.cartesian_reference is None and a.reference_mode == 'recorded' and (not replay_report['reproduction_gate_pass']) and (not a.allow_reference_mismatch)):
         message = 'Recorded-command reproduction failed; MPC was not run. This does not prove the trajectory is unreachable. Validate the plant/history, or explicitly choose --reference-mode plant-generated.'
         if a.replay_only:
             message = 'Replay-only diagnostic complete; no optimizer was run.'
@@ -442,6 +484,16 @@ def main():
         _, _, reference, _, _ = replay(plant, x, start, episode_steps + a.horizon, a.block_steps, mean, std)
         reference_normalized = (reference - mean[MECH_INPUT]) / std[MECH_INPUT]
         print('Using explicit plant-generated held-command reference: a known input sequence produces this target.', flush=True)
+    tip_reference = None
+    if geometry is not None:
+        tip_reference = geometry.end_effector(reference)
+        if a.cartesian_reference:
+            tip_reference = read_cartesian_reference(a.cartesian_reference, np.arange(len(reference)) * control_dt)
+            radius = np.linalg.norm(tip_reference[:, :2] - [geometry.base_x, geometry.base_z], axis=1)
+            if np.any(radius > geometry.lift_length + geometry.jib_length + 1e-9) or np.any(radius < abs(geometry.lift_length - geometry.jib_length) - 1e-9):
+                p.error('Cartesian reference contains points outside the two-link geometric workspace')
+        print(f'Tracking space={a.tracking_space}; planar geometry={asdict(geometry)}', flush=True)
+        print(f'Cartesian normalization: position={a.position_scale:g} m; velocity={a.cartesian_velocity_scale:g} m/s', flush=True)
     plant.restore(initial_plant_snapshot)
     previous_command = current[CI].astype(float) * std[CI] + mean[CI]
     rollout = make_blocked_rollout(trainer)
@@ -458,6 +510,10 @@ def main():
     warm_plant_kernel(plant.previous, plant.current, plant.latent, previous_command, 0, plant.mean, plant.std, *plant.weights)
     print(f'Kernel warmup={time.perf_counter() - compile_start:.2f}s', flush=True)
     config = dict(model=predictor_name, checkpoint=str(checkpoint), checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(), source_csv=str(source), cache=str(cache), selected_retained_row=start, selected_csv_time=csv_start, simulation='full-state optimizer predictor; separately trained mechanical Compact plant; no future recorded-state refresh', mechanical_checkpoint=str(plant_checkpoint), mechanical_checkpoint_sha256=hashlib.sha256(plant_checkpoint.read_bytes()).hexdigest(), feedback_policy='correct four mechanical fields in last two internal rows; preserve all other state estimates and full memory', initial_nonmechanical_state='seeded from two initial recording rows; subsequently predicted internally', strict_optimizer_plant_separation=True, reference_mode=a.reference_mode, reproduction=replay_report, terminal_weights=dict(angle=a.terminal_angle_weight, velocity=a.terminal_velocity_weight), preprocessing='same prepared cache; recorded commands use centered offline smoothing; optimized commands are held, not smoothed', dt_seconds=dt, control_interval_seconds=control_dt, actual_duration_seconds=actual_duration, command_bounds=dict(low=low.tolist(), high=high.tolist(), source='explicit bounds or sampled training commands'), normalized_mechanical_error_scale=(std[MECH_INPUT] if a.tracking_scales is None else np.asarray(a.tracking_scales)).tolist(), arguments={k: str(v) if isinstance(v, Path) else v for k, v in vars(a).items()})
+    write_json(out / 'config.json', config)
+    config.update(tracking_space=a.tracking_space, geometry=asdict(geometry) if geometry else None, cartesian_cost_weights=cartesian_weights.tolist(), cartesian_error_scales=dict(position_m=a.position_scale, velocity_m_s=a.cartesian_velocity_scale), cartesian_reference_source=str(a.cartesian_reference.resolve()) if a.cartesian_reference else 'forward kinematics of mechanical reference', joint_reference_role='replay guide, not inverse kinematics of external tip target' if a.cartesian_reference else 'mechanical trajectory reference')
+    if a.cartesian_reference:
+        config['reference_mode'] = 'external-cartesian'
     write_json(out / 'config.json', config)
     (out / 'mpc_surrogate_mechanical_plant_source.py').write_text(Path(__file__).read_text(encoding='utf-8'), encoding='utf-8')
     state_trace = np.empty((episode_steps + 1, 24), float)
@@ -484,7 +540,7 @@ def main():
     last = time.perf_counter()
     for k in range(episode_steps):
         goal = reference_normalized[k + 1:k + 1 + a.horizon]
-        obj = MPCObjective(rollout, previous, current, memory, goal, previous_command, center, halfwidth, neutral, assignment, a.block_steps, mean, std, weights, cost_weights, a.terminal_angle_weight, a.terminal_velocity_weight, a.tracking_scales)
+        obj = MPCObjective(rollout, previous, current, memory, goal, previous_command, center, halfwidth, neutral, assignment, a.block_steps, mean, std, weights, cost_weights, a.terminal_angle_weight, a.terminal_velocity_weight, a.tracking_scales, geometry if a.tracking_space == 'cartesian' else None, tip_reference[k + 1:k + 1 + a.horizon] if tip_reference is not None else None, cartesian_weights, [a.position_scale, a.position_scale, a.cartesian_velocity_scale, a.cartesian_velocity_scale])
         solve_start = time.perf_counter()
         hold = np.tile(np.clip((previous_command - center) / halfwidth, -1, 1), (a.moves, 1)).ravel()
         hold_cost = obj(hold)
@@ -518,6 +574,8 @@ def main():
         costs[k] = obj.best_cost
         components = obj.best_components
         diagnostics.append(dict(step=k, time_s=k * control_dt, solve_seconds=solve_times[k], selected_cost=obj.best_cost, warm_start_cost=seed_cost, hold_command_cost=hold_cost, angle_error_term=components[0], velocity_error_term=components[1], effort_term=components[2], smoothness_term=components[3], terminal_angle_term=components[4], terminal_velocity_term=components[5], solver_success=bool(result.success), status=int(result.status), message=str(result.message), iterations=int(result.nit), candidate_calls=obj.calls, invalid_candidates=obj.invalid_calls))
+        if geometry is not None and a.tracking_space == 'cartesian':
+            diagnostics[-1].update(position_error_term=components[6], cartesian_velocity_error_term=components[7], terminal_position_term=components[8], terminal_cartesian_velocity_term=components[9])
         shifted = np.vstack((best_plan[1:], best_plan[-1]))
         starts = np.asarray([np.flatnonzero(assignment == i)[0] for i in range(a.moves)])
         seed = np.clip((shifted[starts] - center) / halfwidth, -1, 1).ravel()
@@ -550,17 +608,32 @@ def main():
     trace.to_csv(out / 'trajectory.csv', index=False)
     pd.DataFrame(dict(time_s=time_grid[:-1], lift_command_V=commands[:, 0], jib_command_V=commands[:, 1])).to_csv(out / 'commands.csv', index=False)
     np.savez(out / 'mpc_mechanical_plant_arrays.npz', controller_state_estimate_physical=state_trace, reference_physical=target, plant_mechanical_physical=plant_trace, predictor_one_interval_mechanical_physical=predictor_trace, predictor_prior_full_state_physical=predictor_prior_full, predictor_horizons_mechanical_physical=horizon_forecasts, predictor_horizons_full_state_physical=horizon_full_states, model_mismatch_physical=predictor_trace - plant_trace, commit_seconds=plant_advance_times, teacher_full_state_estimate_physical=teacher_states, teacher_reference_horizons_physical=teacher_refs, selected_command_sequences_physical=planned_commands, applied_commands_physical=commands, solve_seconds=solve_times, cost=costs, time_seconds=time_grid, recorded_commands_physical=recorded_commands, recorded_reference_physical=replay_reference, recorded_exact_replay_physical=replay_exact, recorded_held_replay_physical=replay_held)
+    if geometry is not None:
+        kinematic_summary = save_kinematic_results(out, time_grid, target, plant_trace, predictor_trace, geometry, tip_reference[:episode_steps + 1], a.tracking_space)
+        with np.load(out / 'mpc_mechanical_plant_arrays.npz') as archive:
+            arrays = {key: archive[key] for key in archive.files}
+        arrays.update(reference_end_effector_physical=tip_reference[:episode_steps + 1], predictor_horizons_end_effector_physical=geometry.end_effector(horizon_forecasts), teacher_end_effector_horizons_physical=np.stack([tip_reference[k + 1:k + 1 + a.horizon] for k in range(episode_steps)]))
+        np.savez(out / 'mpc_mechanical_plant_arrays.npz', **arrays)
     comparison = pd.DataFrame(dict(time_s=time_grid[:-1], mpc_lift_V=commands[:, 0], recorded_lift_V=recorded_commands[:, 0], mpc_jib_V=commands[:, 1], recorded_jib_V=recorded_commands[:, 1]))
     comparison.to_csv(out / 'mpc_vs_recorded_commands.csv', index=False)
     command_delta = commands - recorded_commands
     saturation = np.mean(np.isclose(commands, low, atol=1e-05) | np.isclose(commands, high, atol=1e-05), axis=0) * 100
     summary = dict(mpc_executed=True, reference_mode=a.reference_mode, reproduction=replay_report, command_difference_rmse_V=np.sqrt(np.mean(command_delta ** 2, 0)).tolist(), control_steps=episode_steps, control_interval_seconds=control_dt, horizon_seconds=a.horizon * control_dt, mean_solve_ms=float(solve_times.mean() * 1000), median_solve_ms=float(np.median(solve_times) * 1000), p95_solve_ms=float(np.percentile(solve_times, 95) * 1000), max_solve_ms=float(solve_times.max() * 1000), deadline_miss_percent=float(np.mean(solve_times > control_dt) * 100), solver_success_percent=float(history.solver_success.mean() * 100), lift_saturation_percent=float(saturation[0]), jib_saturation_percent=float(saturation[1]), improved_over_hold_percent=float(np.mean(history.selected_cost < history.hold_command_cost - 1e-10) * 100), tracking_metrics=json.loads(metrics.to_json(orient='records')), mismatch_metrics=json.loads(mismatch_metrics.to_json(orient='records')), mechanical_plant_advances=episode_steps, optimizer_uses_mechanical_plant=False, mean_commit_ms=float(plant_advance_times.mean() * 1000), simulated_plant='separate mechanical learned model; learned-model mismatch experiment, not physical crane validation')
     write_json(out / 'summary.json', summary)
-    text = 'Tracking metrics (physical units; initial measured sample excluded):\n' + metrics.to_string(index=False, float_format=lambda v: f'{v:.8g}')
+    summary['tracking_space'] = a.tracking_space
+    if a.cartesian_reference:
+        summary['reference_mode'] = 'external-cartesian'
+    if geometry is not None:
+        summary['kinematic_tracking'] = kinematic_summary
+    write_json(out / 'summary.json', summary)
+    metric_title = 'Joint guide deviations (external Cartesian target)' if a.cartesian_reference else 'Joint tracking metrics'
+    text = metric_title + ' (physical units; initial measured sample excluded):\n' + metrics.to_string(index=False, float_format=lambda v: f'{v:.8g}')
     text += '\n\nOne-control-interval predictor-minus-plant mismatch:\n' + mismatch_metrics.to_string(index=False, float_format=lambda v: f'{v:.8g}')
     text += '\n\nControl/solver summary:\n' + json.dumps(summary, indent=2) + f'\n\nSaved results: {out}'
+    if geometry is not None:
+        text += '\n\n' + (out / 'kinematics_results.txt').read_text(encoding='utf-8')
     print('\n' + text, flush=True)
     (out / 'results.txt').write_text(text, encoding='utf-8')
-    make_plots(out, time_grid, target, plant_trace, predictor_trace, commands, solve_times, costs, control_dt, low, high, not a.no_show, horizon_forecasts, teacher_refs, recorded_commands)
+    make_plots(out, time_grid, target, plant_trace, predictor_trace, commands, solve_times, costs, control_dt, low, high, not a.no_show, horizon_forecasts, teacher_refs, recorded_commands, geometry, tip_reference[:episode_steps + 1] if tip_reference is not None else None)
 if __name__ == '__main__':
     main()
