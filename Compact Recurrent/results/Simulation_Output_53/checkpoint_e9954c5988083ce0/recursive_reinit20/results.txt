@@ -1,15 +1,14 @@
 
-===== recursive | compact latent Numba | epoch 59 =====
+===== recursive | Compact Recurrent Numba | epoch 59 =====
 8,199,999 predictions; two measured initialization rows; CSV times 18..100s; dt=10us.
 Recursive latent state resets from measured rows every 20 predictions.
-Prepared inputs are normalized; current u[t] predicts x[t+1]. Latent state resets from measured rows at each chunk. Centered 51-row command smoothing makes this an offline test, not verified causal control.
-Warm physical one-step call (includes normalization/reconstruction; latent already initialized): {'mean_us': 3.036366666666666, 'median_us': 2.9, 'p95_us': 3.4, 'max_us': 24.9, 'deadline_us': 10.0, 'deadline_miss_percent': 0.03333333333333333, 'RTF': 0.3036366666666666, 'repeats': 3000}
-1,545,420/8,199,999 predictions; elapsed=5.0s; remaining=21.5s
-3,084,680/8,199,999 predictions; elapsed=10.0s; remaining=16.6s
-4,646,740/8,199,999 predictions; elapsed=15.0s; remaining=11.5s
-6,202,660/8,199,999 predictions; elapsed=20.0s; remaining=6.4s
-7,759,080/8,199,999 predictions; elapsed=25.0s; remaining=1.4s
-8,199,999/8,199,999 predictions; elapsed=26.5s; remaining=0.0s
+Prepared inputs are normalized; current u[t] predicts x[t+1]. Memory and states reset from measured rows every selected horizon; processing chunks do not change the reset policy. Centered 51-row command smoothing makes this an offline test, not verified causal control.
+Warm physical one-step call (includes normalization/reconstruction; latent already initialized): {'mean_us': 2.9385999999999997, 'median_us': 2.8, 'p95_us': 3.4, 'max_us': 43.1, 'deadline_us': 10.0, 'deadline_miss_percent': 0.16666666666666669, 'RTF': 0.29385999999999995, 'repeats': 3000}
+Matched reset-horizon latency: {'horizon_steps': 20, 'includes': 'physical input normalization, memory reset, all rollout steps and physical output reconstruction', 'median_us': 27.8, 'mean_us': 28.3275, 'p95_us': 30.4, 'repeats': 1000}
+1,740,000/8,199,999 predictions; elapsed=5.0s; remaining=18.7s
+4,960,000/8,199,999 predictions; elapsed=10.0s; remaining=6.6s
+8,180,000/8,199,999 predictions; elapsed=15.0s; remaining=0.0s
+8,199,999/8,199,999 predictions; elapsed=15.1s; remaining=0.0s
 
             feature          MAE         RMSE        R2  max_abs_error  NRMSE_train_std  persistence_RMSE
     speedref[rad/s] 6.297626e-07  9.58391e-07       NaN   5.168775e-06      9.58391e-07                 0
@@ -34,5 +33,6 @@ ppistonsidelift[Pa]     69.57535     146.9422         1       3563.769     8.315
       thetajib[rad] 1.123633e-07 1.807665e-07         1   1.121368e-06     7.302364e-07      2.540611e-06
 thetaliftdot[rad/s] 1.629473e-06 3.406652e-06         1   5.680484e-05     0.0002170222       3.45252e-06
  thetajibdot[rad/s] 3.262458e-06 5.842487e-06 0.9999999    9.14931e-05     0.0003324928      5.708626e-06
-Compiled chunk throughput (NOT single-call latency): {'inference_seconds': 12.953118499281118, 'simulated_seconds': 81.99999000000001, 'amortized_us_per_step': 1.5796487901134033, 'RTF': 0.15796487901134032, 'chunk_rows': 20, 'reinit_every': 20}
-Results: Compact Recurrent/artifacts\evaluation\Simulation_Output_53\recursive_reinit20
+Compiled chunk throughput (NOT single-call latency): {'inference_seconds': 10.434557800006587, 'simulated_seconds': 81.99999000000001, 'amortized_us_per_step': 1.2725072039650964, 'RTF': 0.12725072039650964, 'chunk_rows': 20000, 'reinit_every': 20}
+Coverage: 8,199,999/8,199,999 predictions; full retained CSV=True
+Results: C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\MPC based Controller\Final Codes\Compact Recurrent\results\Simulation_Output_53\checkpoint_e9954c5988083ce0\recursive_reinit20

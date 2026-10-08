@@ -1,0 +1,58 @@
+{
+  "mode": "recursive",
+  "tag": "recursive_reinit20",
+  "checkpoint": "LSTM/artifacts/best_model.pt",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "architecture": "lstm4",
+  "epoch": 39,
+  "timing_history_tokens": null,
+  "inference_backend": "numba",
+  "core_precision": "float32",
+  "benchmark_environment": {
+    "cpu": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "machine": "AMD64",
+    "python": "3.12.10",
+    "numba": "0.67.0",
+    "numpy": "2.5.3",
+    "torch": "2.14.0+cpu"
+  },
+  "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0",
+  "predictions": 8199999,
+  "initial_measured_rows": 2,
+  "dt_s": 1e-05,
+  "excluded_seconds": 18.0,
+  "reinit_every": 20,
+  "latent_resets": 410000,
+  "latency": {
+    "mean_us": 3.6818000000000004,
+    "median_us": 3.6,
+    "p95_us": 4.4,
+    "max_us": 31.1,
+    "deadline_us": 10.0,
+    "deadline_miss_percent": 0.1,
+    "RTF": 0.36818000000000006,
+    "repeats": 3000
+  },
+  "throughput": {
+    "inference_seconds": 13.360372099821689,
+    "simulated_seconds": 81.99999000000001,
+    "amortized_us_per_step": 1.6293138694067753,
+    "RTF": 0.16293138694067752,
+    "chunk_rows": 20000,
+    "reinit_every": 20
+  },
+  "max_rows": null,
+  "horizon_latency": {
+    "horizon_steps": 20,
+    "includes": "physical input normalization, memory reset, all rollout steps and physical output reconstruction",
+    "median_us": 36.7,
+    "mean_us": 37.3014,
+    "p95_us": 41.30499999999999,
+    "repeats": 1000
+  },
+  "reset_protocol": "two measured states; cold memory reset each horizon; only commands and predicted states within horizon",
+  "timing_excludes": "JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting",
+  "command_smoothing": "centered Savitzky-Golay 51 rows, offline",
+  "path_metadata_updated_only": true
+}

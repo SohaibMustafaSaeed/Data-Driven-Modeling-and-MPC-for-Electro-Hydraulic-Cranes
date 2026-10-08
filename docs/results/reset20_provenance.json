@@ -1,0 +1,50 @@
+{
+  "method": "20 recursive internal steps followed by measured state and memory reset",
+  "dataset": "Simulation_Output_53.csv",
+  "startup_trim_seconds": 18,
+  "total_predictions": 8199999,
+  "blocks": 410000,
+  "last_block_steps": 19,
+  "sample_time_s": 1e-05,
+  "horizon_time_s": 0.0002,
+  "end_effector": "forward kinematics of all recorded and predicted mechanical states; not an MPC closed-loop trajectory",
+  "geometry": {
+    "lift_length": 2.88615,
+    "jib_length": 2.0497,
+    "jib_angle_mode": "absolute",
+    "base_x": -0.09,
+    "base_z": 1.4261,
+    "lift_vector": [
+      2.886080943,
+      0.019892554
+    ],
+    "jib_vector": [
+      2.035,
+      0.245
+    ],
+    "lift_offset_deg": 0.0,
+    "jib_offset_deg": 0.0,
+    "lift_sign": 1.0,
+    "jib_sign": 1.0
+  },
+  "trajectory_display": "each bin consumes every sample; x-z rectangles are min/max bounding boxes",
+  "timing": "serial same-machine matched physical 20-step rollouts; warm full-context one-step timing retained separately",
+  "checkpoints": [
+    {
+      "model": "GRU",
+      "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25"
+    },
+    {
+      "model": "LSTM",
+      "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0"
+    },
+    {
+      "model": "Transformer",
+      "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4"
+    },
+    {
+      "model": "Compact Recurrent",
+      "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6"
+    }
+  ]
+}

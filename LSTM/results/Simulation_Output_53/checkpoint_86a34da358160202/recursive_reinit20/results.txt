@@ -1,0 +1,38 @@
+
+===== recursive | LSTM Numba | epoch 39 =====
+8,199,999 predictions; two measured initialization rows; CSV times 18..100s; dt=10us.
+Recursive latent state resets from measured rows every 20 predictions.
+Prepared inputs are normalized; current u[t] predicts x[t+1]. Memory and states reset from measured rows every selected horizon; processing chunks do not change the reset policy. Centered 51-row command smoothing makes this an offline test, not verified causal control.
+Warm physical one-step call (includes normalization/reconstruction; latent already initialized): {'mean_us': 3.6818000000000004, 'median_us': 3.6, 'p95_us': 4.4, 'max_us': 31.1, 'deadline_us': 10.0, 'deadline_miss_percent': 0.1, 'RTF': 0.36818000000000006, 'repeats': 3000}
+Matched reset-horizon latency: {'horizon_steps': 20, 'includes': 'physical input normalization, memory reset, all rollout steps and physical output reconstruction', 'median_us': 36.7, 'mean_us': 37.3014, 'p95_us': 41.30499999999999, 'repeats': 1000}
+1,380,000/8,199,999 predictions; elapsed=5.0s; remaining=24.9s
+4,000,000/8,199,999 predictions; elapsed=10.1s; remaining=10.6s
+6,620,000/8,199,999 predictions; elapsed=15.1s; remaining=3.6s
+8,199,999/8,199,999 predictions; elapsed=18.2s; remaining=0.0s
+
+            feature          MAE         RMSE        R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+    speedref[rad/s] 2.070965e-07  2.69866e-07       NaN   1.197265e-06      2.69866e-07                 0
+   speedpmsm[rad/s] 1.695131e-13 2.937449e-13       NaN   2.017941e-12     4.944276e-06      1.043242e-12
+           iqref[A] 1.303359e-10 1.762316e-10         1   1.643349e-09     3.068143e-07      7.099131e-09
+           udref[V] 4.846035e-10 6.994003e-10         1   5.124216e-09     3.904989e-07      2.213674e-08
+           uqref[V] 6.568327e-11 8.934096e-11         1   4.311005e-10     5.683565e-07      1.941914e-09
+              id[A] 1.216578e-13 1.900617e-13         1   2.379746e-12     1.370997e-06      2.345228e-12
+              iq[A]  3.41764e-10 4.787531e-10         1   2.602023e-09     8.334783e-07       7.09934e-09
+           psid[Wb] 3.205913e-07 4.182171e-07       NaN   1.612922e-06     4.182171e-07       9.46376e-15
+           psiq[Wb]  6.28386e-13 9.139317e-13         1   6.232872e-12     4.806937e-07      2.349882e-11
+   pumppressure[Pa] 0.0007191055 0.0009458701         1    0.006632345     4.080241e-07        0.02865156
+plinepistonlift[Pa]     75.56174     150.3409         1       3521.992     8.511584e-05          155.4822
+   plinerodlift[Pa]      33.4473     58.65136         1        650.023     2.426065e-05          80.51517
+ppistonsidelift[Pa]      75.5447     150.3058         1       3501.098     8.505623e-05          155.4623
+   prodsidelift[Pa]     33.46541     58.65258         1       648.9629     2.426846e-05          80.48974
+     thetalift[rad] 6.818859e-08 9.500291e-08         1   8.312739e-07     6.539494e-07      1.941844e-06
+ plinepistonjib[Pa]     37.63555     73.83429         1       1023.721     2.623184e-05           98.6148
+    plinerodjib[Pa]      96.8118     169.3511         1       1778.659     3.497013e-05          175.6849
+     ppistonjib[Pa]     37.65083     73.85374         1       1023.862     2.623515e-05          98.62437
+        prodjib[Pa]      96.7983     169.3022         1        1777.37     3.496267e-05          175.6302
+      thetajib[rad]  9.90426e-08 1.287027e-07         1   5.901937e-07     5.199159e-07      2.540611e-06
+thetaliftdot[rad/s] 1.627692e-06 3.403699e-06         1   5.723898e-05     0.0002168341       3.45252e-06
+ thetajibdot[rad/s] 3.242078e-06 5.811462e-06 0.9999999   9.031167e-05     0.0003307272      5.708626e-06
+Compiled chunk throughput (NOT single-call latency): {'inference_seconds': 13.360372099821689, 'simulated_seconds': 81.99999000000001, 'amortized_us_per_step': 1.6293138694067753, 'RTF': 0.16293138694067752, 'chunk_rows': 20000, 'reinit_every': 20}
+Coverage: 8,199,999/8,199,999 predictions; full retained CSV=True
+Results: C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\MPC based Controller\Final Codes\LSTM\results\Simulation_Output_53\checkpoint_86a34da358160202\recursive_reinit20

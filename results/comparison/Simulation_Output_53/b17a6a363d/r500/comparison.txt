@@ -156,6 +156,10 @@ Single-call time and amortized chunk throughput are separate. R2 is undefined fo
 ]
 Shared training settings: {"angle_weight": [4.0, 4.0, 4.0, null], "velocity_weight": [4.0, 4.0, 4.0, null], "medium_horizon": [500, 500, 500, null], "medium_probability": [0.6, 0.6, 0.6, null], "long_probability": [0.2, 0.2, 0.2, null], "selection_horizon": [500, 500, 500, null], "val_horizons": [[100, 500, 1000, 10000, 100000], [100, 500, 1000, 10000, 100000], [100, 500, 1000, 10000, 100000], [10000, 100000]]}
 History: GRU2/LSTM4 keep gated memory; Transformer keeps a fixed encoded-token window, initially empty. All scoring starts with two measured rows. Transformer latency uses a fully populated window.
+FULL-RECORDING COVERAGE: GRU2/measured_one_step: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
+FULL-RECORDING COVERAGE: LSTM4/measured_one_step: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
+FULL-RECORDING COVERAGE: Transformer/measured_one_step: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
+FULL-RECORDING COVERAGE: Compact Recurrent/measured_one_step: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
 
 ===== measured_one_step: 8,199,999 targets; retained rows start at 2; dt=10 us =====
 
@@ -284,6 +288,10 @@ measured_one_step              GRU2   numba        float32             NaN  3.66
 measured_one_step             LSTM4   numba        float32             NaN  3.654633        3.5     4.1    34.9         10.0               0.200000 0.365463     3000          13.757362           81.99999                 1.677727   0.167773       20000
 measured_one_step       Transformer   numba        float32            64.0 18.338067       17.8    20.5   102.1         10.0             100.000000 1.833807     3000         125.240225           81.99999                15.273200   1.527320       20000
 measured_one_step Compact Recurrent   numba        float32             NaN  3.028000        2.9     3.4    72.6         10.0               0.166667 0.302800     3000          11.056038           81.99999                 1.348298   0.134830       20000
+FULL-RECORDING COVERAGE: GRU2/recursive: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
+FULL-RECORDING COVERAGE: LSTM4/recursive: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
+FULL-RECORDING COVERAGE: Transformer/recursive: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
+FULL-RECORDING COVERAGE: Compact Recurrent/recursive: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=0
 
 ===== recursive: 8,199,999 targets; retained rows start at 2; dt=10 us =====
 
@@ -412,6 +420,10 @@ recursive              GRU2   numba        float32             NaN  3.504533    
 recursive             LSTM4   numba        float32             NaN  3.652033        3.5     4.2    42.5         10.0               0.166667 0.365203     3000          13.329794           81.99999                 1.625585   0.162558       20000
 recursive       Transformer   numba        float32            64.0 18.435600       18.2    20.6   110.6         10.0             100.000000 1.843560     3000         128.853759           81.99999                15.713875   1.571387       20000
 recursive Compact Recurrent   numba        float32             NaN  3.280567        3.0     3.4    43.4         10.0               0.700000 0.328057     3000          10.341478           81.99999                 1.261156   0.126116       20000
+FULL-RECORDING COVERAGE: GRU2/recursive_reinit500: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=16,400
+FULL-RECORDING COVERAGE: LSTM4/recursive_reinit500: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=16,400
+FULL-RECORDING COVERAGE: Transformer/recursive_reinit500: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=16,400
+FULL-RECORDING COVERAGE: Compact Recurrent/recursive_reinit500: 8,199,999/8,199,999 predictions; CSV 18.000020..100.000000s; full=True; reset blocks=16,400
 
 ===== recursive_reinit500: 8,199,999 targets; retained rows start at 2; dt=10 us =====
 

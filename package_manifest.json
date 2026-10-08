@@ -111,5 +111,23 @@
     "mpc_metrics_resolution": "all internal microsteps",
     "mpc_tail_test": "253 samples, exact 53-sample final block",
     "completed_full_recording_mpc_performance_run": false
+  },
+  "main_model_analysis": {
+    "public_names": [
+      "GRU",
+      "LSTM",
+      "Transformer",
+      "Compact Recurrent"
+    ],
+    "reset_horizon_steps": 20,
+    "horizon_seconds": 0.0002,
+    "predictions_per_model": 8199999,
+    "reset_blocks": 410000,
+    "last_block_steps": 19,
+    "full_recording": true,
+    "recurrent_state_reset_from_two_measured_rows": true,
+    "predictions_recomputed": true,
+    "end_effector_trajectory_scope": "whole CSV; FK of actual/predicted states; not closed-loop MPC",
+    "sequential_matched_20_step_cpu_benchmarks": true
   }
 }

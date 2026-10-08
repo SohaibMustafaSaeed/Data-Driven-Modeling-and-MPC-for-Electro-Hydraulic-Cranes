@@ -100,8 +100,8 @@ def plot_each_model_feature(runs, tables, names, tag, out, points, no_show, plt)
 
 def main():
     p = argparse.ArgumentParser(description='iMotion residual dynamics')
-    p.add_argument('--gru-checkpoint', '--gru2-checkpoint', dest='gru_checkpoint', type=Path, help='Updated GRU2 checkpoint, labeled GRU')
-    p.add_argument('--lstm-checkpoint', type=Path, help='Matching LSTM4 checkpoint, labeled LSTM')
+    p.add_argument('--gru-checkpoint', '--gru2-checkpoint', dest='gru_checkpoint', type=Path, help='GRU checkpoint')
+    p.add_argument('--lstm-checkpoint', type=Path, help='LSTM checkpoint')
     p.add_argument('--transformer-checkpoint', type=Path, default=ROOT / 'Transformers/artifacts/best_model.pt')
     p.add_argument('--compact-checkpoint', type=Path, default=ROOT / 'Compact Recurrent/artifacts/best_model.pt')
     p.add_argument('--compact-results', type=Path)
@@ -113,8 +113,8 @@ def main():
     p.add_argument('--lstm-results', type=Path)
     p.add_argument('--test-file', default='Simulation_Output_53.csv')
     p.add_argument('--output-dir', type=Path)
-    p.add_argument('--mode', choices=['both', 'measured', 'recursive'], default='both')
-    p.add_argument('--reinit-every', type=int, help='Recursive reset horizon; default uses GRU medium training horizon')
+    p.add_argument('--mode', choices=['reset', 'both', 'measured', 'recursive'], default='reset')
+    p.add_argument('--reinit-every', type=int, help='Recursive reset horizon; default is 20 internal prediction samples')
     p.add_argument('--saved-only', action='store_true', help='Load cached results only; no inference')
     p.add_argument('--allow-prefix', action='store_true', help='Permit explicitly limited evaluations; both must cover identical targets')
     a = p.parse_args()
@@ -124,7 +124,7 @@ def main():
         default_gru, default_lstm = latest_pair()
     checkpoints = [a.gru_checkpoint or default_gru, a.lstm_checkpoint or default_lstm, a.transformer_checkpoint, a.compact_checkpoint]
     import gru2, lstm4, transformer, trainCompactLatent
-    names = ('GRU2', 'LSTM4', 'Transformer', 'Compact Recurrent')
+    names = ('GRU', 'LSTM', 'Transformer', 'Compact Recurrent')
     trainers = (gru2, lstm4, transformer, trainCompactLatent)
     loaded = []
     for checkpoint, trainer in zip(checkpoints, trainers):
@@ -139,7 +139,7 @@ def main():
             p.error(f'Training has not completed: {checkpoint.parent}')
         loaded.append(ck)
     if a.reinit_every is None:
-        a.reinit_every = loaded[0]['training_config']['arguments'].get('medium_horizon', 500)
+        a.reinit_every = 20
     if a.reinit_every < 1:
         p.error('--reinit-every must be positive')
     stem = Path(a.test_file).stem
@@ -153,6 +153,8 @@ def main():
     scenarios = []
     if a.mode in ('both', 'measured'):
         scenarios.append(('measured_one_step', 'measured_one_step'))
+    if a.mode == 'reset':
+        scenarios.append((f'recursive_reinit{a.reinit_every}', 'recursive'))
     if a.mode in ('both', 'recursive'):
         scenarios += [('recursive', 'recursive'), (f'recursive_reinit{a.reinit_every}', 'recursive')]
     for architecture, root, checkpoint in zip(('gru2', 'lstm4', 'transformer', 'compact'), roots, checkpoints):
@@ -191,7 +193,7 @@ def main():
         budget = architecture_budget(trainer, model)
         metadata.append(dict(model=name, compute_budget=budget, checkpoint=str(checkpoint.resolve()), best_epoch=ck['epoch'], parameters=sum((p.numel() for p in model.parameters())), model_config=ck['model_config'], checkpoint_selection=ck.get('training_config', {}).get('checkpoint_selection', 'original training criterion'), training_loss_weights=ck.get('training_config', {}).get('loss_weights', {})))
     controls = gru2.ANGLE_COLS + gru2.VELOCITY_COLS
-    emit('GRU2 vs LSTM4 vs Transformer vs Compact Recurrent: cached evaluations. Error metrics use physical units per state; NRMSE uses training std.\nTimings are warm CPU benchmarks from saved evaluations; benchmark dates may differ.\nSingle-call time and amortized chunk throughput are separate. R2 is undefined for constant truth.')
+    emit('GRU vs LSTM vs Transformer vs Compact Recurrent: cached evaluations. Error metrics use physical units per state; NRMSE uses training std.\nTimings are warm CPU benchmarks from saved evaluations; benchmark dates may differ.\nSingle-call time and amortized chunk throughput are separate. R2 is undefined for constant truth.')
     emit(json.dumps(metadata, indent=2))
     keys = ('epochs', 'batch_size', 'steps_per_epoch', 'angle_weight', 'velocity_weight', 'short_horizon', 'medium_horizon', 'long_horizon', 'medium_probability', 'long_probability', 'selection_horizon', 'warmup_epochs', 'learning_rate', 'burn_in_steps', 'grad_block', 'val_horizons', 'val_windows', 'scale_samples_per_file', 'threads', 'seed')
     settings = [ck['training_config']['arguments'] for ck in loaded]
@@ -199,7 +201,7 @@ def main():
     emit('Shared training settings: ' + ('matched' if not differences else json.dumps(differences)))
     if any((manifest_signature(ck['training_config']['training_manifest']) != manifest_signature(loaded[0]['training_config']['training_manifest']) for ck in loaded[1:])):
         raise ValueError('Training recordings or split manifests differ')
-    emit('History: GRU2/LSTM4 keep gated memory; Transformer keeps a fixed encoded-token window, initially empty. All scoring starts with two measured rows. Transformer latency uses a fully populated window.')
+    emit('History: GRU/LSTM keep gated memory; Transformer keeps a fixed encoded-token window, initially empty. All scoring starts with two measured rows. Transformer latency uses a fully populated window.')
     for tag, mode in scenarios:
         folders = [root / tag for root in roots]
         runs = [read_result(folder, 'gru', mode) for folder in folders]
@@ -254,9 +256,12 @@ def main():
             latency = report['latency']
             throughput = report['throughput']
             timing = dict(mode=tag, model=name, backend='numba', core_precision='float32', history_tokens=report.get('timing_history_tokens'), **latency, inference_seconds=throughput['inference_seconds'], simulated_seconds=throughput['simulated_seconds'], chunk_us_per_prediction=throughput.get('amortized_us_per_step', throughput.get('amortized_us_per_prediction')), chunk_RTF=throughput['RTF'], chunk_rows=throughput['chunk_rows'])
+            horizon_latency = report.get('horizon_latency') or {}
+            timing.update(reset_horizon_steps=horizon_latency.get('horizon_steps'), reset_horizon_median_us=horizon_latency.get('median_us'), reset_horizon_mean_us=horizon_latency.get('mean_us'), reset_horizon_p95_us=horizon_latency.get('p95_us'))
             timings.append(timing)
             all_timing.append(timing)
             summaries.append(dict(mode=tag, model=name, parameters=metadata[len(timings) - 1]['parameters'], warm_window_MACs=metadata[len(timings) - 1]['compute_budget']['warm_window_multiply_adds'], temporal_memory_bytes=metadata[len(timings) - 1]['compute_budget']['temporal_memory_bytes'], mean_NRMSE_train_std=table.NRMSE_train_std.mean(), control_mean_NRMSE=table.loc[table.feature.isin(controls), 'NRMSE_train_std'].mean(), control_rms_NRMSE=np.sqrt(np.mean(table.loc[table.feature.isin(controls), 'NRMSE_train_std'] ** 2)), rms_NRMSE_train_std=np.sqrt(np.mean(table.NRMSE_train_std ** 2)), median_call_us=latency['median_us'], mean_call_us=latency['mean_us'], p95_call_us=latency['p95_us'], chunk_us_per_prediction=timing['chunk_us_per_prediction'], chunk_RTF=timing['chunk_RTF']))
+            summaries[-1].update(reset_horizon_median_us=horizon_latency.get('median_us'), reset_horizon_mean_us=horizon_latency.get('mean_us'), reset_horizon_p95_us=horizon_latency.get('p95_us'))
         control_table = pd.concat(tables).loc[lambda table: table.feature.isin(controls)]
         emit('\nMPC state metrics (angles and angular velocities):\n' + control_table.to_string(index=False, float_format=lambda v: f'{v:.8g}'))
         emit('\nAll saved timing metrics:\n' + pd.DataFrame(timings).to_string(index=False))
@@ -265,7 +270,7 @@ def main():
             for name, table in zip(names, tables):
                 delta[f'{metric}_{name}'] = table[metric].to_numpy()
             for name, table in zip(names[1:], tables[1:]):
-                delta[f'{metric}_change_{name}_minus_GRU2'] = table[metric].to_numpy() - tables[0][metric].to_numpy()
+                delta[f'{metric}_change_{name}_minus_GRU'] = table[metric].to_numpy() - tables[0][metric].to_numpy()
         folder = out / tag
         folder.mkdir(parents=True, exist_ok=True)
         pd.concat(tables).to_csv(folder / 'metrics.csv', index=False)

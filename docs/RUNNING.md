@@ -148,8 +148,8 @@ python "Transformers/transformer.py" --epochs 60 --output-dir "Transformers/arti
 The other artifacts directories already contain trained models. To retrain:
 
 ```powershell
-python "GRU Latent/gru2.py" --epochs 60 --overwrite
-python "LSTM/lstm4.py" --epochs 60 --overwrite
+python "GRU Latent/gru.py" --epochs 60 --overwrite
+python "LSTM/LSTM.py" --epochs 60 --overwrite
 python "Compact Recurrent/trainCompactLatent.py" --epochs 60 --overwrite
 ```
 
@@ -178,10 +178,10 @@ bands, with interactive zoom for detail. See [whole-recording coverage](FULL_REC
 
 
 ```powershell
-python "GRU Latent/test.py" --reinit-every 500
-python "LSTM/test.py" --reinit-every 500
-python "Compact Recurrent/test.py" --reinit-every 500
-python "Transformers/test.py" --reinit-every 500
+python "GRU Latent/test.py" --reinit-every 20
+python "LSTM/test.py" --reinit-every 20
+python "Compact Recurrent/test.py" --reinit-every 20
+python "Transformers/test.py" --reinit-every 20
 ```
 
 Default test recording: Simulation_Output_53.csv. Each command evaluates measured
@@ -200,19 +200,19 @@ recording result. --checkpoint, --dataset-dir, and --output-dir override default
 ## Compare all four models and open separate plots
 
 ```powershell
-python compare_models.py --reinit-every 500
+python compare_models.py --reinit-every 20
 ```
 
 The comparison prints all per-feature metrics and saved timing summaries for
 measured one-step, continuous recursive, and reset-500 evaluation. Matching saved
 results are reused. Missing evaluations are generated once; --saved-only disables
-that inference. Default popups are 88 separate figures for reset-500: one model
+that inference. Default popups are 88 separate figures for reset-20: one model
 versus recorded truth for each of 22 states. Close every window to finish.
 
 ```powershell
-python compare_models.py --reinit-every 500 --plot-mode recursive
-python compare_models.py --reinit-every 500 --plot-mode all
-python compare_models.py --reinit-every 500 --no-show
+python compare_models.py --reinit-every 20 --plot-mode recursive
+python compare_models.py --reinit-every 20 --plot-mode all
+python compare_models.py --reinit-every 20 --no-show
 ```
 
 --plot-mode all opens 264 figures for all three modes. Figures are also saved

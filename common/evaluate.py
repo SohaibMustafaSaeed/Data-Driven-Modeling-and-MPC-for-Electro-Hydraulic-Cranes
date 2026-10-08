@@ -6,36 +6,39 @@ import argparse
 import time
 import platform
 import numba
+from common.reset_evaluation import make_reset_kernel, make_physical_horizon_kernel
 import numpy as np
 import pandas as pd
 from common.recording_view import recording_coverage, save_coverage, scalar_source, plot_recording_pair, time_metrics
 import hashlib
 import importlib
 selector = argparse.ArgumentParser(add_help=False)
-selector.add_argument('--architecture', choices=['gru2', 'lstm4', 'transformer', 'compact'], required=True)
+selector.add_argument('--architecture', choices=['gru', 'lstm', 'gru2', 'lstm4', 'transformer', 'compact'], required=True)
 selection, _ = selector.parse_known_args()
+selection.architecture = {'gru': 'gru2', 'lstm': 'lstm4'}.get(selection.architecture, selection.architecture)
 trainer = importlib.import_module({'gru2': 'gru2', 'lstm4': 'lstm4', 'transformer': 'transformer', 'compact': 'trainCompactLatent'}[selection.architecture])
 for symbol in ('SCRIPT_DIR', 'DEFAULT_DATASET_DIR', 'DEFAULT_ARTIFACT_DIR', 'STATE_INDICES', 'RESULT_DIR', 'OUTPUT_COLS', 'load_bundle', 'export_weights', 'native_encode', 'native_chunk', 'physical_step', 'write_json'):
     globals()[symbol] = getattr(trainer, symbol)
-MODEL_NAME = {'gru2': 'GRU2', 'lstm4': 'LSTM4', 'transformer': 'Transformer', 'compact': 'Compact Recurrent'}[selection.architecture]
+MODEL_NAME = {'gru2': 'GRU', 'lstm4': 'LSTM', 'transformer': 'Transformer', 'compact': 'Compact Recurrent'}[selection.architecture]
 from common.evaluation import Metrics, load_test
 
 def main():
     p = argparse.ArgumentParser(description='iMotion residual dynamics')
-    p.add_argument('--architecture', choices=['gru2', 'lstm4', 'transformer', 'compact'], required=True)
+    p.add_argument('--architecture', choices=['gru', 'lstm', 'gru2', 'lstm4', 'transformer', 'compact'], required=True)
     p.add_argument('--checkpoint', type=Path, default=DEFAULT_ARTIFACT_DIR / 'best_model.pt')
     p.add_argument('--dataset-dir', type=Path, default=DEFAULT_DATASET_DIR)
     p.add_argument('--test-file', type=Path, default=Path('Simulation_Output_53.csv'))
     p.add_argument('--output-dir', type=Path)
-    p.add_argument('--mode', choices=['both', 'measured', 'recursive'], default='both')
+    p.add_argument('--mode', choices=['both', 'measured', 'recursive'], default='recursive')
     p.add_argument('--recursive', action='store_true', help='Recursive-only alias')
     p.add_argument('--chunk-rows', type=int, default=20000)
-    p.add_argument('--reinit-every', type=int, default=0, help='Reset recursive latent state from measured rows every N predictions; 0 keeps continuous rollout')
+    p.add_argument('--reinit-every', type=int, default=20, help='Reset recursive latent state from measured rows every N predictions; 0 keeps continuous rollout')
     p.add_argument('--latency-repeats', type=int, default=3000)
     p.add_argument('--max-rows', type=int, help='Explicit prefix limit; default entire retained CSV')
     p.add_argument('--show', action=argparse.BooleanOptionalAction, default=True)
     p.add_argument('--plot-points', type=int, default=10000)
     a = p.parse_args()
+    a.architecture = {'gru': 'gru2', 'lstm': 'lstm4'}.get(a.architecture, a.architecture)
     if min(a.chunk_rows, a.latency_repeats) < 1 or a.reinit_every < 0 or (a.max_rows is not None and a.max_rows < 3):
         p.error('Invalid sizes')
     if a.recursive:
@@ -105,7 +108,7 @@ def main():
         emit(f'{n:,} predictions; two measured initialization rows; CSV times {offset + 2 * dt:g}..{offset + (len(x) - 1) * dt:g}s; dt={dt * 1000000.0:g}us.')
         if reinit:
             emit(f'Recursive latent state resets from measured rows every {reinit} predictions.')
-        emit('Prepared inputs are normalized; current u[t] predicts x[t+1]. ' + ('Latent state resets from measured rows at each chunk.' if reinit else 'Latent state persists across chunks.') + ' Centered 51-row command smoothing makes this an offline test, not verified causal control.')
+        emit('Prepared inputs are normalized; current u[t] predicts x[t+1]. ' + ('Memory and states reset from measured rows every selected horizon; processing chunks do not change the reset policy.' if reinit else 'Latent state persists across chunks.') + ' Centered 51-row command smoothing makes this an offline test, not verified causal control.')
         if a.max_rows:
             emit(f'EXPLICIT PREFIX: {len(x)} retained rows')
         times = []
@@ -123,22 +126,40 @@ def main():
         seconds = 0.0
         wall = time.perf_counter()
         last = wall
-        chunk_size = reinit or a.chunk_rows
+        reset_kernel = make_reset_kernel(trainer) if reinit else None
+        horizon_kernel = make_physical_horizon_kernel(trainer, STATE_INDICES) if reinit else None
+        horizon_latency = None
+        if reinit:
+            reset_kernel(x, 0, min(n, reinit), reinit, mean, std, w)
+            commands_physical = np.asarray(x[1:reinit + 1][:, [0, 16]], float) * std[[0, 16]] + mean[[0, 16]]
+            horizon_kernel(prev.astype(float) * std + mean, current.astype(float) * std + mean, commands_physical, mean, std, w)
+            horizon_times = []
+            for repeat in range(min(a.latency_repeats, 1000)):
+                tick = time.perf_counter_ns()
+                horizon_kernel(prev.astype(float) * std + mean, current.astype(float) * std + mean, commands_physical, mean, std, w)
+                horizon_times.append((time.perf_counter_ns() - tick) / 1000)
+            horizon_latency = dict(horizon_steps=len(commands_physical), includes='physical input normalization, memory reset, all rollout steps and physical output reconstruction', median_us=float(np.median(horizon_times)), mean_us=float(np.mean(horizon_times)), p95_us=float(np.percentile(horizon_times, 95)), repeats=len(horizon_times))
+            emit(f'Matched reset-horizon latency: {horizon_latency}')
+        chunk_size = max(reinit, (a.chunk_rows // reinit) * reinit) if reinit else a.chunk_rows
         for begin in range(0, n, chunk_size):
             end = min(n, begin + chunk_size)
             started = time.perf_counter()
             if mode == 'recursive' and reinit:
-                previous = np.array(x[begin], copy=True)
-                cur = np.array(x[begin + 1], copy=True)
-                latent = native_encode(cur, w[0], w[1])
-            result, previous, cur, latent = native_chunk(x[begin + 1:end + 1], previous, cur, latent, mode == 'recursive', mean, std, *w)
+                result = reset_kernel(x, begin, end, reinit, mean, std, w)
+            else:
+                result, previous, cur, latent = native_chunk(x[begin + 1:end + 1], previous, cur, latent, mode == 'recursive', mean, std, *w)
             seconds += time.perf_counter() - started
             if not np.isfinite(result).all():
                 raise RuntimeError(f'{mode} diverged after prediction {begin}')
             prediction[begin:end] = result
             actual = physical(x[begin + 2:end + 2, list(STATE_INDICES)])
-            baseline_row = begin + 1 if reinit else 1
-            baseline = np.broadcast_to(physical(x[baseline_row, list(STATE_INDICES)]), actual.shape) if mode == 'recursive' else physical(x[begin + 1:end + 1, list(STATE_INDICES)])
+            if reinit:
+                anchor_rows = (np.arange(begin, end) // reinit) * reinit + 1
+                baseline = physical(x[anchor_rows][:, list(STATE_INDICES)])
+            elif mode == 'recursive':
+                baseline = np.broadcast_to(physical(x[1, list(STATE_INDICES)]), actual.shape)
+            else:
+                baseline = physical(x[begin + 1:end + 1, list(STATE_INDICES)])
             meter.add(actual, result, baseline)
             now = time.perf_counter()
             if now - last > 5 or end == n:
@@ -150,7 +171,7 @@ def main():
         throughput = dict(inference_seconds=seconds, simulated_seconds=n * dt, amortized_us_per_step=seconds / n * 1000000.0, RTF=seconds / (n * dt), chunk_rows=chunk_size, reinit_every=reinit)
         emit('\n' + metrics.to_string(index=False, float_format=lambda v: f'{v:.7g}'))
         emit(f'Compiled chunk throughput (NOT single-call latency): {throughput}')
-        write_json(out / 'evaluation.json', dict(mode=mode, tag=tag, checkpoint=str(a.checkpoint.resolve()), source_csv=str(source), cache=str(cache), architecture=a.architecture, epoch=ck['epoch'], timing_history_tokens=timing_history_tokens, inference_backend='numba', core_precision='float32', benchmark_environment=dict(cpu=platform.processor(), machine=platform.machine(), python=platform.python_version(), numba=numba.__version__, numpy=np.__version__, torch=str(trainer.torch.__version__)), checkpoint_sha256=hashlib.sha256(a.checkpoint.read_bytes()).hexdigest(), predictions=n, initial_measured_rows=2, dt_s=dt, excluded_seconds=offset, reinit_every=reinit, latent_resets=int(np.ceil(n / reinit)) if reinit else 0, latency=latency, throughput=throughput, max_rows=a.max_rows, timing_excludes='JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting', command_smoothing='centered Savitzky-Golay 51 rows, offline'))
+        write_json(out / 'evaluation.json', dict(mode=mode, tag=tag, checkpoint=str(a.checkpoint.resolve()), source_csv=str(source), cache=str(cache), architecture=a.architecture, epoch=ck['epoch'], timing_history_tokens=timing_history_tokens, inference_backend='numba', core_precision='float32', benchmark_environment=dict(cpu=platform.processor(), machine=platform.machine(), python=platform.python_version(), numba=numba.__version__, numpy=np.__version__, torch=str(trainer.torch.__version__)), checkpoint_sha256=hashlib.sha256(a.checkpoint.read_bytes()).hexdigest(), predictions=n, initial_measured_rows=2, dt_s=dt, excluded_seconds=offset, reinit_every=reinit, latent_resets=int(np.ceil(n / reinit)) if reinit else 0, latency=latency, throughput=throughput, max_rows=a.max_rows, horizon_latency=horizon_latency, reset_protocol='two measured states; cold memory reset each horizon; only commands and predicted states within horizon', timing_excludes='JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting', command_smoothing='centered Savitzky-Golay 51 rows, offline'))
         coverage = recording_coverage(cache, n, 2, dt, offset, reinit, source)
         save_coverage(out / 'recording_coverage.json', coverage)
         emit(f'Coverage: {n:,}/{coverage["expected_prediction_rows"]:,} predictions; full retained CSV={coverage["full_retained_recording"]}')

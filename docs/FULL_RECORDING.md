@@ -1,4 +1,9 @@
-# Whole-CSV evaluation and MPC
+# Whole-CSV evaluation with 20-step resets and MPC
+
+The main model analysis is now predict 20 internal steps, reset with measured data,
+and repeat over the entire retained CSV. Continuous 82-second prediction is archived
+as an optional diagnostic, not the default comparison. Public labels are GRU and LSTM.
+
 
 Full recording means every sample retained by the existing preprocessing. The
 18-second startup trim stays unchanged. Two measured rows initialize the recurrent
@@ -38,17 +43,17 @@ is not an 82-second autonomous open-loop rollout. Both are shown and labeled.
 From the original CSV workspace:
 
 ```powershell
-& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\compareModels.py" --test-file "Simulation_Output_53.csv" --reinit-every 500 --saved-only --plot-mode recursive
+& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\compareModels.py" --test-file "Simulation_Output_53.csv" --reinit-every 20 --saved-only
 ```
 
-For the repeated 500-step case, use `--plot-mode mpc`. For all three methods,
+The default plot is the repeated 20-step case across the entire CSV. For all three methods,
 use `--plot-mode all` (264 separate model/state figures plus error-over-time
 overviews). Add `--no-show` to save without opening windows.
 
 From the portable project root:
 
 ```powershell
-python compare_models.py --test-file "Simulation_Output_53.csv" --reinit-every 500 --saved-only --plot-mode recursive
+python compare_models.py --test-file "Simulation_Output_53.csv" --reinit-every 20 --saved-only
 ```
 
 The comparison prints covered/expected prediction counts and the full CSV time
@@ -62,10 +67,10 @@ mode also has an error-over-time overview of the four mechanical states.
 From the portable project root, with the dataset paths configured:
 
 ```powershell
-python "GRU Latent/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 500
-python "LSTM/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 500
-python "Transformers/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 500
-python "Compact Recurrent/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 500
+python "GRU Latent/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 20
+python "LSTM/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 20
+python "Transformers/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 20
+python "Compact Recurrent/test.py" --test-file "Simulation_Output_53.csv" --reinit-every 20
 python "MPC offline Model/plant/testMechanicalCompact.py" --test-file "Simulation_Output_53.csv" --mpc-horizons 100 500 2000
 ```
 
