@@ -6,6 +6,7 @@ import subprocess
 import sys
 import numpy as np
 import pandas as pd
+from common.recording_view import recording_coverage, scalar_source, plot_recording_pair, time_metrics, plot_temporal_errors
 import torch
 from common.data import OUTPUT_COLS, STATE_INDICES
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -71,20 +72,19 @@ def plot_each_model_feature(runs, tables, names, tag, out, points, no_show, plt)
     count = len(left['prediction'])
     indices = np.unique(np.linspace(0, count - 1, min(count, points), dtype=np.int64))
     targets = left['start'] + indices
-    truth = left['cache'][targets][:, STATE_INDICES].astype(float) * left['std'] + left['mean']
     times = left['offset'] + targets * left['dt']
     manifest = []
     for name, run, table in zip(names, runs, tables):
         model_folder = out / tag / 'feature_plots' / name.replace(' ', '_')
         model_folder.mkdir(parents=True, exist_ok=True)
-        prediction = run['prediction'][indices]
         for j, feature in enumerate(OUTPUT_COLS):
             fig, ax = plt.subplots(figsize=(11, 5), layout='constrained')
             manager = fig.canvas.manager
             if hasattr(manager, 'set_window_title'):
                 manager.set_window_title(f'{name} | {feature} | {tag}')
-            ax.plot(times, truth[:, j], color='black', linewidth=1.1, label='Actual recorded')
-            ax.plot(times, prediction[:, j], color='tab:blue', linestyle='--', linewidth=1, label=name)
+            actual_source = scalar_source(run['cache'], STATE_INDICES[j], run['start'], run['mean'][j], run['std'][j])
+            predicted_source = scalar_source(run['prediction'], j)
+            plot_recording_pair(ax, actual_source, predicted_source, count, run['dt'], run['offset'] + run['start'] * run['dt'], name, points)
             row = table.iloc[j]
             ax.set_title(f'{name} vs actual: {feature}' + chr(10) + f'{tag} | RMSE={row.RMSE:.6g} | MAE={row.MAE:.6g} | R2={row.R2:.6g} | NRMSE={row.NRMSE_train_std:.6g}')
             ax.set_xlabel('CSV time [s]')
@@ -107,7 +107,7 @@ def main():
     p.add_argument('--compact-results', type=Path)
     p.add_argument('--no-show', action='store_true', help='Save figures without popup windows')
     p.add_argument('--plot-mode', choices=['measured_one_step', 'recursive', 'mpc', 'all'], help='Popup scenario; default MPC reset if available, otherwise the selected mode')
-    p.add_argument('--plot-points', type=int, default=6000, help='Display thinning only; saved metrics still use all target rows')
+    p.add_argument('--plot-points', type=int, default=6000, help='Min/max display bins use every sample; zoom for raw detail; metrics use every target row')
     p.add_argument('--transformer-results', type=Path)
     p.add_argument('--gru-results', type=Path)
     p.add_argument('--lstm-results', type=Path)
@@ -170,6 +170,8 @@ def main():
     plt.ioff()
     plt.rcParams['figure.max_open_warning'] = 0
     plot_manifest = []
+    coverage_rows = []
+    temporal_metrics = []
     out.mkdir(parents=True, exist_ok=True)
     all_metrics = []
     all_timing = []
@@ -223,6 +225,15 @@ def main():
         transformer_run = runs[2]
         if transformer_run['report'].get('timing_history_tokens', 0) < loaded[2]['model_config']['history']:
             raise ValueError('Transformer latency was not measured with a full history window')
+        for name, run, folder in zip(names, runs, folders):
+            coverage = recording_coverage(run['report']['cache'], len(run['prediction']), run['start'], run['dt'], run['offset'], run['report'].get('reinit_every', 0), run['report']['source_csv'])
+            coverage.update(model=name, mode=tag)
+            coverage_rows.append(coverage)
+            rolling = time_metrics(run['prediction'], run['cache'], list(STATE_INDICES), run['mean'], run['std'], run['start'], run['dt'], run['offset'], OUTPUT_COLS)
+            rolling.insert(0, 'model', name)
+            rolling.insert(0, 'mode', tag)
+            temporal_metrics.append(rolling)
+            emit(f'FULL-RECORDING COVERAGE: {name}/{tag}: {coverage["prediction_rows"]:,}/{coverage["expected_prediction_rows"]:,} predictions; CSV {coverage["first_prediction_csv_time_s"]:.6f}..{coverage["last_prediction_csv_time_s"]:.6f}s; full={coverage["full_retained_recording"]}; reset blocks={coverage["reset_blocks"]:,}')
         tables = []
         timings = []
         emit(f"\n===== {tag}: {len(left['prediction']):,} targets; retained rows start at {left['start']}; dt={left['dt'] * 1000000.0:g} us =====")
@@ -262,8 +273,11 @@ def main():
         delta.to_csv(folder / 'metric_differences.csv', index=False)
         control_table.to_csv(folder / 'control_metrics.csv', index=False)
         if plot_tag == 'all' or plot_tag == tag:
+            plot_temporal_errors(pd.concat(temporal_metrics, ignore_index=True), names, tag, out, plt, a.no_show)
             plot_manifest.extend(plot_each_model_feature(runs, tables, names, tag, out, a.plot_points, a.no_show, plt))
         provenance.append(dict(mode=tag, target_start=left['start'], predictions=len(left['prediction']), results=[str(f.resolve()) for f in folders]))
+    pd.DataFrame(coverage_rows).to_csv(out / 'recording_coverage.csv', index=False)
+    pd.concat(temporal_metrics, ignore_index=True).to_csv(out / 'error_over_time.csv', index=False)
     pd.concat(all_metrics).to_csv(out / 'all_metrics.csv', index=False)
     pd.DataFrame(all_timing).to_csv(out / 'all_timing.csv', index=False)
     summary = pd.DataFrame(summaries)

@@ -99,5 +99,17 @@
     "matched_start_commands_and_predictions": "bitwise identical",
     "automatic_selection_accuracy_improvement": false,
     "report": "docs/ACTIVITY_SELECTION_AB.md"
+  },
+  "whole_recording": {
+    "startup_trim_unchanged": true,
+    "coverage_report": "docs/results/full_recording_coverage.csv",
+    "verified_model_cases": 12,
+    "predictions_per_case": 8199999,
+    "all_sample_minmax_envelopes": true,
+    "per_second_error_metrics": true,
+    "mpc_default": "whole retained CSV unless duration explicitly supplied",
+    "mpc_metrics_resolution": "all internal microsteps",
+    "mpc_tail_test": "253 samples, exact 53-sample final block",
+    "completed_full_recording_mpc_performance_run": false
   }
 }

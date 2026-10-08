@@ -296,6 +296,10 @@ def show_saved_results(folder, show=True, geometry=None):
         geometry = PlanarGeometry(**config['geometry'])
     if geometry is None and (folder / 'kinematics_config.json').is_file():
         geometry = PlanarGeometry(**json.loads((folder / 'kinematics_config.json').read_text()))
+    if config.get('full_recording'):
+        from full_recording_mpc import show_full_results
+        show_full_results(sys.modules[__name__], folder, show, geometry)
+        return
     print((folder / 'results.txt').read_text(encoding='utf-8'), flush=True)
     with np.load(folder / 'mpc_mechanical_plant_arrays.npz') as a:
         desired_tip = a['reference_end_effector_physical'] if 'reference_end_effector_physical' in a.files else None
@@ -323,7 +327,8 @@ def main():
     p.add_argument('--terminal-angle-weight', type=float)
     p.add_argument('--terminal-velocity-weight', type=float)
     p.add_argument('--tracking-scales', type=float, nargs=4, help='Physical angle/velocity error scales; default training std')
-    p.add_argument('--duration', type=float, default=1.0, help='Requested reference episode seconds')
+    p.add_argument('--duration', type=float, help='Explicit shorter episode; omit for the entire retained CSV')
+    p.add_argument('--full-recording', action='store_true', help='Cover every retained sample; incompatible with --duration or segment selection')
     p.add_argument('--start-seconds', type=float, help='Time within retained data; default selects joint mechanical motion')
     p.add_argument('--block-steps', type=int, default=100, help='100 internal 10us steps = 1ms held command')
     p.add_argument('--horizon', type=int, default=100, help='Prediction horizon in control intervals')
@@ -363,7 +368,7 @@ def main():
         p.error('Counts must be positive')
     if a.moves > a.horizon:
         p.error('moves must not exceed horizon')
-    if not all((math.isfinite(value) and value > 0 for value in (a.duration, a.fd_step, a.ftol))) or a.fd_step > 1:
+    if not all((math.isfinite(value) and value > 0 for value in ((1.0 if a.duration is None else a.duration), a.fd_step, a.ftol))) or a.fd_step > 1:
         p.error('duration/ftol must be positive; fd-step must be in (0,1]')
     if a.start_seconds is not None and (not math.isfinite(a.start_seconds) or a.start_seconds < 0):
         p.error('Invalid start-seconds')
@@ -376,6 +381,11 @@ def main():
         p.error('Reproduction tolerances must be finite and positive')
     if a.tracking_scales is not None and (not all((math.isfinite(v) and v > 0 for v in a.tracking_scales))):
         p.error('Four positive physical tracking scales required')
+    full_recording = a.full_recording or a.duration is None
+    if a.full_recording and a.duration is not None:
+        p.error('--full-recording and --duration are mutually exclusive')
+    if full_recording and (a.start_seconds is not None or a.segment_from is not None):
+        p.error('Whole-CSV mode starts at the first two retained rows; use --duration for a selected episode')
     saved_segment = read_report(a.segment_from / 'config.json') if a.segment_from else None
     torch.set_num_threads(a.threads)
     checkpoint = (a.checkpoint or default_checkpoint()).resolve()
@@ -409,7 +419,7 @@ def main():
         a.horizon = int(round(count))
         if a.horizon < a.moves:
             p.error('Horizon must cover all move blocks')
-    episode_steps = int(round(a.duration / control_dt))
+    episode_steps = 1 if full_recording else int(round(a.duration / control_dt))
     if episode_steps < 1:
         p.error('duration must contain at least one control interval')
     actual_duration = episode_steps * control_dt
@@ -433,6 +443,13 @@ def main():
     from reference_replay import prepare_output, report_replay, replay
     out = prepare_output(out, a.overwrite)
     x, cache = load_test(source, a.dataset_dir, sc, out)
+    session = None
+    if full_recording:
+        from full_recording_mpc import FullRecordingSession
+        session = FullRecordingSession(sys.modules[__name__], out, x, mean, std, dt, a.block_steps, a.horizon, trainer, geometry)
+        episode_steps = len(session.counts)
+        actual_duration = session.count * dt
+        print(f'FULL CSV: {session.count:,} internal predictions, {episode_steps:,} control updates, {actual_duration:g}s; last block={session.counts[-1]} samples', flush=True)
     if a.lift_bounds is None or a.jib_bounds is None:
         low, high = sampled_training_bounds(ck, mean, std, a.bound_samples_per_file, a.dataset_dir.resolve())
     else:
@@ -450,11 +467,17 @@ def main():
     if not np.isfinite(neutral).all():
         p.error('Invalid neutral command')
     neutral = np.clip(neutral, low, high)
-    selection = select_segment(x, episode_steps, a.block_steps, a.horizon, dt, a.start_seconds)
-    start = activity_segment(x, selection, mean, std, episode_steps, a.block_steps)
-    rows = start + np.arange(episode_steps + a.horizon + 1, dtype=np.int64) * a.block_steps
-    reference_normalized = np.asarray(x[rows][:, MECH_INPUT], float)
-    reference = reference_normalized * std[MECH_INPUT] + mean[MECH_INPUT]
+    if session is None:
+        selection = select_segment(x, episode_steps, a.block_steps, a.horizon, dt, a.start_seconds)
+        start = activity_segment(x, selection, mean, std, episode_steps, a.block_steps)
+        rows = start + np.arange(episode_steps + a.horizon + 1, dtype=np.int64) * a.block_steps
+        reference_normalized = np.asarray(x[rows][:, MECH_INPUT], float)
+        reference = reference_normalized * std[MECH_INPUT] + mean[MECH_INPUT]
+    else:
+        start = 1
+        rows = session.rows
+        reference = session.reference.copy()
+        reference_normalized = (reference - mean[MECH_INPUT]) / std[MECH_INPUT]
     offset = float(sc['startup_rows_removed']) * dt
     csv_start = offset + start * dt
     assignment = np.arange(a.horizon, dtype=np.int64) * a.moves // a.horizon
@@ -465,7 +488,10 @@ def main():
     plant_columns = [INPUT_COLS.index(col) for col in PLANT_INPUT_COLS]
     plant.reset(initial_full[:, plant_columns])
     write_json(out / 'config.json', dict(source_csv=str(source), selected_retained_row=start, dt_seconds=dt, simulation='reproduction-first two-surrogate MPC'))
-    replay_report, replay_reference, replay_exact, replay_held, recorded_commands, initial_plant_snapshot = report_replay(out / 'reference_reproduction', plant, x, start, episode_steps, a.block_steps, mean, std, a.reachability_angle_tolerance, a.reachability_velocity_tolerance, False, low, high)
+    if session is None:
+        replay_report, replay_reference, replay_exact, replay_held, recorded_commands, initial_plant_snapshot = report_replay(out / 'reference_reproduction', plant, x, start, episode_steps, a.block_steps, mean, std, a.reachability_angle_tolerance, a.reachability_velocity_tolerance, False, low, high)
+    else:
+        replay_report, replay_reference, replay_exact, replay_held, recorded_commands, initial_plant_snapshot = session.replay(plant, x, start, episode_steps, a.block_steps, mean, std, out / 'reference_reproduction', a.reachability_angle_tolerance, a.reachability_velocity_tolerance, low, high)
     command_stats = pd.DataFrame(dict(command=['lift', 'jib'], recorded_mean_V=recorded_commands.mean(0), recorded_min_V=recorded_commands.min(0), recorded_max_V=recorded_commands.max(0)))
     print('Recorded commands for this exact segment:')
     print(command_stats.to_string(index=False))
@@ -477,26 +503,34 @@ def main():
         print(message, flush=True)
         (out / 'results.txt').write_text(message, encoding='utf-8')
         write_json(out / 'summary.json', dict(status='replay_only' if a.replay_only else 'recorded_reproduction_failed', mpc_executed=False, reproduction=replay_report))
-        if not a.no_show:
+        if not a.no_show and session is None:
             report_replay(out / 'reference_reproduction', plant, x, start, episode_steps, a.block_steps, mean, std, a.reachability_angle_tolerance, a.reachability_velocity_tolerance, True, low, high)
         return
     if a.reference_mode == 'plant-generated':
-        _, _, reference, _, _ = replay(plant, x, start, episode_steps + a.horizon, a.block_steps, mean, std)
+        if session is None:
+            _, _, reference, _, _ = replay(plant, x, start, episode_steps + a.horizon, a.block_steps, mean, std)
+        else:
+            session.choose_reference('plant-generated')
+            reference = session.reference.copy()
         reference_normalized = (reference - mean[MECH_INPUT]) / std[MECH_INPUT]
         print('Using explicit plant-generated held-command reference: a known input sequence produces this target.', flush=True)
     tip_reference = None
     if geometry is not None:
         tip_reference = geometry.end_effector(reference)
         if a.cartesian_reference:
-            tip_reference = read_cartesian_reference(a.cartesian_reference, np.arange(len(reference)) * control_dt)
+            tip_reference = read_cartesian_reference(a.cartesian_reference, (np.arange(len(reference)) * control_dt) if session is None else (session.rows - 1) * dt) if session is None else session.external_target(a.cartesian_reference)
             radius = np.linalg.norm(tip_reference[:, :2] - [geometry.base_x, geometry.base_z], axis=1)
             if np.any(radius > geometry.lift_length + geometry.jib_length + 1e-9) or np.any(radius < abs(geometry.lift_length - geometry.jib_length) - 1e-9):
                 p.error('Cartesian reference contains points outside the two-link geometric workspace')
         print(f'Tracking space={a.tracking_space}; planar geometry={asdict(geometry)}', flush=True)
         print(f'Cartesian normalization: position={a.position_scale:g} m; velocity={a.cartesian_velocity_scale:g} m/s', flush=True)
+    if session is not None and a.reference_mode != 'plant-generated':
+        session.choose_reference('recorded')
+    if session is not None and a.cartesian_reference:
+        tip_reference = session.external_target(a.cartesian_reference)
     plant.restore(initial_plant_snapshot)
     previous_command = current[CI].astype(float) * std[CI] + mean[CI]
-    rollout = make_blocked_rollout(trainer)
+    rollout = make_blocked_rollout(trainer) if session is None else session.rollout
     predictor_name = getattr(trainer, 'ARCHITECTURE', 'compact_latent')
     print(f"Model={predictor_name}; checkpoint epoch={ck['epoch']}; parameters={sum((p.numel() for p in model.parameters())):,}", flush=True)
     print(f'CSV segment={csv_start:.6f}..{csv_start + actual_duration:.6f}s; duration={actual_duration:g}s; internal dt={dt * 1000000.0:g}us; control interval={control_dt * 1000.0:g}ms; horizon={a.horizon * control_dt * 1000.0:g}ms; decision blocks={a.moves} ({2 * a.moves} variables)', flush=True)
@@ -507,12 +541,17 @@ def main():
     compile_start = time.perf_counter()
     warm = np.tile(previous_command, (a.horizon, 1))
     rollout(previous, current, memory, warm, a.block_steps, mean, std, weights)
+    if session is not None:
+        session.dense_kernel(previous, current, memory, previous_command, 0, mean, std, weights)
     warm_plant_kernel(plant.previous, plant.current, plant.latent, previous_command, 0, plant.mean, plant.std, *plant.weights)
     print(f'Kernel warmup={time.perf_counter() - compile_start:.2f}s', flush=True)
     config = dict(model=predictor_name, checkpoint=str(checkpoint), checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(), source_csv=str(source), cache=str(cache), selected_retained_row=start, selected_csv_time=csv_start, simulation='full-state optimizer predictor; separately trained mechanical Compact plant; no future recorded-state refresh', mechanical_checkpoint=str(plant_checkpoint), mechanical_checkpoint_sha256=hashlib.sha256(plant_checkpoint.read_bytes()).hexdigest(), feedback_policy='correct four mechanical fields in last two internal rows; preserve all other state estimates and full memory', initial_nonmechanical_state='seeded from two initial recording rows; subsequently predicted internally', strict_optimizer_plant_separation=True, reference_mode=a.reference_mode, reproduction=replay_report, terminal_weights=dict(angle=a.terminal_angle_weight, velocity=a.terminal_velocity_weight), preprocessing='same prepared cache; recorded commands use centered offline smoothing; optimized commands are held, not smoothed', dt_seconds=dt, control_interval_seconds=control_dt, actual_duration_seconds=actual_duration, command_bounds=dict(low=low.tolist(), high=high.tolist(), source='explicit bounds or sampled training commands'), normalized_mechanical_error_scale=(std[MECH_INPUT] if a.tracking_scales is None else np.asarray(a.tracking_scales)).tolist(), arguments={k: str(v) if isinstance(v, Path) else v for k, v in vars(a).items()})
     write_json(out / 'config.json', config)
     config.update(tracking_space=a.tracking_space, geometry=asdict(geometry) if geometry else None, cartesian_cost_weights=cartesian_weights.tolist(), cartesian_error_scales=dict(position_m=a.position_scale, velocity_m_s=a.cartesian_velocity_scale), cartesian_reference_source=str(a.cartesian_reference.resolve()) if a.cartesian_reference else 'forward kinematics of mechanical reference', joint_reference_role='replay guide, not inverse kinematics of external tip target' if a.cartesian_reference else 'mechanical trajectory reference')
-    config['activity_selection'] = dict(mode='automatic' if a.start_seconds is None else 'explicit_start', velocity_units='rad/s', physical_reconstruction='normalized * std + mean', score='min(lift_RMS,jib_RMS) + 0.1*(lift_RMS+jib_RMS)')
+    config['full_recording'] = full_recording
+    config['last_control_block_microsteps'] = int(session.counts[-1]) if session is not None else a.block_steps
+    config['lookahead_after_csv_end'] = replay_report.get('lookahead_after_csv_end')
+    config['activity_selection'] = dict(mode='whole_csv' if full_recording else ('automatic' if a.start_seconds is None else 'explicit_start'), velocity_units='rad/s', physical_reconstruction='normalized * std + mean', score='min(lift_RMS,jib_RMS) + 0.1*(lift_RMS+jib_RMS)')
     if a.cartesian_reference:
         config['reference_mode'] = 'external-cartesian'
     write_json(out / 'config.json', config)
@@ -540,6 +579,8 @@ def main():
     started = time.perf_counter()
     last = time.perf_counter()
     for k in range(episode_steps):
+        if session is not None:
+            session.set_step(k)
         goal = reference_normalized[k + 1:k + 1 + a.horizon]
         obj = MPCObjective(rollout, previous, current, memory, goal, previous_command, center, halfwidth, neutral, assignment, a.block_steps, mean, std, weights, cost_weights, a.terminal_angle_weight, a.terminal_velocity_weight, a.tracking_scales, geometry if a.tracking_space == 'cartesian' else None, tip_reference[k + 1:k + 1 + a.horizon] if tip_reference is not None else None, cartesian_weights, [a.position_scale, a.position_scale, a.cartesian_velocity_scale, a.cartesian_velocity_scale])
         solve_start = time.perf_counter()
@@ -564,7 +605,10 @@ def main():
             row[f'reference_next_{col}'] = reference[k + 1, j]
         teacher.append(row)
         commit_start = time.perf_counter()
-        previous, current, memory, predicted_mechanics, actual_mechanics, prior_full = advance_and_correct(rollout, previous, current, memory, action, a.block_steps, mean, std, weights, plant)
+        if session is None:
+            previous, current, memory, predicted_mechanics, actual_mechanics, prior_full = advance_and_correct(rollout, previous, current, memory, action, a.block_steps, mean, std, weights, plant)
+        else:
+            previous, current, memory, predicted_mechanics, actual_mechanics, prior_full = session.advance(previous, current, memory, action, mean, std, weights, plant, k)
         plant_advance_times[k] = time.perf_counter() - commit_start
         predictor_trace[k + 1] = predicted_mechanics
         plant_trace[k + 1] = actual_mechanics
@@ -587,13 +631,21 @@ def main():
             print(f'MPC {k + 1}/{episode_steps}: elapsed={elapsed:.1f}s; ETA={elapsed * (episode_steps - k - 1) / (k + 1):.1f}s; solve={solve_times[k] * 1000.0:.2f}ms; cost={costs[k]:.6g}; u={action.tolist()}; optimizer={result.message}', flush=True)
             last = now
             pd.DataFrame(diagnostics).to_csv(out / 'solver_history.csv', index=False)
-    time_grid = np.arange(episode_steps + 1) * control_dt
+    time_grid = np.arange(episode_steps + 1) * control_dt if session is None else np.r_[0, np.cumsum(session.counts)] * dt
     predicted = plant_trace
     target = reference[:episode_steps + 1]
     metrics = tracking_metrics(target[1:], predicted[1:])
     metrics.to_csv(out / 'tracking_metrics.csv', index=False)
     mismatch_metrics = tracking_metrics(plant_trace[1:], predictor_trace[1:])
     mismatch_metrics.to_csv(out / 'model_mismatch_metrics.csv', index=False)
+    full_coverage = None
+    full_distance = None
+    if session is not None:
+        metrics.to_csv(out / 'tracking_metrics_control_endpoints.csv', index=False)
+        mismatch_metrics.to_csv(out / 'model_mismatch_control_endpoints.csv', index=False)
+        full_coverage, full_distance = session.finish(offset)
+        metrics = session.track_meter.table()
+        mismatch_metrics = session.mismatch_meter.table()
     history = pd.DataFrame(diagnostics)
     history.to_csv(out / 'solver_history.csv', index=False)
     pd.DataFrame(teacher).to_csv(out / 'teacher_dataset.csv', index=False)
@@ -608,9 +660,24 @@ def main():
         trace[f'model_mismatch_{col}'] = predictor_trace[:, j] - plant_trace[:, j]
     trace.to_csv(out / 'trajectory.csv', index=False)
     pd.DataFrame(dict(time_s=time_grid[:-1], lift_command_V=commands[:, 0], jib_command_V=commands[:, 1])).to_csv(out / 'commands.csv', index=False)
-    np.savez(out / 'mpc_mechanical_plant_arrays.npz', controller_state_estimate_physical=state_trace, reference_physical=target, plant_mechanical_physical=plant_trace, predictor_one_interval_mechanical_physical=predictor_trace, predictor_prior_full_state_physical=predictor_prior_full, predictor_horizons_mechanical_physical=horizon_forecasts, predictor_horizons_full_state_physical=horizon_full_states, model_mismatch_physical=predictor_trace - plant_trace, commit_seconds=plant_advance_times, teacher_full_state_estimate_physical=teacher_states, teacher_reference_horizons_physical=teacher_refs, selected_command_sequences_physical=planned_commands, applied_commands_physical=commands, solve_seconds=solve_times, cost=costs, time_seconds=time_grid, recorded_commands_physical=recorded_commands, recorded_reference_physical=replay_reference, recorded_exact_replay_physical=replay_exact, recorded_held_replay_physical=replay_held)
+    if session is not None:
+        np.save(out / 'predictor_horizons_full_state.npy', horizon_full_states)
+    np.savez(out / 'mpc_mechanical_plant_arrays.npz', controller_state_estimate_physical=state_trace, reference_physical=target, plant_mechanical_physical=plant_trace, predictor_one_interval_mechanical_physical=predictor_trace, predictor_prior_full_state_physical=predictor_prior_full, predictor_horizons_mechanical_physical=horizon_forecasts, predictor_horizons_full_state_physical=horizon_full_states if session is None else np.empty((0, a.horizon, 22)), model_mismatch_physical=predictor_trace - plant_trace, commit_seconds=plant_advance_times, teacher_full_state_estimate_physical=teacher_states, teacher_reference_horizons_physical=teacher_refs, selected_command_sequences_physical=planned_commands, applied_commands_physical=commands, solve_seconds=solve_times, cost=costs, time_seconds=time_grid, recorded_commands_physical=recorded_commands, recorded_reference_physical=replay_reference, recorded_exact_replay_physical=replay_exact, recorded_held_replay_physical=replay_held)
     if geometry is not None:
         kinematic_summary = save_kinematic_results(out, time_grid, target, plant_trace, predictor_trace, geometry, tip_reference[:episode_steps + 1], a.tracking_space)
+        if session is not None:
+            kinematic_summary['control_endpoint_distance'] = kinematic_summary['end_effector']
+            kinematic_summary['end_effector'] = full_distance
+            kinematic_summary['control_endpoint_lift_distance'] = kinematic_summary['lift_tip']
+            kinematic_summary['lift_tip'] = dict(position_RMSE_m=float(np.sqrt(session.lift_distance[0] / session.count)), position_MAE_m=float(session.lift_distance[1] / session.count), position_max_error_m=float(session.lift_distance[2]), scored_microsteps=session.count)
+            kinematic_summary['control_endpoint_model_mismatch'] = kinematic_summary['one_interval_model_mismatch']
+            kinematic_summary['one_interval_model_mismatch'] = dict(position_RMSE_m=float(np.sqrt(session.model_distance[0] / session.count)), position_MAE_m=float(session.model_distance[1] / session.count), position_max_error_m=float(session.model_distance[2]), scored_microsteps=session.count)
+            kinematic_summary['metric_resolution'] = 'every internal microstep'
+            write_json(out / 'kinematics_summary.json', kinematic_summary)
+            for filename in ('end_effector_metrics.csv', 'end_effector_mismatch_metrics.csv', 'kinematics_results.txt'):
+                path = out / filename
+                path.rename(out / (path.stem + '_control_endpoints' + path.suffix))
+            (out / 'kinematics_results.txt').write_text('All internal samples:\n' + session.tip_meter.table().to_string(index=False) + '\n' + json.dumps(full_distance, indent=2), encoding='utf-8')
         with np.load(out / 'mpc_mechanical_plant_arrays.npz') as archive:
             arrays = {key: archive[key] for key in archive.files}
         arrays.update(reference_end_effector_physical=tip_reference[:episode_steps + 1], predictor_horizons_end_effector_physical=geometry.end_effector(horizon_forecasts), teacher_end_effector_horizons_physical=np.stack([tip_reference[k + 1:k + 1 + a.horizon] for k in range(episode_steps)]))
@@ -622,6 +689,17 @@ def main():
     summary = dict(mpc_executed=True, reference_mode=a.reference_mode, reproduction=replay_report, command_difference_rmse_V=np.sqrt(np.mean(command_delta ** 2, 0)).tolist(), control_steps=episode_steps, control_interval_seconds=control_dt, horizon_seconds=a.horizon * control_dt, mean_solve_ms=float(solve_times.mean() * 1000), median_solve_ms=float(np.median(solve_times) * 1000), p95_solve_ms=float(np.percentile(solve_times, 95) * 1000), max_solve_ms=float(solve_times.max() * 1000), deadline_miss_percent=float(np.mean(solve_times > control_dt) * 100), solver_success_percent=float(history.solver_success.mean() * 100), lift_saturation_percent=float(saturation[0]), jib_saturation_percent=float(saturation[1]), improved_over_hold_percent=float(np.mean(history.selected_cost < history.hold_command_cost - 1e-10) * 100), tracking_metrics=json.loads(metrics.to_json(orient='records')), mismatch_metrics=json.loads(mismatch_metrics.to_json(orient='records')), mechanical_plant_advances=episode_steps, optimizer_uses_mechanical_plant=False, mean_commit_ms=float(plant_advance_times.mean() * 1000), simulated_plant='separate mechanical learned model; learned-model mismatch experiment, not physical crane validation')
     write_json(out / 'summary.json', summary)
     summary['tracking_space'] = a.tracking_space
+    summary['full_recording'] = full_recording
+    if session is not None:
+        summary['recording_coverage'] = full_coverage
+        summary['all_microstep_end_effector_distance'] = full_distance
+        summary['metric_sample_resolution'] = 'every internal 10us sample'
+        session.track_meter.table().to_csv(out / 'tracking_metrics.csv', index=False)
+        session.mismatch_meter.table().to_csv(out / 'model_mismatch_metrics.csv', index=False)
+        if geometry is not None:
+            session.tip_meter.table().to_csv(out / 'end_effector_metrics.csv', index=False)
+            session.tip_mismatch.table().to_csv(out / 'end_effector_mismatch_metrics.csv', index=False)
+            pd.concat([session.lift_meter.table().assign(boom='lift'), session.tip_meter.table().assign(boom='jib/end_effector')], ignore_index=True).to_csv(out / 'boom_tip_metrics.csv', index=False)
     if a.cartesian_reference:
         summary['reference_mode'] = 'external-cartesian'
     if geometry is not None:
@@ -629,12 +707,16 @@ def main():
     write_json(out / 'summary.json', summary)
     metric_title = 'Joint guide deviations (external Cartesian target)' if a.cartesian_reference else 'Joint tracking metrics'
     text = metric_title + ' (physical units; initial measured sample excluded):\n' + metrics.to_string(index=False, float_format=lambda v: f'{v:.8g}')
-    text += '\n\nOne-control-interval predictor-minus-plant mismatch:\n' + mismatch_metrics.to_string(index=False, float_format=lambda v: f'{v:.8g}')
+    text += ('\n\nAll-microstep predictor-minus-plant mismatch:\n' if session is not None else '\n\nOne-control-interval predictor-minus-plant mismatch:\n') + mismatch_metrics.to_string(index=False, float_format=lambda v: f'{v:.8g}')
     text += '\n\nControl/solver summary:\n' + json.dumps(summary, indent=2) + f'\n\nSaved results: {out}'
     if geometry is not None:
         text += '\n\n' + (out / 'kinematics_results.txt').read_text(encoding='utf-8')
     print('\n' + text, flush=True)
     (out / 'results.txt').write_text(text, encoding='utf-8')
+    if session is not None:
+        import matplotlib
+        matplotlib.use('Agg' if a.no_show else 'TkAgg')
+        session.plots(offset)
     make_plots(out, time_grid, target, plant_trace, predictor_trace, commands, solve_times, costs, control_dt, low, high, not a.no_show, horizon_forecasts, teacher_refs, recorded_commands, geometry, tip_reference[:episode_steps + 1] if tip_reference is not None else None)
 if __name__ == '__main__':
     main()

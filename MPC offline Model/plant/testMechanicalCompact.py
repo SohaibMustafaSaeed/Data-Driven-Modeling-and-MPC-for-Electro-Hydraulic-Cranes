@@ -10,6 +10,7 @@ import json
 import platform
 import numpy as np
 import pandas as pd
+from common.recording_view import recording_coverage, save_coverage, scalar_source, plot_recording_pair, time_metrics
 from mechanical_compact import SCRIPT_DIR, DEFAULT_DATASET_DIR, DEFAULT_ARTIFACT_DIR, INPUT_COLS, OUTPUT_COLS, STATE_INDICES, COMMAND_INDICES, load_bundle, load_test_rows, export_weights, native_encode, native_chunk, physical_step, held_command, Metrics, write_json
 
 def benchmark(fn, repeats, deadline_us):
@@ -153,14 +154,16 @@ def main():
             emit(f'Held-command advance benchmark: {block_latency}', log)
             emit(f'Throughput: {throughput}', log)
             write_json(out / 'evaluation.json', dict(mode='recursive' if recursive else 'measured_one_step', tag=tag, checkpoint=str(a.checkpoint.resolve()), checkpoint_sha256=fingerprint, source_csv=str(source), cache=str(cache), source_projection_indices=sc['source_projection_indices'], input_columns=INPUT_COLS, output_columns=OUTPUT_COLS, predictions=n, initial_measured_rows=2, reinit_every=reinit, dt_s=dt, excluded_seconds=offset, max_rows=a.max_rows, latency=latency, held_block_latency=block_latency, control_block=a.control_block, throughput=throughput, inference_backend='numba', core_precision='float32', cpu=platform.processor(), command_smoothing='centered 51 rows, offline', excludes_hydraulic_electrical_features=True))
+            coverage = recording_coverage(cache, n, 2, dt, offset, reinit, source)
+            save_coverage(out / 'recording_coverage.json', coverage)
+            time_metrics(pred, x, [0, 1, 2, 3], mean[:4], std[:4], 2, dt, offset, OUTPUT_COLS).to_csv(out / 'error_over_time.csv', index=False)
             indices = np.unique(np.linspace(0, n - 1, min(n, a.plot_points), dtype=np.int64))
             times = offset + (indices + 2) * dt
             truth = physical(x[indices + 2, :4])
             forecast = pred[indices]
             fig, axes = plt.subplots(2, 2, figsize=(14, 9), sharex=True, layout='constrained')
             for j, ax in enumerate(axes.flat):
-                ax.plot(times, truth[:, j], color='black', label='Recorded')
-                ax.plot(times, forecast[:, j], '--', label='Mechanical Compact')
+                plot_recording_pair(ax, scalar_source(x, j, 2, mean[j], std[j]), scalar_source(pred, j), n, dt, offset + 2 * dt, 'Mechanical Compact', a.plot_points)
                 ax.set_title(f'{OUTPUT_COLS[j]} | RMSE={metrics.RMSE.iloc[j]:.5g}')
                 ax.set_ylabel('rad' if j < 2 else 'rad/s')
                 ax.set_xlabel('CSV time [s]')

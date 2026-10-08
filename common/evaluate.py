@@ -8,6 +8,7 @@ import platform
 import numba
 import numpy as np
 import pandas as pd
+from common.recording_view import recording_coverage, save_coverage, scalar_source, plot_recording_pair, time_metrics
 import hashlib
 import importlib
 selector = argparse.ArgumentParser(add_help=False)
@@ -150,6 +151,10 @@ def main():
         emit('\n' + metrics.to_string(index=False, float_format=lambda v: f'{v:.7g}'))
         emit(f'Compiled chunk throughput (NOT single-call latency): {throughput}')
         write_json(out / 'evaluation.json', dict(mode=mode, tag=tag, checkpoint=str(a.checkpoint.resolve()), source_csv=str(source), cache=str(cache), architecture=a.architecture, epoch=ck['epoch'], timing_history_tokens=timing_history_tokens, inference_backend='numba', core_precision='float32', benchmark_environment=dict(cpu=platform.processor(), machine=platform.machine(), python=platform.python_version(), numba=numba.__version__, numpy=np.__version__, torch=str(trainer.torch.__version__)), checkpoint_sha256=hashlib.sha256(a.checkpoint.read_bytes()).hexdigest(), predictions=n, initial_measured_rows=2, dt_s=dt, excluded_seconds=offset, reinit_every=reinit, latent_resets=int(np.ceil(n / reinit)) if reinit else 0, latency=latency, throughput=throughput, max_rows=a.max_rows, timing_excludes='JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting', command_smoothing='centered Savitzky-Golay 51 rows, offline'))
+        coverage = recording_coverage(cache, n, 2, dt, offset, reinit, source)
+        save_coverage(out / 'recording_coverage.json', coverage)
+        emit(f'Coverage: {n:,}/{coverage["expected_prediction_rows"]:,} predictions; full retained CSV={coverage["full_retained_recording"]}')
+        time_metrics(prediction, x, list(STATE_INDICES), mean[list(STATE_INDICES)], std[list(STATE_INDICES)], 2, dt, offset, OUTPUT_COLS).to_csv(out / 'error_over_time.csv', index=False)
         indices = np.unique(np.linspace(0, n - 1, min(n, a.plot_points), dtype=int))
         t = offset + (indices + 2) * dt
         actual = physical(x[indices + 2][:, list(STATE_INDICES)])
@@ -161,13 +166,12 @@ def main():
                     ax.set_visible(False)
                     continue
                 j = page * 11 + slot
-                ax.plot(t, actual[:, j], color='black', label='Actual', linewidth=1)
-                ax.plot(t, forecast[:, j], '--', label=MODEL_NAME, linewidth=1)
+                plot_recording_pair(ax, scalar_source(x, STATE_INDICES[j], 2, mean[STATE_INDICES[j]], std[STATE_INDICES[j]]), scalar_source(prediction, j), n, dt, offset + 2 * dt, MODEL_NAME, a.plot_points)
                 ax.set_title(f'{OUTPUT_COLS[j]} | RMSE={metrics.RMSE.iloc[j]:.5g}')
                 ax.set_xlabel('CSV time [s]')
                 ax.legend(fontsize=8)
                 ax.grid(alpha=0.3)
-            fig.suptitle(f'{source.name}: {mode}; latent state preserved\nEvery prediction scored; display points thinned')
+            fig.suptitle(f'{source.name}: {tag}; {n:,} predictions across the full selected CSV\nAll samples contribute to min/max bands; zoom/pan for detail')
             fig.savefig(out / f'actual_vs_predicted_{page + 1}.png', dpi=130)
         fig, axes = plt.subplots(1, 2, figsize=(12, 5), layout='constrained')
         axes[0].bar(['Mean', 'p95', 'Max', 'Deadline'], [latency['mean_us'], latency['p95_us'], latency['max_us'], latency['deadline_us']])
@@ -186,7 +190,7 @@ def main():
     pd.DataFrame(summaries).to_csv(base / 'method_comparison.csv', index=False)
     print(pd.DataFrame(summaries).to_string(index=False), flush=True)
     if a.show:
-        plt.show()
+        plt.show(block=True)
     plt.close('all')
 if __name__ == '__main__':
     main()

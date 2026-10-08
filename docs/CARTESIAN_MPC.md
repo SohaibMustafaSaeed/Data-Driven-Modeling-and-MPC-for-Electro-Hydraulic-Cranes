@@ -1,5 +1,7 @@
 # Cartesian end-effector MPC with PATU geometry
 
+For full-CSV runs, see [whole-recording methodology](FULL_RECORDING.md). Omitting --duration now processes the whole retained CSV; explicit --duration selects a shorter episode.
+
 The GRU still predicts crane dynamics and the independent mechanical Compact
 model still supplies plant feedback. Forward kinematics maps their predicted
 mechanical states to end-effector position and velocity. The optimizer now has

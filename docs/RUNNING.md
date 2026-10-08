@@ -172,6 +172,11 @@ training provenance. Training uses PyTorch; deployed CPU evaluation uses Numba.
 
 ## Testing each model
 
+Every retained sample is evaluated by default, including when short reset horizons
+repeat across the whole recording. Plots now use every sample in min/max display
+bands, with interactive zoom for detail. See [whole-recording coverage](FULL_RECORDING.md).
+
+
 ```powershell
 python "GRU Latent/test.py" --reinit-every 500
 python "LSTM/test.py" --reinit-every 500
@@ -222,6 +227,11 @@ raw:/prepared: dataset paths; the original weights and prediction arrays are unc
 Embedded checkpoint metadata retains the historical training paths for provenance.
 
 ## Offline MPC
+
+Whole-recording MPC is the default when --duration is omitted. Use --full-recording
+to request this explicitly. It advances and scores every internal sample, including
+the final partial control interval. See [full CSV commands](FULL_RECORDING.md).
+
 
 The default objective now tracks the Cartesian end effector using exact PATU
 local link vectors and absolute boom angles. See [Cartesian MPC](CARTESIAN_MPC.md)

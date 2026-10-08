@@ -13,6 +13,8 @@ The physical activity selector has also been corrected and tested before/after.
 See [the controlled comparison](docs/ACTIVITY_SELECTION_AB.md): fixed-start model
 predictions and controls are unchanged; automatic selection chooses a different episode.
 
+Whole-recording evaluation is now explicit. See [full CSV coverage and commands](docs/FULL_RECORDING.md). Model plots include every retained sample in min/max envelopes, and full-CSV MPC saves and scores every internal microstep. Short historical MPC episodes below remain labeled as episodes.
+
 ## Offline MPC: tracking a separate mechanical surrogate plant
 
 The optimizer predicts 22 physical states with GRU2, chooses bounded lift/jib
@@ -190,7 +192,7 @@ python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/resu
 Run a new offline MPC experiment:
 
 ```powershell
-python "MPC offline Model/offline_mpc.py" --duration 1 --reference-mode plant-generated
+python "MPC offline Model/offline_mpc.py" --full-recording --reference-mode plant-generated
 ```
 
 Compare all four models using the existing saved evaluations:
