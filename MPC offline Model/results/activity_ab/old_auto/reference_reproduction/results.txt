@@ -1,0 +1,88 @@
+                 replay             feature          RMSE           MAE  max_abs_error         R2
+exact_prepared_commands      thetalift[rad] 0.00026348573 0.00022484974  0.00047996542 0.97075276
+exact_prepared_commands       thetajib[rad] 9.8993183e-05 9.0714247e-05  0.00013317721 0.99621484
+exact_prepared_commands thetaliftdot[rad/s] 0.00079480245 0.00069652323   0.0015935278 -9.8144471
+exact_prepared_commands  thetajibdot[rad/s]   0.000633923 0.00054769701   0.0012519585 -1.2040154
+ held_recorded_commands      thetalift[rad] 0.00026362358 0.00022497631  0.00048013861 0.97072215
+ held_recorded_commands       thetajib[rad] 9.9041477e-05 9.0756298e-05  0.00013325098 0.99621114
+ held_recorded_commands thetaliftdot[rad/s] 0.00079498468  0.0006967136   0.0015937879 -9.8194066
+ held_recorded_commands  thetajibdot[rad/s] 0.00063417532 0.00054788361   0.0012524633 -1.2057703
+{
+  "exact_reproduction_pass": true,
+  "held_reproduction_pass": true,
+  "held_commands_in_mpc_bounds": true,
+  "reproduction_gate_pass": true,
+  "angle_rmse_tolerance_rad": 0.002,
+  "velocity_rmse_tolerance_rad_s": 0.002,
+  "interpretation": "Configurable recorded-command reproduction test; failure does not prove mathematical unreachability.",
+  "command_source": "same prepared centered-smoothed recorded commands as model preprocessing",
+  "steps": 200,
+  "block_steps": 100,
+  "selected_retained_row": 3990001,
+  "metrics": [
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetalift[rad]",
+      "RMSE": 0.0002634857,
+      "MAE": 0.0002248497,
+      "max_abs_error": 0.0004799654,
+      "R2": 0.9707527609
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetajib[rad]",
+      "RMSE": 9.89932e-05,
+      "MAE": 9.07142e-05,
+      "max_abs_error": 0.0001331772,
+      "R2": 0.996214838
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0007948025,
+      "MAE": 0.0006965232,
+      "max_abs_error": 0.0015935278,
+      "R2": -9.8144471145
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.000633923,
+      "MAE": 0.000547697,
+      "max_abs_error": 0.0012519585,
+      "R2": -1.2040154377
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetalift[rad]",
+      "RMSE": 0.0002636236,
+      "MAE": 0.0002249763,
+      "max_abs_error": 0.0004801386,
+      "R2": 0.9707221481
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetajib[rad]",
+      "RMSE": 9.90415e-05,
+      "MAE": 9.07563e-05,
+      "max_abs_error": 0.000133251,
+      "R2": 0.9962111439
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0007949847,
+      "MAE": 0.0006967136,
+      "max_abs_error": 0.0015937879,
+      "R2": -9.8194066006
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.0006341753,
+      "MAE": 0.0005478836,
+      "max_abs_error": 0.0012524633,
+      "R2": -1.2057702758
+    }
+  ]
+}

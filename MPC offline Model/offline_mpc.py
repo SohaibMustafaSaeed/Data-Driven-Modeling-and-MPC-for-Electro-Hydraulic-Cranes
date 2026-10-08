@@ -104,7 +104,7 @@ def activity_segment(x, selection, mean, std, episode_steps, block):
     if isinstance(selection, (int, np.integer)):
         return int(selection)
     indices, last_start, stride = selection
-    velocity = np.asarray(x[indices][:, MECH_INPUT[2:]], float) + mean[MECH_INPUT[2:]] / std[MECH_INPUT[2:]]
+    velocity = np.asarray(x[indices][:, MECH_INPUT[2:]], float) * std[MECH_INPUT[2:]] + mean[MECH_INPUT[2:]]
     window = max(1, int(math.ceil(episode_steps * block / stride)))
     if len(indices) < window:
         raise ValueError('Not enough rows for reference segment')
@@ -512,6 +512,7 @@ def main():
     config = dict(model=predictor_name, checkpoint=str(checkpoint), checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(), source_csv=str(source), cache=str(cache), selected_retained_row=start, selected_csv_time=csv_start, simulation='full-state optimizer predictor; separately trained mechanical Compact plant; no future recorded-state refresh', mechanical_checkpoint=str(plant_checkpoint), mechanical_checkpoint_sha256=hashlib.sha256(plant_checkpoint.read_bytes()).hexdigest(), feedback_policy='correct four mechanical fields in last two internal rows; preserve all other state estimates and full memory', initial_nonmechanical_state='seeded from two initial recording rows; subsequently predicted internally', strict_optimizer_plant_separation=True, reference_mode=a.reference_mode, reproduction=replay_report, terminal_weights=dict(angle=a.terminal_angle_weight, velocity=a.terminal_velocity_weight), preprocessing='same prepared cache; recorded commands use centered offline smoothing; optimized commands are held, not smoothed', dt_seconds=dt, control_interval_seconds=control_dt, actual_duration_seconds=actual_duration, command_bounds=dict(low=low.tolist(), high=high.tolist(), source='explicit bounds or sampled training commands'), normalized_mechanical_error_scale=(std[MECH_INPUT] if a.tracking_scales is None else np.asarray(a.tracking_scales)).tolist(), arguments={k: str(v) if isinstance(v, Path) else v for k, v in vars(a).items()})
     write_json(out / 'config.json', config)
     config.update(tracking_space=a.tracking_space, geometry=asdict(geometry) if geometry else None, cartesian_cost_weights=cartesian_weights.tolist(), cartesian_error_scales=dict(position_m=a.position_scale, velocity_m_s=a.cartesian_velocity_scale), cartesian_reference_source=str(a.cartesian_reference.resolve()) if a.cartesian_reference else 'forward kinematics of mechanical reference', joint_reference_role='replay guide, not inverse kinematics of external tip target' if a.cartesian_reference else 'mechanical trajectory reference')
+    config['activity_selection'] = dict(mode='automatic' if a.start_seconds is None else 'explicit_start', velocity_units='rad/s', physical_reconstruction='normalized * std + mean', score='min(lift_RMS,jib_RMS) + 0.1*(lift_RMS+jib_RMS)')
     if a.cartesian_reference:
         config['reference_mode'] = 'external-cartesian'
     write_json(out / 'config.json', config)

@@ -1,0 +1,30 @@
+{
+  "applied_commands_physical": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  },
+  "plant_mechanical_physical": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  },
+  "predictor_one_interval_mechanical_physical": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  },
+  "predictor_horizons_full_state_physical": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  },
+  "reference_physical": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  },
+  "cost": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  },
+  "selected_command_sequences_physical": {
+    "bitwise_identical": true,
+    "max_absolute_difference": 0.0
+  }
+}

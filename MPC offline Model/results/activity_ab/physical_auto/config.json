@@ -1,0 +1,213 @@
+{
+  "model": "gru2",
+  "checkpoint": "GRU Latent/artifacts/best_model.pt",
+  "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "selected_retained_row": 3998001,
+  "selected_csv_time": 57.98001,
+  "simulation": "full-state optimizer predictor; separately trained mechanical Compact plant; no future recorded-state refresh",
+  "mechanical_checkpoint": "MPC offline Model/artifacts/mechanical_plant/best_model.pt",
+  "mechanical_checkpoint_sha256": "ee47597d91ff0460528020c1d2e6bfb31516604300ba8913b40d532711c28a94",
+  "feedback_policy": "correct four mechanical fields in last two internal rows; preserve all other state estimates and full memory",
+  "initial_nonmechanical_state": "seeded from two initial recording rows; subsequently predicted internally",
+  "strict_optimizer_plant_separation": true,
+  "reference_mode": "plant-generated",
+  "reproduction": {
+    "exact_reproduction_pass": true,
+    "held_reproduction_pass": true,
+    "held_commands_in_mpc_bounds": true,
+    "reproduction_gate_pass": true,
+    "angle_rmse_tolerance_rad": 0.002,
+    "velocity_rmse_tolerance_rad_s": 0.002,
+    "interpretation": "Configurable recorded-command reproduction test; failure does not prove mathematical unreachability.",
+    "command_source": "same prepared centered-smoothed recorded commands as model preprocessing",
+    "steps": 200,
+    "block_steps": 100,
+    "selected_retained_row": 3998001,
+    "metrics": [
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetalift[rad]",
+        "RMSE": 0.0002707952,
+        "MAE": 0.0002268242,
+        "max_abs_error": 0.0005137186,
+        "R2": 0.970082091
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetajib[rad]",
+        "RMSE": 7.82067e-05,
+        "MAE": 5.58923e-05,
+        "max_abs_error": 0.0001865897,
+        "R2": 0.9975049966
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetaliftdot[rad/s]",
+        "RMSE": 0.0009582341,
+        "MAE": 0.0007728535,
+        "max_abs_error": 0.0014805337,
+        "R2": -4.9163193947
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetajibdot[rad/s]",
+        "RMSE": 0.0015760395,
+        "MAE": 0.0013788593,
+        "max_abs_error": 0.0028417888,
+        "R2": -4.4810293104
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetalift[rad]",
+        "RMSE": 0.0002707952,
+        "MAE": 0.0002268242,
+        "max_abs_error": 0.0005137186,
+        "R2": 0.970082091
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetajib[rad]",
+        "RMSE": 7.82067e-05,
+        "MAE": 5.58923e-05,
+        "max_abs_error": 0.0001865897,
+        "R2": 0.9975049966
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetaliftdot[rad/s]",
+        "RMSE": 0.0009583622,
+        "MAE": 0.0007729673,
+        "max_abs_error": 0.0014807714,
+        "R2": -4.9179016052
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetajibdot[rad/s]",
+        "RMSE": 0.0015766061,
+        "MAE": 0.0013793059,
+        "max_abs_error": 0.0028432823,
+        "R2": -4.4849712306
+      }
+    ]
+  },
+  "terminal_weights": {
+    "angle": 0.0,
+    "velocity": 0.0
+  },
+  "preprocessing": "same prepared cache; recorded commands use centered offline smoothing; optimized commands are held, not smoothed",
+  "dt_seconds": 1e-05,
+  "control_interval_seconds": 0.001,
+  "actual_duration_seconds": 0.2,
+  "command_bounds": {
+    "low": [
+      -0.9999999723274773,
+      -0.9999999978489263
+    ],
+    "high": [
+      1.0000032089789734,
+      1.00000154537254
+    ],
+    "source": "explicit bounds or sampled training commands"
+  },
+  "normalized_mechanical_error_scale": [
+    0.1452756424840032,
+    0.24754517845098534,
+    0.015697249958841208,
+    0.017571768630515548
+  ],
+  "arguments": {
+    "tracking_space": "cartesian",
+    "geometry_file": null,
+    "lift_length": null,
+    "jib_length": null,
+    "jib_angle_mode": null,
+    "lift_local_vector": null,
+    "jib_local_vector": null,
+    "base_position": null,
+    "angle_offsets_deg": null,
+    "angle_signs": null,
+    "position_scale": 0.01,
+    "cartesian_velocity_scale": 0.1,
+    "position_weight": 1.0,
+    "cartesian_velocity_weight": 0.1,
+    "terminal_position_weight": 5.0,
+    "terminal_cartesian_velocity_weight": 1.0,
+    "cartesian_reference": null,
+    "plot_results": null,
+    "checkpoint": null,
+    "mechanical_checkpoint": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\MPC offline Model\\artifacts\\mechanical_plant\\best_model.pt",
+    "dataset_dir": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Dataset preprocessed",
+    "test_file": "Simulation_Output_53.csv",
+    "output_dir": "verification_final_codes\\activity_ab\\physical_auto",
+    "overwrite": false,
+    "segment_from": null,
+    "horizon_ms": 50.0,
+    "reference_mode": "plant-generated",
+    "allow_reference_mismatch": false,
+    "replay_only": false,
+    "reachability_angle_tolerance": 0.002,
+    "reachability_velocity_tolerance": 0.002,
+    "terminal_angle_weight": 0.0,
+    "terminal_velocity_weight": 0.0,
+    "tracking_scales": null,
+    "duration": 0.2,
+    "start_seconds": null,
+    "block_steps": 100,
+    "horizon": 50,
+    "moves": 5,
+    "maxiter": 8,
+    "fd_step": 0.03,
+    "ftol": 1e-08,
+    "angle_weight": 0.0,
+    "velocity_weight": 0.0,
+    "effort_weight": 0.0001,
+    "smoothness_weight": 0.001,
+    "lift_bounds": null,
+    "jib_bounds": null,
+    "bound_samples_per_file": 1000,
+    "neutral_command": [
+      0.0,
+      0.0
+    ],
+    "progress_every": 25,
+    "threads": 2,
+    "no_show": true
+  },
+  "tracking_space": "cartesian",
+  "geometry": {
+    "lift_length": 2.8861494977309152,
+    "jib_length": 2.0496950992769634,
+    "jib_angle_mode": "absolute",
+    "base_x": -0.09,
+    "base_z": 1.4261,
+    "lift_offset_deg": 0.0,
+    "jib_offset_deg": 0.0,
+    "lift_sign": 1.0,
+    "jib_sign": 1.0,
+    "lift_vector": [
+      2.886080943,
+      0.019892554
+    ],
+    "jib_vector": [
+      2.035,
+      0.245
+    ]
+  },
+  "cartesian_cost_weights": [
+    1.0,
+    0.1,
+    5.0,
+    1.0
+  ],
+  "cartesian_error_scales": {
+    "position_m": 0.01,
+    "velocity_m_s": 0.1
+  },
+  "cartesian_reference_source": "forward kinematics of mechanical reference",
+  "joint_reference_role": "mechanical trajectory reference",
+  "activity_rule_under_test": "physical",
+  "ab_test_note": "Only activity selection differs; trained models, kinematics and objective unchanged.",
+  "path_metadata_updated_only": true
+}

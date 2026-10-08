@@ -92,5 +92,12 @@
     "intrinsic_geometry_offsets_not_added_twice": true,
     "tests": "exact vectors, analytic velocities, physical-unit objective, short native MPC integrations",
     "full_one_second_cartesian_performance_evaluation": false
+  },
+  "activity_selection_fix": {
+    "physical_velocity_reconstruction": "normalized * std + mean",
+    "experiments": "three 200-action Cartesian MPC runs; 50-ms horizon; same model weights",
+    "matched_start_commands_and_predictions": "bitwise identical",
+    "automatic_selection_accuracy_improvement": false,
+    "report": "docs/ACTIVITY_SELECTION_AB.md"
   }
 }

@@ -1,0 +1,79 @@
+{
+  "exact_reproduction_pass": true,
+  "held_reproduction_pass": true,
+  "held_commands_in_mpc_bounds": true,
+  "reproduction_gate_pass": true,
+  "angle_rmse_tolerance_rad": 0.002,
+  "velocity_rmse_tolerance_rad_s": 0.002,
+  "interpretation": "Configurable recorded-command reproduction test; failure does not prove mathematical unreachability.",
+  "command_source": "same prepared centered-smoothed recorded commands as model preprocessing",
+  "steps": 200,
+  "block_steps": 100,
+  "selected_retained_row": 3990001,
+  "metrics": [
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetalift[rad]",
+      "RMSE": 0.0002634857,
+      "MAE": 0.0002248497,
+      "max_abs_error": 0.0004799654,
+      "R2": 0.9707527609
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetajib[rad]",
+      "RMSE": 9.89932e-05,
+      "MAE": 9.07142e-05,
+      "max_abs_error": 0.0001331772,
+      "R2": 0.996214838
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0007948025,
+      "MAE": 0.0006965232,
+      "max_abs_error": 0.0015935278,
+      "R2": -9.8144471145
+    },
+    {
+      "replay": "exact_prepared_commands",
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.000633923,
+      "MAE": 0.000547697,
+      "max_abs_error": 0.0012519585,
+      "R2": -1.2040154377
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetalift[rad]",
+      "RMSE": 0.0002636236,
+      "MAE": 0.0002249763,
+      "max_abs_error": 0.0004801386,
+      "R2": 0.9707221481
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetajib[rad]",
+      "RMSE": 9.90415e-05,
+      "MAE": 9.07563e-05,
+      "max_abs_error": 0.000133251,
+      "R2": 0.9962111439
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0007949847,
+      "MAE": 0.0006967136,
+      "max_abs_error": 0.0015937879,
+      "R2": -9.8194066006
+    },
+    {
+      "replay": "held_recorded_commands",
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.0006341753,
+      "MAE": 0.0005478836,
+      "max_abs_error": 0.0012524633,
+      "R2": -1.2057702758
+    }
+  ]
+}

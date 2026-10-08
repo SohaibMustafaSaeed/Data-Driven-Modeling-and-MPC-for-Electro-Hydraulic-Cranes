@@ -1,0 +1,207 @@
+{
+  "mpc_executed": true,
+  "reference_mode": "plant-generated",
+  "reproduction": {
+    "exact_reproduction_pass": true,
+    "held_reproduction_pass": true,
+    "held_commands_in_mpc_bounds": true,
+    "reproduction_gate_pass": true,
+    "angle_rmse_tolerance_rad": 0.002,
+    "velocity_rmse_tolerance_rad_s": 0.002,
+    "interpretation": "Configurable recorded-command reproduction test; failure does not prove mathematical unreachability.",
+    "command_source": "same prepared centered-smoothed recorded commands as model preprocessing",
+    "steps": 200,
+    "block_steps": 100,
+    "selected_retained_row": 3990001,
+    "metrics": [
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetalift[rad]",
+        "RMSE": 0.0002634857,
+        "MAE": 0.0002248497,
+        "max_abs_error": 0.0004799654,
+        "R2": 0.9707527609
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetajib[rad]",
+        "RMSE": 9.89932e-05,
+        "MAE": 9.07142e-05,
+        "max_abs_error": 0.0001331772,
+        "R2": 0.996214838
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetaliftdot[rad/s]",
+        "RMSE": 0.0007948025,
+        "MAE": 0.0006965232,
+        "max_abs_error": 0.0015935278,
+        "R2": -9.8144471145
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetajibdot[rad/s]",
+        "RMSE": 0.000633923,
+        "MAE": 0.000547697,
+        "max_abs_error": 0.0012519585,
+        "R2": -1.2040154377
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetalift[rad]",
+        "RMSE": 0.0002636236,
+        "MAE": 0.0002249763,
+        "max_abs_error": 0.0004801386,
+        "R2": 0.9707221481
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetajib[rad]",
+        "RMSE": 9.90415e-05,
+        "MAE": 9.07563e-05,
+        "max_abs_error": 0.000133251,
+        "R2": 0.9962111439
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetaliftdot[rad/s]",
+        "RMSE": 0.0007949847,
+        "MAE": 0.0006967136,
+        "max_abs_error": 0.0015937879,
+        "R2": -9.8194066006
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetajibdot[rad/s]",
+        "RMSE": 0.0006341753,
+        "MAE": 0.0005478836,
+        "max_abs_error": 0.0012524633,
+        "R2": -1.2057702758
+      }
+    ]
+  },
+  "command_difference_rmse_V": [
+    0.027227921784881533,
+    0.12846838251574963
+  ],
+  "control_steps": 200,
+  "control_interval_seconds": 0.001,
+  "horizon_seconds": 0.05,
+  "mean_solve_ms": 359.6012154991331,
+  "median_solve_ms": 335.3227000043262,
+  "p95_solve_ms": 821.4232399928729,
+  "max_solve_ms": 980.3121000004467,
+  "deadline_miss_percent": 100.0,
+  "solver_success_percent": 94.0,
+  "lift_saturation_percent": 0.0,
+  "jib_saturation_percent": 23.0,
+  "improved_over_hold_percent": 100.0,
+  "tracking_metrics": [
+    {
+      "feature": "thetalift[rad]",
+      "RMSE": 3.1068e-05,
+      "MAE": 2.7742e-05,
+      "max_abs_error": 3.74679e-05,
+      "R2": 0.9995099566
+    },
+    {
+      "feature": "thetajib[rad]",
+      "RMSE": 6.53056e-05,
+      "MAE": 4.6301e-05,
+      "max_abs_error": 0.0001540848,
+      "R2": 0.9983022127
+    },
+    {
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 4.81465e-05,
+      "MAE": 4.29221e-05,
+      "max_abs_error": 7.04547e-05,
+      "R2": 0.9017453237
+    },
+    {
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.0010211596,
+      "MAE": 0.0009594321,
+      "max_abs_error": 0.0013160799,
+      "R2": -15.8961838698
+    }
+  ],
+  "mismatch_metrics": [
+    {
+      "feature": "thetalift[rad]",
+      "RMSE": 2.7394e-06,
+      "MAE": 2.7314e-06,
+      "max_abs_error": 3.4636e-06,
+      "R2": 0.9999961247
+    },
+    {
+      "feature": "thetajib[rad]",
+      "RMSE": 1.9547e-06,
+      "MAE": 1.4539e-06,
+      "max_abs_error": 2.9805e-06,
+      "R2": 0.999998376
+    },
+    {
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 3.1288e-06,
+      "MAE": 2.6497e-06,
+      "max_abs_error": 4.491e-06,
+      "R2": 0.9996666419
+    },
+    {
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 1.27219e-05,
+      "MAE": 1.26747e-05,
+      "max_abs_error": 1.57083e-05,
+      "R2": 0.9971377137
+    }
+  ],
+  "mechanical_plant_advances": 200,
+  "optimizer_uses_mechanical_plant": false,
+  "mean_commit_ms": 0.2983970002969727,
+  "simulated_plant": "separate mechanical learned model; learned-model mismatch experiment, not physical crane validation",
+  "tracking_space": "cartesian",
+  "kinematic_tracking": {
+    "tracking_space": "cartesian",
+    "geometry": {
+      "lift_length": 2.8861494977309152,
+      "jib_length": 2.0496950992769634,
+      "jib_angle_mode": "absolute",
+      "base_x": -0.09,
+      "base_z": 1.4261,
+      "lift_offset_deg": 0.0,
+      "jib_offset_deg": 0.0,
+      "lift_sign": 1.0,
+      "jib_sign": 1.0,
+      "lift_vector": [
+        2.886080943,
+        0.019892554
+      ],
+      "jib_vector": [
+        2.035,
+        0.245
+      ]
+    },
+    "end_effector": {
+      "position_RMSE_m": 0.0001580086995269646,
+      "position_MAE_m": 0.00013182393343326844,
+      "position_max_error_m": 0.0003276099043902997,
+      "final_position_error_m": 0.0003276099043902997
+    },
+    "lift_tip": {
+      "position_RMSE_m": 8.966686206290707e-05,
+      "position_MAE_m": 8.006759616368151e-05,
+      "position_max_error_m": 0.00010813807320791205,
+      "final_position_error_m": 0.00010813807320791205
+    },
+    "one_interval_model_mismatch": {
+      "position_RMSE_m": 8.720617350075196e-06,
+      "position_MAE_m": 8.692301156525384e-06,
+      "position_max_error_m": 9.996586384576689e-06,
+      "final_position_error_m": 9.345861135943213e-06
+    },
+    "initial_measured_sample_excluded": true,
+    "planar_axes": "horizontal x, vertical z; metres; no slew or flexible deflection",
+    "lift_tip_reference_role": "reference elbow from mechanical reference"
+  }
+}

@@ -9,6 +9,10 @@ gallery below preserves the earlier joint-cost experiment.
 
 **Start here:** [Run the code](docs/RUNNING.md) · [MPC tracking metrics](docs/results/mpc_tracking_metrics.csv) · [Full-state comparison metrics](docs/results/full_state_all_metrics.csv).
 
+The physical activity selector has also been corrected and tested before/after.
+See [the controlled comparison](docs/ACTIVITY_SELECTION_AB.md): fixed-start model
+predictions and controls are unchanged; automatic selection chooses a different episode.
+
 ## Offline MPC: tracking a separate mechanical surrogate plant
 
 The optimizer predicts 22 physical states with GRU2, chooses bounded lift/jib
