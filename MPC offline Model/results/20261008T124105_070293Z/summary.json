@@ -1,0 +1,78 @@
+{
+  "control_steps": 1000,
+  "control_interval_seconds": 0.001,
+  "horizon_seconds": 0.02,
+  "mean_solve_ms": 96.95026650000364,
+  "median_solve_ms": 78.42204999178648,
+  "p95_solve_ms": 268.8459500073804,
+  "max_solve_ms": 574.2269000038505,
+  "deadline_miss_percent": 100.0,
+  "solver_success_percent": 100.0,
+  "lift_saturation_percent": 98.1,
+  "jib_saturation_percent": 16.0,
+  "improved_over_hold_percent": 83.89999999999999,
+  "tracking_metrics": [
+    {
+      "feature": "thetalift[rad]",
+      "RMSE": 0.002989624,
+      "MAE": 0.0024573871,
+      "R2": 0.826019766,
+      "max_abs_error": 0.0056601743
+    },
+    {
+      "feature": "thetajib[rad]",
+      "RMSE": 0.0013200138,
+      "MAE": 0.0010735271,
+      "R2": 0.9720318215,
+      "max_abs_error": 0.0023832759
+    },
+    {
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 0.0053698931,
+      "MAE": 0.0051482377,
+      "R2": -3.2235033344,
+      "max_abs_error": 0.0067239428
+    },
+    {
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 0.001640906,
+      "MAE": 0.0015505787,
+      "R2": -4.646004939,
+      "max_abs_error": 0.0022547315
+    }
+  ],
+  "mismatch_metrics": [
+    {
+      "feature": "thetalift[rad]",
+      "RMSE": 2.8101e-06,
+      "MAE": 2.784e-06,
+      "R2": 0.9999997359,
+      "max_abs_error": 3.5243e-06
+    },
+    {
+      "feature": "thetajib[rad]",
+      "RMSE": 2.4857e-06,
+      "MAE": 2.1333e-06,
+      "R2": 0.9999998784,
+      "max_abs_error": 4.4265e-06
+    },
+    {
+      "feature": "thetaliftdot[rad/s]",
+      "RMSE": 8.8375e-06,
+      "MAE": 7.811e-06,
+      "R2": 0.9999457666,
+      "max_abs_error": 1.51572e-05
+    },
+    {
+      "feature": "thetajibdot[rad/s]",
+      "RMSE": 2.52981e-05,
+      "MAE": 2.44498e-05,
+      "R2": 0.9991703382,
+      "max_abs_error": 3.60292e-05
+    }
+  ],
+  "mechanical_plant_advances": 1000,
+  "optimizer_uses_mechanical_plant": false,
+  "mean_commit_ms": 0.2726784001861233,
+  "simulated_plant": "separate mechanical learned model; learned-model mismatch experiment, not physical crane validation"
+}

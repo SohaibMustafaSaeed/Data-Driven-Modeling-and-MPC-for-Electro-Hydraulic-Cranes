@@ -1,0 +1,34 @@
+
+===== recursive | GRU2 Numba | epoch 35 =====
+8,199,999 predictions; two measured initialization rows; CSV times 18..100s; dt=10us.
+Prepared inputs are normalized; current u[t] predicts x[t+1]. Latent state persists across chunks. Centered 51-row command smoothing makes this an offline test, not verified causal control.
+Warm physical one-step call (includes normalization/reconstruction; latent already initialized): {'mean_us': 3.504533333333333, 'median_us': 3.4, 'p95_us': 4.0, 'max_us': 41.3, 'deadline_us': 10.0, 'deadline_miss_percent': 0.2, 'RTF': 0.3504533333333333, 'repeats': 3000}
+2,860,000/8,199,999 predictions; elapsed=5.0s; remaining=9.4s
+5,780,000/8,199,999 predictions; elapsed=10.0s; remaining=4.2s
+8,199,999/8,199,999 predictions; elapsed=14.2s; remaining=0.0s
+
+            feature          MAE         RMSE         R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+    speedref[rad/s]  0.005175803  0.006352788        NaN     0.01274891      0.006352788                 0
+   speedpmsm[rad/s] 2.860272e-09 3.541025e-09        NaN   8.585261e-09       0.05960206      2.698269e-07
+           iqref[A]  1.35397e-05 1.815816e-05  0.9989129    4.58249e-05       0.03161284       0.002225145
+           udref[V] 0.0001268463 0.0001333664  0.9939683   0.0001893489       0.07446298       0.006938403
+           uqref[V] 2.905017e-06 3.642271e-06   0.999416   8.063777e-06       0.02317088      0.0006088086
+              id[A] 5.482186e-09 7.317213e-09  0.9968481   1.906451e-08       0.05278223      6.297322e-07
+              iq[A] 3.866319e-05  4.40495e-05  0.9936026   7.334461e-05       0.07668734         0.0022252
+           psid[Wb]  0.004549799  0.005656135        NaN     0.01252788      0.005656135      2.430767e-09
+           psiq[Wb] 5.765352e-08 6.364113e-08  0.9987812   9.796486e-08       0.03347284      7.365411e-06
+   pumppressure[Pa]     102.8132     115.2201  0.9973126       189.4486       0.04970302          8980.434
+plinepistonlift[Pa]     488511.2     674468.4  0.7337399        1786645        0.3818519           1427472
+   plinerodlift[Pa]     886226.1      1063443  0.6315132        2637042        0.4398842           2822214
+ppistonsidelift[Pa]       490944     677263.7  0.7321877        1793306        0.3832553           1429698
+   prodsidelift[Pa]     886670.5      1062665  0.6315116        2617634        0.4396951           2820239
+     thetalift[rad]   0.04799383   0.05209165  0.8846472     0.08228328        0.3585711         0.2190515
+ plinepistonjib[Pa]      2794240      3221861  -3.802133        6282015         1.144663           2233370
+    plinerodjib[Pa]      2521323      3165252 -0.6327869        6660562        0.6536082           2496851
+     ppistonjib[Pa]      2789945      3216408  -3.781121        6271334         1.142568           2233801
+        prodjib[Pa]      2529799      3175406 -0.6442164        6657287        0.6557543           2496140
+      thetajib[rad]   0.06992483   0.08178718  0.7094118      0.1482529        0.3303929         0.2875206
+thetaliftdot[rad/s]  0.006102231  0.007806956  0.7551042     0.02398062        0.4973454        0.02037801
+ thetajibdot[rad/s]   0.00662263  0.008069032   0.832971     0.02378049        0.4592043        0.02002739
+Compiled chunk throughput (NOT single-call latency): {'inference_seconds': 12.192366099974606, 'simulated_seconds': 81.99999000000001, 'amortized_us_per_step': 1.4868740959571587, 'RTF': 0.14868740959571586, 'chunk_rows': 20000, 'reinit_every': 0}
+Results: GRU Latent/artifacts\evaluation\Simulation_Output_53\checkpoint_b9264f31b3731f5f\recursive

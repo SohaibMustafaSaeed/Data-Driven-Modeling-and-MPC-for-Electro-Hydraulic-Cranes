@@ -1,0 +1,35 @@
+
+===== recursive | LSTM Numba | epoch 39 =====
+8,199,999 predictions; two measured initialization rows; CSV times 18..100s; dt=10us.
+Prepared inputs are normalized; current u[t] predicts x[t+1]. Latent state persists across chunks. Centered 51-row command smoothing makes this an offline test, not verified causal control.
+Warm physical one-step call (includes normalization/reconstruction; latent already initialized): {'mean_us': 3.6520333333333332, 'median_us': 3.5, 'p95_us': 4.2, 'max_us': 42.5, 'deadline_us': 10.0, 'deadline_miss_percent': 0.16666666666666669, 'RTF': 0.3652033333333333, 'repeats': 3000}
+2,700,000/8,199,999 predictions; elapsed=5.0s; remaining=10.2s
+5,400,000/8,199,999 predictions; elapsed=10.1s; remaining=5.2s
+8,060,000/8,199,999 predictions; elapsed=15.1s; remaining=0.3s
+8,199,999/8,199,999 predictions; elapsed=15.3s; remaining=0.0s
+
+            feature          MAE         RMSE        R2  max_abs_error  NRMSE_train_std  persistence_RMSE
+    speedref[rad/s]  0.005703317  0.007312089       NaN     0.01977226      0.007312089                 0
+   speedpmsm[rad/s] 3.003174e-09 3.366244e-09       NaN    6.32636e-09       0.05666018      2.698269e-07
+           iqref[A] 2.305724e-05 2.884262e-05 0.9972571   5.607686e-05        0.0502142       0.002225145
+           udref[V] 9.734129e-05 0.0001181791 0.9952638   0.0002656264       0.06598338       0.006938403
+           uqref[V] 4.295478e-06 5.250886e-06 0.9987862   1.471403e-05       0.03340433      0.0006088086
+              id[A] 8.535351e-09 9.144826e-09  0.995077   1.575537e-08        0.0659656      6.297322e-07
+              iq[A] 6.205605e-05 7.447142e-05 0.9817146     0.00016633        0.1296499         0.0022252
+           psid[Wb]   0.01431906   0.01760424       NaN     0.03406864       0.01760424      2.430767e-09
+           psiq[Wb] 9.747444e-08 1.213841e-07  0.995566   3.042767e-07       0.06384347      7.365411e-06
+   pumppressure[Pa]     69.58207      91.9056 0.9982902       257.8905       0.03964572          8980.434
+plinepistonlift[Pa]     877312.8      1015787 0.3960672        2049259        0.5750905           1427472
+   plinerodlift[Pa]     766203.9     949111.6 0.7064863        2145773        0.3925921           2822214
+ppistonsidelift[Pa]     873786.8      1011980 0.4020584        2043166        0.5726672           1429698
+   prodsidelift[Pa]     768640.2     951040.6 0.7048595        2135237        0.3935085           2820239
+     thetalift[rad]    0.1050323    0.1142307 0.4453004      0.1730865        0.7863034         0.2190515
+ plinepistonjib[Pa]      2854593      3239284 -3.854208        8618373         1.150852           2233370
+    plinerodjib[Pa]      5084067      5848078 -4.573645   1.399286e+07         1.207598           2496851
+     ppistonjib[Pa]      2857424      3242210 -3.858138        8623772         1.151734           2233801
+        prodjib[Pa]      5084588      5846548 -4.573904   1.399854e+07         1.207373           2496140
+      thetajib[rad]   0.06432861   0.07938136  0.726256      0.1892287        0.3206742         0.2875206
+thetaliftdot[rad/s]  0.005984723  0.007585951 0.7687733     0.01795552        0.4832662        0.02037801
+ thetajibdot[rad/s]  0.005509448  0.006583407 0.8888139     0.02313079        0.3746582        0.02002739
+Compiled chunk throughput (NOT single-call latency): {'inference_seconds': 13.329794400066021, 'simulated_seconds': 81.99999000000001, 'amortized_us_per_step': 1.6255848811769393, 'RTF': 0.1625584881176939, 'chunk_rows': 20000, 'reinit_every': 0}
+Results: LSTM/artifacts\evaluation\Simulation_Output_53\checkpoint_86a34da358160202\recursive

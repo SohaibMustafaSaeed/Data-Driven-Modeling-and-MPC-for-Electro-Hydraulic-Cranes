@@ -1,0 +1,74 @@
+{
+  "models": {
+    "gru2": {
+      "status": "trained",
+      "checkpoint": "GRU Latent/artifacts/best_model.pt",
+      "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+      "copied_files": [
+        "best_model.pt",
+        "latest_model.pt",
+        "best_numba_weights.npz",
+        "config.json",
+        "training_history.json"
+      ]
+    },
+    "lstm4": {
+      "status": "trained",
+      "checkpoint": "LSTM/artifacts/best_model.pt",
+      "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0",
+      "copied_files": [
+        "best_model.pt",
+        "latest_model.pt",
+        "best_numba_weights.npz",
+        "config.json",
+        "training_history.json"
+      ]
+    },
+    "transformer": {
+      "status": "full_training_checkpoint_missing"
+    },
+    "compact": {
+      "status": "trained",
+      "checkpoint": "Compact Recurrent/artifacts/best_model.pt",
+      "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6",
+      "copied_files": [
+        "best_model.pt",
+        "latest_model.pt",
+        "best_numba_weights.npz",
+        "config.json",
+        "training_history.json"
+      ]
+    }
+  },
+  "results": [
+    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/measured_one_step",
+    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive",
+    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive_reinit500",
+    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/measured_one_step",
+    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive",
+    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit500",
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/measured_one_step",
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive",
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit20",
+    "MPC offline Model/results/20261008T124105_070293Z",
+    "MPC offline Model/results/verified_one_second",
+    "MPC offline Model/results/verified_one_second_v2"
+  ],
+  "source_workspace": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV",
+  "checkpoint_weights_modified": false,
+  "mechanical_plant": {
+    "checkpoint": "MPC offline Model/artifacts/mechanical_plant/best_model.pt",
+    "checkpoint_sha256": "ee47597d91ff0460528020c1d2e6bfb31516604300ba8913b40d532711c28a94"
+  },
+  "packaging_validation": {
+    "entrypoints_help": 13,
+    "preprocessing": "small_recording_check_passed",
+    "training": "one_epoch_each_of_four_full_state_models_and_mechanical_plant",
+    "comparison": "88_separate_figures_from_prefix_saved_results",
+    "offline_mpc": "three_action_integration_and_saved_results_plotting",
+    "checkpoint_hashes": "unchanged",
+    "prediction_copies": "matching_size_shape_dtype_and_1000_sample_rows_each",
+    "full_training_or_full_evaluation_rerun": false
+  },
+  "bundled_result_bytes": 13034908706
+}

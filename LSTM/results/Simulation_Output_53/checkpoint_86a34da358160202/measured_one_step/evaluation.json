@@ -1,0 +1,39 @@
+{
+  "mode": "measured_one_step",
+  "tag": "measured_one_step",
+  "checkpoint": "LSTM/artifacts/best_model.pt",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "architecture": "lstm4",
+  "epoch": 39,
+  "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0",
+  "predictions": 8199999,
+  "initial_measured_rows": 2,
+  "dt_s": 1e-05,
+  "excluded_seconds": 18.0,
+  "reinit_every": 0,
+  "latent_resets": 0,
+  "latency": {
+    "mean_us": 3.6546333333333325,
+    "median_us": 3.5,
+    "p95_us": 4.1,
+    "max_us": 34.9,
+    "deadline_us": 10.0,
+    "deadline_miss_percent": 0.2,
+    "RTF": 0.36546333333333325,
+    "repeats": 3000
+  },
+  "throughput": {
+    "inference_seconds": 13.757362100033788,
+    "simulated_seconds": 81.99999000000001,
+    "amortized_us_per_step": 1.677727289970863,
+    "RTF": 0.16777272899708628,
+    "chunk_rows": 20000,
+    "reinit_every": 0
+  },
+  "max_rows": null,
+  "timing_excludes": "JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting",
+  "command_smoothing": "centered Savitzky-Golay 51 rows, offline",
+  "packaged_from": "encoded_gru_lstm_runs/20261007T030354Z/LSTM/evaluation/Simulation_Output_53/checkpoint_86a34da358160202/measured_one_step",
+  "path_metadata_updated_only": true
+}

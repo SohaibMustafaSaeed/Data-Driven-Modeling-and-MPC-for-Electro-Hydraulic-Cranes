@@ -1,0 +1,5 @@
+{
+  "status": "not_trained",
+  "command": "python Transformers/transformer.py --epochs 60",
+  "smoke_checkpoint_not_included": true
+}

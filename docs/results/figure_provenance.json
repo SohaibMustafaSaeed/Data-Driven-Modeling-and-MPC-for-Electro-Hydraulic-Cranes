@@ -1,0 +1,63 @@
+{
+  "full_state_results": [
+    {
+      "model": "GRU2",
+      "mode": "measured_one_step",
+      "source_result": "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/measured_one_step",
+      "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+      "epoch": 35,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "GRU2",
+      "mode": "recursive",
+      "source_result": "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive",
+      "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+      "epoch": 35,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "LSTM4",
+      "mode": "measured_one_step",
+      "source_result": "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/measured_one_step",
+      "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0",
+      "epoch": 39,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "LSTM4",
+      "mode": "recursive",
+      "source_result": "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive",
+      "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0",
+      "epoch": 39,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "Compact Recurrent",
+      "mode": "measured_one_step",
+      "source_result": "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/measured_one_step",
+      "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6",
+      "epoch": null,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    },
+    {
+      "model": "Compact Recurrent",
+      "mode": "recursive",
+      "source_result": "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive",
+      "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6",
+      "epoch": null,
+      "report_modified_for_portable_paths": true,
+      "prediction_and_metric_values_unchanged": true
+    }
+  ],
+  "selected_mpc_run": "MPC offline Model/results/verified_one_second_v2",
+  "mpc_reference_mode": "plant-generated",
+  "display_points": 6000,
+  "metrics_recomputed": false,
+  "transformer_full_training_available": false
+}

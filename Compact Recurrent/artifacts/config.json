@@ -1,0 +1,380 @@
+{
+  "format": "compact_latent_recurrent_numba_24x22_v1",
+  "model": {
+    "latent_dim": 8,
+    "hidden": 32
+  },
+  "training_manifest": [
+    {
+      "file": "prepared:training/Simulation_Output_00.npy",
+      "source_csv": "raw:Train/Simulation_Output_00.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_01.npy",
+      "source_csv": "raw:Train/Simulation_Output_01.csv",
+      "rows": 1200000,
+      "train_rows": 1080000,
+      "validation_start": 1080000,
+      "validation_rows": 120000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_02.npy",
+      "source_csv": "raw:Train/Simulation_Output_02.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_03.npy",
+      "source_csv": "raw:Train/Simulation_Output_03.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_04.npy",
+      "source_csv": "raw:Train/Simulation_Output_04.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_05.npy",
+      "source_csv": "raw:Train/Simulation_Output_05.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_06.npy",
+      "source_csv": "raw:Train/Simulation_Output_06.csv",
+      "rows": 7200000,
+      "train_rows": 6480000,
+      "validation_start": 6480000,
+      "validation_rows": 720000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_07.npy",
+      "source_csv": "raw:Train/Simulation_Output_07.csv",
+      "rows": 7200000,
+      "train_rows": 6480000,
+      "validation_start": 6480000,
+      "validation_rows": 720000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_08.npy",
+      "source_csv": "raw:Train/Simulation_Output_08.csv",
+      "rows": 5200000,
+      "train_rows": 4680000,
+      "validation_start": 4680000,
+      "validation_rows": 520000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_09.npy",
+      "source_csv": "raw:Train/Simulation_Output_09.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_10.npy",
+      "source_csv": "raw:Train/Simulation_Output_10.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_11.npy",
+      "source_csv": "raw:Train/Simulation_Output_11.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_12.npy",
+      "source_csv": "raw:Train/Simulation_Output_12.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_13.npy",
+      "source_csv": "raw:Train/Simulation_Output_13.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_14.npy",
+      "source_csv": "raw:Train/Simulation_Output_14.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_15.npy",
+      "source_csv": "raw:Train/Simulation_Output_15.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_16.npy",
+      "source_csv": "raw:Train/Simulation_Output_16.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_17.npy",
+      "source_csv": "raw:Train/Simulation_Output_17.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_18.npy",
+      "source_csv": "raw:Train/Simulation_Output_18.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_19.npy",
+      "source_csv": "raw:Train/Simulation_Output_19.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_20.npy",
+      "source_csv": "raw:Train/Simulation_Output_20.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_21.npy",
+      "source_csv": "raw:Train/Simulation_Output_21.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_22.npy",
+      "source_csv": "raw:Train/Simulation_Output_22.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_23.npy",
+      "source_csv": "raw:Train/Simulation_Output_23.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_24.npy",
+      "source_csv": "raw:Train/Simulation_Output_24.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_25.npy",
+      "source_csv": "raw:Train/Simulation_Output_25.csv",
+      "rows": 4200000,
+      "train_rows": 3780000,
+      "validation_start": 3780000,
+      "validation_rows": 420000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_26.npy",
+      "source_csv": "raw:Train/Simulation_Output_26.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_27.npy",
+      "source_csv": "raw:Train/Simulation_Output_27.csv",
+      "rows": 6200000,
+      "train_rows": 5580000,
+      "validation_start": 5580000,
+      "validation_rows": 620000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_28.npy",
+      "source_csv": "raw:Train/Simulation_Output_28.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_29.npy",
+      "source_csv": "raw:Train/Simulation_Output_29.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_30.npy",
+      "source_csv": "raw:Train/Simulation_Output_30.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_31.npy",
+      "source_csv": "raw:Train/Simulation_Output_31.csv",
+      "rows": 4200000,
+      "train_rows": 3780000,
+      "validation_start": 3780000,
+      "validation_rows": 420000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_32.npy",
+      "source_csv": "raw:Train/Simulation_Output_32.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_33.npy",
+      "source_csv": "raw:Train/Simulation_Output_33.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_34.npy",
+      "source_csv": "raw:Train/Simulation_Output_34.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_35.npy",
+      "source_csv": "raw:Train/Simulation_Output_35.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_36.npy",
+      "source_csv": "raw:Train/Simulation_Output_36.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_37.npy",
+      "source_csv": "raw:Train/Simulation_Output_37.csv",
+      "rows": 4200000,
+      "train_rows": 3780000,
+      "validation_start": 3780000,
+      "validation_rows": 420000
+    },
+    {
+      "file": "prepared:training/Simulation_Output_38.npy",
+      "source_csv": "raw:Train/Simulation_Output_38.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_39.npy",
+      "source_csv": "raw:Train/Simulation_Output_39.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_40.npy",
+      "source_csv": "raw:Train/Simulation_Output_40.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_41.npy",
+      "source_csv": "raw:Train/Simulation_Output_41.csv",
+      "rows": 8200001,
+      "train_rows": 7380000,
+      "validation_start": 7380000,
+      "validation_rows": 820001
+    },
+    {
+      "file": "prepared:training/Simulation_Output_42.npy",
+      "source_csv": "raw:Train/Simulation_Output_42.csv",
+      "rows": 6200000,
+      "train_rows": 5580000,
+      "validation_start": 5580000,
+      "validation_rows": 620000
+    }
+  ],
+  "scaler_fitted_rows": 292140000,
+  "delta_scale_training_pairs": 430000,
+  "command_alignment": "u[t],x[t],x[t-1] -> x[t+1]",
+  "arguments": {
+    "dataset_dir": "prepared:",
+    "output_dir": "Compact Recurrent/artifacts",
+    "epochs": 60,
+    "overwrite": true,
+    "batch_size": 16,
+    "steps_per_epoch": 20,
+    "latent_dim": 8,
+    "hidden": 32,
+    "learning_rate": 0.001,
+    "warmup_epochs": 2,
+    "short_horizon": 100,
+    "long_horizon": 1000,
+    "burn_in_steps": 10000,
+    "grad_block": 50,
+    "val_horizons": [
+      10000,
+      100000
+    ],
+    "val_windows": 4,
+    "scale_samples_per_file": 10000,
+    "threads": 2,
+    "seed": 42
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "model": "gru2",
+  "checkpoint": "GRU Latent/artifacts/best_model.pt",
+  "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "selected_retained_row": 3915001,
+  "selected_csv_time": 57.15001,
+  "simulation": "full-state optimizer predictor; separately trained mechanical Compact plant; no future recorded-state refresh",
+  "mechanical_checkpoint": "MPC offline Model/artifacts/mechanical_plant/best_model.pt",
+  "mechanical_checkpoint_sha256": "ee47597d91ff0460528020c1d2e6bfb31516604300ba8913b40d532711c28a94",
+  "feedback_policy": "correct four mechanical fields in last two internal rows; preserve all other state estimates and full memory",
+  "initial_nonmechanical_state": "seeded from two initial recording rows; subsequently predicted internally",
+  "strict_optimizer_plant_separation": true,
+  "reference_mode": "plant-generated",
+  "reproduction": {
+    "exact_reproduction_pass": false,
+    "held_reproduction_pass": false,
+    "held_commands_in_mpc_bounds": true,
+    "reproduction_gate_pass": false,
+    "angle_rmse_tolerance_rad": 0.002,
+    "velocity_rmse_tolerance_rad_s": 0.002,
+    "interpretation": "Configurable recorded-command reproduction test; failure does not prove mathematical unreachability.",
+    "command_source": "same prepared centered-smoothed recorded commands as model preprocessing",
+    "steps": 1000,
+    "block_steps": 100,
+    "selected_retained_row": 3915001,
+    "metrics": [
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetalift[rad]",
+        "RMSE": 0.0039374727,
+        "MAE": 0.00324464,
+        "max_abs_error": 0.0073669094,
+        "R2": 0.6982120614
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetajib[rad]",
+        "RMSE": 0.0008081547,
+        "MAE": 0.0006333724,
+        "max_abs_error": 0.0016232835,
+        "R2": 0.9895167428
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetaliftdot[rad/s]",
+        "RMSE": 0.006735467,
+        "MAE": 0.0064236003,
+        "max_abs_error": 0.0083024752,
+        "R2": -5.6447246101
+      },
+      {
+        "replay": "exact_prepared_commands",
+        "feature": "thetajibdot[rad/s]",
+        "RMSE": 0.00271778,
+        "MAE": 0.0025735411,
+        "max_abs_error": 0.004190938,
+        "R2": -14.48825368
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetalift[rad]",
+        "RMSE": 0.003938417,
+        "MAE": 0.0032454485,
+        "max_abs_error": 0.0073683209,
+        "R2": 0.6980672888
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetajib[rad]",
+        "RMSE": 0.0008077386,
+        "MAE": 0.0006330088,
+        "max_abs_error": 0.0016227081,
+        "R2": 0.9895275347
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetaliftdot[rad/s]",
+        "RMSE": 0.0067373852,
+        "MAE": 0.0064254582,
+        "max_abs_error": 0.0083043512,
+        "R2": -5.6485099718
+      },
+      {
+        "replay": "held_recorded_commands",
+        "feature": "thetajibdot[rad/s]",
+        "RMSE": 0.0027174484,
+        "MAE": 0.0025731449,
+        "max_abs_error": 0.004191977,
+        "R2": -14.4844745215
+      }
+    ]
+  },
+  "terminal_weights": {
+    "angle": 20.0,
+    "velocity": 5.0
+  },
+  "preprocessing": "same prepared cache; recorded commands use centered offline smoothing; optimized commands are held, not smoothed",
+  "dt_seconds": 1e-05,
+  "control_interval_seconds": 0.001,
+  "actual_duration_seconds": 1.0,
+  "command_bounds": {
+    "low": [
+      -0.9999999723274773,
+      -0.9999999978489263
+    ],
+    "high": [
+      1.0000032089789734,
+      1.00000154537254
+    ],
+    "source": "explicit bounds or sampled training commands"
+  },
+  "normalized_mechanical_error_scale": [
+    0.1452756424840032,
+    0.24754517845098534,
+    0.015697249958841208,
+    0.017571768630515548
+  ],
+  "arguments": {
+    "plot_results": null,
+    "checkpoint": null,
+    "mechanical_checkpoint": "MPC offline Model/artifacts/mechanical_plant/best_model.pt",
+    "dataset_dir": "prepared:",
+    "test_file": "Simulation_Output_53.csv",
+    "output_dir": "MPC based Controller\\full state model\\mpc_mechanical_plant_runs\\verified_one_second_v2",
+    "overwrite": true,
+    "segment_from": "MPC based Controller\\full state model\\mpc_mechanical_plant_runs\\verified_one_second_v2",
+    "horizon_ms": 100.0,
+    "reference_mode": "plant-generated",
+    "allow_reference_mismatch": false,
+    "replay_only": false,
+    "reachability_angle_tolerance": 0.002,
+    "reachability_velocity_tolerance": 0.002,
+    "terminal_angle_weight": 20.0,
+    "terminal_velocity_weight": 5.0,
+    "tracking_scales": null,
+    "duration": 1.0,
+    "start_seconds": 39.15001,
+    "block_steps": 100,
+    "horizon": 100,
+    "moves": 10,
+    "maxiter": 15,
+    "fd_step": 0.03,
+    "ftol": 1e-08,
+    "angle_weight": 10.0,
+    "velocity_weight": 1.0,
+    "effort_weight": 0.0001,
+    "smoothness_weight": 0.001,
+    "lift_bounds": null,
+    "jib_bounds": null,
+    "bound_samples_per_file": 1000,
+    "neutral_command": [
+      0.0,
+      0.0
+    ],
+    "progress_every": 25,
+    "threads": 2,
+    "no_show": false
+  },
+  "path_metadata_updated_only": true
+}
