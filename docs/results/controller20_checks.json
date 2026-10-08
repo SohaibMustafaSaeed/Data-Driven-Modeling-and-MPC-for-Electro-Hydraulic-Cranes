@@ -1,0 +1,11 @@
+{
+  "controller_interval_s": 0.1,
+  "horizon_s": 2,
+  "internal_steps": 200000,
+  "intervals": 20,
+  "all_sample_counts_verified": true,
+  "partial_endpoint_excluded": true,
+  "all_four_full_2second_predictions_match_saved": true,
+  "all_four_full_2second_future_state_perturbations_ignored": true,
+  "original_and_portable_saved_comparison_passed": true
+}

@@ -1,0 +1,67 @@
+{
+  "mode": "recursive",
+  "tag": "recursive_reinit200000",
+  "checkpoint": "Transformers/artifacts/best_model.pt",
+  "source_csv": "raw:Test/Simulation_Output_53.csv",
+  "cache": "prepared:testing/Simulation_Output_53.npy",
+  "architecture": "transformer",
+  "epoch": 19,
+  "timing_history_tokens": 64,
+  "inference_backend": "numba",
+  "core_precision": "float32",
+  "benchmark_environment": {
+    "cpu": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "machine": "AMD64",
+    "python": "3.12.10",
+    "numba": "0.67.0",
+    "numpy": "2.5.3",
+    "torch": "2.14.0+cpu"
+  },
+  "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4",
+  "predictions": 8199999,
+  "initial_measured_rows": 2,
+  "dt_s": 1e-05,
+  "excluded_seconds": 18.0,
+  "reinit_every": 200000,
+  "latent_resets": 41,
+  "latency": {
+    "mean_us": 29.329999999999995,
+    "median_us": 22.799999999999997,
+    "p95_us": 55.77499999999995,
+    "max_us": 76.7,
+    "deadline_us": 10.0,
+    "deadline_miss_percent": 100.0,
+    "RTF": 2.9329999999999994,
+    "repeats": 10
+  },
+  "throughput": {
+    "inference_seconds": 122.99615809990792,
+    "simulated_seconds": 81.99999000000001,
+    "amortized_us_per_step": 14.999533304809905,
+    "RTF": 1.4999533304809902,
+    "chunk_rows": 200000,
+    "reinit_every": 200000
+  },
+  "max_rows": null,
+  "horizon_latency": {
+    "horizon_steps": 200000,
+    "includes": "physical input normalization, memory reset, all rollout steps and physical output reconstruction",
+    "median_us": 3025893.2,
+    "mean_us": 3018753.8333333335,
+    "p95_us": 3034336.82,
+    "repeats": 3
+  },
+  "reset_protocol": "two measured states; cold memory reset each horizon; only commands and predicted states within horizon",
+  "timing_excludes": "JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting",
+  "command_smoothing": "centered Savitzky-Golay 51 rows, offline",
+  "controller_horizon_validation": {
+    "controller_intervals": 20,
+    "control_interval_seconds": 0.1,
+    "samples_per_control_interval": 10000,
+    "internal_horizon_steps": 200000,
+    "prediction_duration_seconds": 2.0,
+    "controller_config": "MPC offline Model/results/full_csv_patu_100ms/config.json",
+    "command_policy": "recorded prepared command preview at the original sample rate",
+    "interpretation": "conditional dynamics validation over the controller time horizon; not a closed-loop MPC run"
+  }
+}

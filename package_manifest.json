@@ -70,7 +70,11 @@
     "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit200",
     "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit200",
     "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit200",
-    "MPC offline Model/results/full_csv_patu_100ms"
+    "MPC offline Model/results/full_csv_patu_100ms",
+    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive_reinit200000",
+    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit200000",
+    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit200000",
+    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit200000"
   ],
   "source_workspace": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV",
   "checkpoint_weights_modified": false,
@@ -88,7 +92,7 @@
     "prediction_copies": "matching_size_shape_dtype_and_1000_sample_rows_each",
     "full_training_or_full_evaluation_rerun": false
   },
-  "bundled_result_bytes": 27616603537,
+  "bundled_result_bytes": 33395588480,
   "kinematic_mpc": {
     "geometry_source": "User-supplied PATU assembly vectors and base frame",
     "geometry_file": "MPC offline Model/geometry_patu.json",
@@ -133,7 +137,8 @@
     "recurrent_state_reset_from_two_measured_rows": true,
     "predictions_recomputed": true,
     "end_effector_trajectory_scope": "reference versus MPC-controlled independent mechanical plant; whole CSV",
-    "sequential_matched_200_step_cpu_benchmarks": true
+    "sequential_matched_200_step_cpu_benchmarks": true,
+    "stronger_validation": "20 actual controller intervals = 2s; short internal-step diagnostics retained separately"
   },
   "main_mpc_analysis": {
     "full_recording": true,
@@ -158,5 +163,38 @@
     "scored_microsteps": 8199999,
     "MPC_reference": "plant-generated",
     "MPC_optimizer_maxiter": 5
+  },
+  "controller_time_validation": {
+    "controller_intervals": 20,
+    "control_interval_seconds": 0.1,
+    "samples_per_control_interval": 10000,
+    "internal_horizon_steps": 200000,
+    "prediction_duration_seconds": 2.0,
+    "controller_config": "MPC offline Model/results/full_csv_patu_100ms/config.json",
+    "command_policy": "recorded prepared command preview at the original sample rate",
+    "interpretation": "conditional dynamics validation over the controller time horizon; not a closed-loop MPC run",
+    "predictions_per_model": 8199999,
+    "reset_blocks": 41,
+    "last_block_predictions": 199999,
+    "endpoint_policy": "Only complete controller intervals scored as exact endpoints; partial tail scored in all-sample metrics",
+    "mpc_planning_horizon_unchanged": true,
+    "checkpoints": [
+      {
+        "model": "GRU",
+        "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25"
+      },
+      {
+        "model": "LSTM",
+        "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0"
+      },
+      {
+        "model": "Transformer",
+        "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4"
+      },
+      {
+        "model": "Compact Recurrent",
+        "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6"
+      }
+    ]
   }
 }

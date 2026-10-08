@@ -1,0 +1,530 @@
+[
+  {
+    "model": "GRU",
+    "feature": "speedref[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_01.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "speedpmsm[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_02.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "iqref[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_03.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "udref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_04.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "uqref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_05.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "id[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_06.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "iq[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_07.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "psid[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_08.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "psiq[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_09.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "pumppressure[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_10.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "plinepistonlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_11.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "plinerodlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_12.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "ppistonsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_13.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "prodsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_14.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "thetalift[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_15.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "plinepistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_16.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "plinerodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_17.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "ppistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_18.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "prodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_19.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "thetajib[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_20.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "thetaliftdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_21.png"
+  },
+  {
+    "model": "GRU",
+    "feature": "thetajibdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\GRU\\feature_22.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "speedref[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_01.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "speedpmsm[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_02.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "iqref[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_03.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "udref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_04.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "uqref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_05.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "id[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_06.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "iq[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_07.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "psid[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_08.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "psiq[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_09.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "pumppressure[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_10.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "plinepistonlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_11.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "plinerodlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_12.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "ppistonsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_13.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "prodsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_14.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "thetalift[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_15.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "plinepistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_16.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "plinerodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_17.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "ppistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_18.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "prodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_19.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "thetajib[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_20.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "thetaliftdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_21.png"
+  },
+  {
+    "model": "LSTM",
+    "feature": "thetajibdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\LSTM\\feature_22.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "speedref[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_01.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "speedpmsm[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_02.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "iqref[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_03.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "udref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_04.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "uqref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_05.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "id[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_06.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "iq[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_07.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "psid[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_08.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "psiq[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_09.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "pumppressure[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_10.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "plinepistonlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_11.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "plinerodlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_12.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "ppistonsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_13.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "prodsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_14.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "thetalift[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_15.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "plinepistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_16.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "plinerodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_17.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "ppistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_18.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "prodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_19.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "thetajib[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_20.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "thetaliftdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_21.png"
+  },
+  {
+    "model": "Transformer",
+    "feature": "thetajibdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Transformer\\feature_22.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "speedref[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_01.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "speedpmsm[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_02.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "iqref[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_03.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "udref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_04.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "uqref[V]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_05.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "id[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_06.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "iq[A]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_07.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "psid[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_08.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "psiq[Wb]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_09.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "pumppressure[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_10.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "plinepistonlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_11.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "plinerodlift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_12.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "ppistonsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_13.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "prodsidelift[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_14.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "thetalift[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_15.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "plinepistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_16.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "plinerodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_17.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "ppistonjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_18.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "prodjib[Pa]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_19.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "thetajib[rad]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_20.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "thetaliftdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_21.png"
+  },
+  {
+    "model": "Compact Recurrent",
+    "feature": "thetajibdot[rad/s]",
+    "mode": "recursive_reinit200000",
+    "path": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV\\MPC based Controller\\Final Codes\\results\\comparison\\Simulation_Output_53\\b17a6a363d\\r200000\\recursive_reinit200000\\feature_plots\\Compact_Recurrent\\feature_22.png"
+  }
+]

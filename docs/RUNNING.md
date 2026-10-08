@@ -1,5 +1,17 @@
 # Running the models and offline MPC
 
+## Stronger controller-time prediction test
+
+Use `python evaluate_controller_horizon.py --controller-horizon 20 --saved-only`
+to print cached two-second forecast results and open the whole-CSV comparison,
+persistence and interval-error plots. The default saved controller has a 100-ms
+interval, so 20 controller intervals means 200,000 internal steps. Use
+`--controller-config` for another controller. Omit `--saved-only` to compute missing
+predictions. All 8,199,999 targets are scored; exact-endpoint metrics omit the
+incomplete final interval. This is conditional recorded-command-preview validation,
+not a new closed-loop MPC experiment. The 200-sample test remains a short diagnostic.
+See [controller-time methodology and results](CONTROLLER_HORIZON_VALIDATION.md).
+
 This directory is the project root. Scripts resolve artifacts relative to their
 own location and do not import code from the original project folders.
 Run the commands below from this directory using Python 3.12.

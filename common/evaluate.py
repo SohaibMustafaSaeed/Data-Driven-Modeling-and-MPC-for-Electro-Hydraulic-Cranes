@@ -33,6 +33,8 @@ def main():
     p.add_argument('--recursive', action='store_true', help='Recursive-only alias')
     p.add_argument('--chunk-rows', type=int, default=20000)
     p.add_argument('--reinit-every', type=int, default=200, help='Reset recursive latent state from measured rows every N predictions; 0 keeps continuous rollout')
+    p.add_argument('--controller-config', type=Path, help='Use this saved controller interval to convert --controller-horizon into internal samples')
+    p.add_argument('--controller-horizon', type=int, default=20, help='Number of controller intervals when --controller-config is supplied')
     p.add_argument('--latency-repeats', type=int, default=3000)
     p.add_argument('--max-rows', type=int, help='Explicit prefix limit; default entire retained CSV')
     p.add_argument('--show', action=argparse.BooleanOptionalAction, default=True)
@@ -65,6 +67,16 @@ def main():
     dt = float(sc['sampling_interval_seconds'])
     offset = int(sc['startup_rows_removed']) * dt
     n = len(x) - 2
+    controller = None
+    if a.controller_config:
+        from common.horizons import controller_protocol
+        controller = controller_protocol(a.controller_config, dt, a.controller_horizon)
+        if a.mode != 'recursive':
+            p.error('Controller-horizon validation requires recursive mode')
+        if '--reinit-every' in sys.argv:
+            p.error('Use --controller-config or --reinit-every; do not combine them')
+        a.reinit_every = controller['internal_horizon_steps']
+        print('Controller-time validation: ' + str(controller), flush=True)
 
     def physical(y):
         return np.asarray(y, dtype=np.float64) * std[list(STATE_INDICES)] + mean[list(STATE_INDICES)]
@@ -134,7 +146,7 @@ def main():
             commands_physical = np.asarray(x[1:reinit + 1][:, [0, 16]], float) * std[[0, 16]] + mean[[0, 16]]
             horizon_kernel(prev.astype(float) * std + mean, current.astype(float) * std + mean, commands_physical, mean, std, w)
             horizon_times = []
-            for repeat in range(min(a.latency_repeats, 1000)):
+            for repeat in range(min(a.latency_repeats, max(3, min(1000, 200000 // reinit)))):
                 tick = time.perf_counter_ns()
                 horizon_kernel(prev.astype(float) * std + mean, current.astype(float) * std + mean, commands_physical, mean, std, w)
                 horizon_times.append((time.perf_counter_ns() - tick) / 1000)
@@ -172,6 +184,11 @@ def main():
         emit('\n' + metrics.to_string(index=False, float_format=lambda v: f'{v:.7g}'))
         emit(f'Compiled chunk throughput (NOT single-call latency): {throughput}')
         write_json(out / 'evaluation.json', dict(mode=mode, tag=tag, checkpoint=str(a.checkpoint.resolve()), source_csv=str(source), cache=str(cache), architecture=a.architecture, epoch=ck['epoch'], timing_history_tokens=timing_history_tokens, inference_backend='numba', core_precision='float32', benchmark_environment=dict(cpu=platform.processor(), machine=platform.machine(), python=platform.python_version(), numba=numba.__version__, numpy=np.__version__, torch=str(trainer.torch.__version__)), checkpoint_sha256=hashlib.sha256(a.checkpoint.read_bytes()).hexdigest(), predictions=n, initial_measured_rows=2, dt_s=dt, excluded_seconds=offset, reinit_every=reinit, latent_resets=int(np.ceil(n / reinit)) if reinit else 0, latency=latency, throughput=throughput, max_rows=a.max_rows, horizon_latency=horizon_latency, reset_protocol='two measured states; cold memory reset each horizon; only commands and predicted states within horizon', timing_excludes='JIT compilation, initialization, CSV/cache I/O, file writes, scoring and plotting', command_smoothing='centered Savitzky-Golay 51 rows, offline'))
+        if controller:
+            import json
+            report = json.loads((out / 'evaluation.json').read_text())
+            report['controller_horizon_validation'] = controller
+            write_json(out / 'evaluation.json', report)
         coverage = recording_coverage(cache, n, 2, dt, offset, reinit, source)
         save_coverage(out / 'recording_coverage.json', coverage)
         emit(f'Coverage: {n:,}/{coverage["expected_prediction_rows"]:,} predictions; full retained CSV={coverage["full_retained_recording"]}')

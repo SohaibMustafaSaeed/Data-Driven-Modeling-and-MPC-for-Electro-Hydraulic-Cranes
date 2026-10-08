@@ -5,8 +5,9 @@ mechanical Compact Recurrent model as the simulated plant for offline MPC**.
 The main trajectory results below are **reference versus controlled mechanical
 plant**, across every retained sample of `Simulation_Output_53.csv`.
 
-The state-model comparison now uses **200 recursive steps before each measured
-reset**, rather than 20. No model was retrained and no checkpoint weights changed.
+The stronger model validation now forecasts **20 actual controller intervals
+(2 seconds)** before a measured reset. The existing **200 internal-step (2-ms)**
+test remains a separate short-horizon diagnostic. No checkpoint weights changed.
 
 ## MPC: reference versus the mechanical plant
 
@@ -32,7 +33,7 @@ It is **never reset to future recorded states**. Every internal sample is scored
 
 | Controller setting | Completed run |
 | --- | --- |
-| Internal model sample time | 10 Âµs |
+| Internal model sample time | 10 µs |
 | Held command / control interval | 100 ms = 10,000 internal samples |
 | Prediction horizon | 200 ms = 2 control intervals |
 | Planned command blocks | 2; 4 optimization variables |
@@ -61,7 +62,7 @@ future recorded command sequence as a prescribed solution.
 
 These are controlled-plant results, replacing the previously featured four-model
 FK trajectory gallery. Every sample contributes to the plotted mean and min/max
-envelope; xâ€“z plots also retain per-bin bounding boxes. Full-resolution arrays
+envelope; x–z plots also retain per-bin bounding boxes. Full-resolution arrays
 remain available, and interactive time plots load the visible samples when zoomed.
 
 ### Both booms, and each boom separately
@@ -72,12 +73,12 @@ remain available, and interactive time plots load the visible samples when zoome
 
 ![Both boom angles and angular velocities, reference versus MPC plant, full CSV](docs/figures/mpc_both_booms_full_csv.png)
 
-[Separate lift-state plot](docs/figures/mpc_lift_full_csv.png) Â·
+[Separate lift-state plot](docs/figures/mpc_lift_full_csv.png) ·
 [separate jib-state plot](docs/figures/mpc_jib_full_csv.png).
 
 ### Measured MPC results
 
-All metrics below use every internal 10-Âµs sample, excluding the two initialization
+All metrics below use every internal 10-µs sample, excluding the two initialization
 rows. Mechanical units are radians and rad/s; Cartesian units are metres and m/s.
 
 | Mechanical state | RMSE | MAE | Max absolute error |
@@ -114,18 +115,111 @@ candidates. Tracking errors and GRU-versus-plant mismatch are saved separately.
 
 ![Solve time and objective throughout the full controller run](docs/figures/mpc_solve_time_and_cost.png)
 
-[MPC summary and solver metrics](docs/results/mpc_full_csv_summary.json) Â·
-[all-sample mechanical tracking metrics](docs/results/mpc_full_csv_tracking_metrics.csv) Â·
-[all-sample end-effector metrics](docs/results/mpc_full_csv_end_effector_metrics.csv) Â·
-[reference reproduction diagnostic](docs/results/mpc_full_csv_reproduction_metrics.csv) Â·
+[MPC summary and solver metrics](docs/results/mpc_full_csv_summary.json) ·
+[all-sample mechanical tracking metrics](docs/results/mpc_full_csv_tracking_metrics.csv) ·
+[all-sample end-effector metrics](docs/results/mpc_full_csv_end_effector_metrics.csv) ·
+[reference reproduction diagnostic](docs/results/mpc_full_csv_reproduction_metrics.csv) ·
 [coverage proof](docs/results/mpc_full_csv_recording_coverage.json).
 
-## Full-state model comparison: 200-step measured resets
+## Prediction validation over 20 actual controller intervals
+
+The stronger dynamics test uses the **actual 100-ms interval of the published
+controller**, read from its saved configuration: **20 × 100 ms = 2 seconds**, or
+**200,000 internal model steps**. This is separate from 20 internal samples
+(0.2 ms) and 200 internal samples (2 ms). High R² in those tiny-horizon tests
+does not establish predictive accuracy over an MPC-relevant duration.
+
+All four models now have a recomputed **two-second recursive forecast test across
+the entire retained CSV**: 8,199,999 targets each, 41 measured-reset blocks, and
+199,999 predictions in the final partial block. Each block starts from two
+measured rows and reset memory. There are no measured-state refreshes inside a
+forecast block. Every retained target contributes to the global error metrics.
+
+| Model | Lift angle RMSE [rad] | Jib angle RMSE [rad] | Lift velocity RMSE [rad/s] | Jib velocity RMSE [rad/s] |
+| --- | --- | --- | --- | --- |
+| GRU | 0.00267003 | 0.00419828 | 0.00434339 | 0.00561563 |
+| LSTM | 0.00304465 | 0.00475421 | 0.00398889 | 0.00561928 |
+| Transformer | 0.00340935 | 0.00841001 | 0.00503473 | 0.00952408 |
+| Compact Recurrent | 0.00210751 | 0.00235846 | 0.00321849 | 0.0037923 |
+| Hold initial measured state | 0.018517 | 0.0234549 | 0.00611215 | 0.00979436 |
+
+The persistence baseline freezes all states at the initial measured row of each
+two-second block. Errors are reported in physical units and relative to that
+baseline. Angle R² can remain high because boom angle varies slowly across the
+recording; angular velocity and pressure errors reveal additional limitations.
+These results establish conditional predictive skill on this held-out recording,
+not perfect model quality or general performance on other operating conditions.
+
+![Two-second forecasts across the entire CSV: lift and jib angles](docs/figures/controller20_full_csv_angles.png)
+
+![Two-second forecasts across the entire CSV: lift and jib angular velocities](docs/figures/controller20_full_csv_velocities.png)
+
+### Why the earlier plots looked perfect
+
+| GRU forecast duration | Lift velocity RMSE [rad/s] | Lift velocity R? | Jib velocity RMSE [rad/s] | Jib velocity R? |
+| --- | --- | --- | --- | --- |
+| 20 internal samples: 0.2 ms | 3.390756e-06 | 0.999999953803 | 5.765094e-06 | 0.999999914737 |
+| 200 internal samples: 2 ms | 3.282399e-05 | 0.999995670871 | 5.656502e-05 | 0.999991791858 |
+| 20 controller intervals: 2 s | 0.004343389 | 0.924198934171 | 0.005615626 | 0.919100580508 |
+
+These use the same checkpoint and recording. The shorter horizons have much less
+time to accumulate error before a measured reset. Near-one R? at 0.2 or 2 ms
+does not imply near-one R? over two seconds. [All models and states at all three
+durations](docs/results/forecast_duration_comparison.csv) are saved for comparison.
+
+### Error and persistence at every controller prediction interval
+
+The first figure scores every internal sample within each 100-ms lead interval,
+aggregated across all forecast blocks throughout the CSV. The second scores exact
+100-ms endpoints at leads 1 through 20. An incomplete final interval is included
+in all-sample metrics but excluded from exact-endpoint metrics: **819 exact
+endpoints per model** are available, with 40 at the full two-second lead and 41
+at each earlier lead. No target beyond the CSV is invented.
+
+![Controller-interval forecast errors versus holding the measured state](docs/figures/controller20_interval_errors.png)
+
+![Exact controller-endpoint forecast errors versus persistence](docs/figures/controller20_endpoint_errors.png)
+
+**Input assumption:** this test supplies the known recorded, preprocessed command
+sequence at its original sample rate. It evaluates dynamics conditional on a
+command preview, not the optimizer's ability to choose commands. Those commands
+are not forced into 100-ms holds; forcing them into holds while scoring against
+the original recording would also introduce command-approximation error. The
+existing centered command smoothing remains offline preprocessing. This test
+therefore does not establish deployment causality or closed-loop MPC tracking.
+
+**Controller distinction:** the completed mechanical-plant MPC run above still
+uses a two-interval, 200-ms planning horizon. This new 20-interval test does not
+change that optimizer, its commands, its convergence rate or its measured tracking
+results. The model-validation horizon and closed-loop controller experiment are
+reported separately. The mechanical plant remains the only simulated MPC plant;
+the four state-model forecasts are not four end-effector tracking experiments.
+
+[All-state errors, R² and persistence](docs/results/controller20_all_state_metrics.csv) ·
+[errors at all 20 intervals and exact endpoints](docs/results/controller20_metrics_by_interval.csv) ·
+[model summary](docs/results/controller20_model_summary.csv) ·
+[whole-CSV coverage](docs/results/controller20_recording_coverage.csv) ·
+[duration, command assumption and checkpoint provenance](docs/results/controller20_protocol.json).
+
+From the project root, with dataset paths configured:
+
+```powershell
+python evaluate_controller_horizon.py --controller-horizon 20 --saved-only
+python compare_models.py --controller-config "MPC offline Model/results/full_csv_patu_100ms/config.json" --controller-horizon 20 --saved-only
+```
+
+The first command prints cached metrics and opens the complete-recording overviews
+and persistence/lead plots. The second opens a separate full-recording figure for
+each model/state. Omit `--saved-only` in the first command to compute missing
+forecasts. Pass another completed controller's `--controller-config` to convert
+its actual interval duration automatically. Add `--no-show` to save without GUI.
+
+## Short-horizon diagnostic: 200 internal-step measured resets
 
 | Setting | Value |
 | --- | --- |
 | Models | GRU, LSTM, Transformer, Compact Recurrent |
-| Internal step | 10 Âµs |
+| Internal step | 10 µs |
 | Prediction block before measured reset | 200 samples = 2 ms |
 | Complete-CSV predictions per model | 8,199,999 |
 | Reset blocks | 41,000 |
@@ -139,16 +233,16 @@ inference; physical metrics use reconstructed outputs. Normalization, targets an
 reset boundaries match. Compact retains its historical different training
 curriculum; this is not a claim of identical training objectives across all four.
 
-| Model | Parameters | Mean NRMSE, all 22 states | Mean NRMSE, mechanics | 200-step median [Âµs] |
+| Model | Parameters | Mean NRMSE, all 22 states | Mean NRMSE, mechanics | 200-step median [µs] |
 | --- | --- | --- | --- | --- |
 | GRU | 4098 | 0.0003972997 | 0.001331286 | 297.9 |
 | LSTM | 4946 | 0.0003988728 | 0.001339987 | 324.7 |
 | Transformer | 4710 | 0.0004022796 | 0.001323912 | 2558.15 |
 | Compact Recurrent | 4246 | 0.0003874854 | 0.00133942 | 250.6 |
 
-Even 200 internal samples spans only **2 ms**. High RÂ² is expected for slowly
+Even 200 internal samples spans only **2 ms**. High R² is expected for slowly
 moving boom states under frequent measurement resets and does not establish
-long-horizon accuracy. Plots now display **1 âˆ’ RÂ² in scientific notation**,
+long-horizon accuracy. Plots now display **1 − R² in scientific notation**,
 instead of rounding near-one values to `1.000000`. Persistence RMSE and error by
 prediction lead provide more useful context. A ratio of model RMSE to persistence
 RMSE below one indicates improvement over holding the measured state fixed.
@@ -161,9 +255,9 @@ RMSE below one indicates improvement over holding the measured state fixed.
 
 ![Errors at each prediction lead, aggregated over every block of the entire CSV](docs/figures/reset200_error_by_lead.png)
 
-[All-state MAE, RMSE, RÂ², 1âˆ’RÂ², NRMSE and persistence](docs/results/reset200_all_state_metrics.csv) Â·
-[metrics by lead 1â€“200](docs/results/reset200_metrics_by_prediction_step.csv) Â·
-[model summary and timing](docs/results/reset200_model_summary.csv) Â·
+[All-state MAE, RMSE, R², 1−R², NRMSE and persistence](docs/results/reset200_all_state_metrics.csv) ·
+[metrics by lead 1–200](docs/results/reset200_metrics_by_prediction_step.csv) ·
+[model summary and timing](docs/results/reset200_model_summary.csv) ·
 [complete-recording coverage](docs/results/reset200_recording_coverage.csv).
 
 The four-model FK trajectory plots and reset-20 results remain as historical
@@ -239,6 +333,6 @@ All four full-state artifacts and the 1,060-parameter mechanical artifact are
 included. Large arrays and checkpoints use Git LFS. Run `git lfs pull` after
 cloning to obtain them. No weights changed for these analyses.
 
-[Dataset, preprocessing and training commands](docs/RUNNING.md) Â·
-[full-recording methodology](docs/FULL_RECORDING.md) Â·
+[Dataset, preprocessing and training commands](docs/RUNNING.md) ·
+[full-recording methodology](docs/FULL_RECORDING.md) ·
 [Cartesian MPC and PATU geometry](docs/CARTESIAN_MPC.md).

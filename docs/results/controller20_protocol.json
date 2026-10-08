@@ -1,0 +1,33 @@
+{
+  "controller_intervals": 20,
+  "control_interval_seconds": 0.1,
+  "samples_per_control_interval": 10000,
+  "internal_horizon_steps": 200000,
+  "prediction_duration_seconds": 2.0,
+  "controller_config": "MPC offline Model/results/full_csv_patu_100ms/config.json",
+  "command_policy": "recorded prepared command preview at the original sample rate",
+  "interpretation": "conditional dynamics validation over the controller time horizon; not a closed-loop MPC run",
+  "predictions_per_model": 8199999,
+  "reset_blocks": 41,
+  "last_block_predictions": 199999,
+  "endpoint_policy": "Only complete controller intervals scored as exact endpoints; partial tail scored in all-sample metrics",
+  "mpc_planning_horizon_unchanged": true,
+  "checkpoints": [
+    {
+      "model": "GRU",
+      "checkpoint_sha256": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25"
+    },
+    {
+      "model": "LSTM",
+      "checkpoint_sha256": "86a34da358160202f88d5ad461865aaef764c74c022230a51af14599d27702c0"
+    },
+    {
+      "model": "Transformer",
+      "checkpoint_sha256": "ac2b53cfda13bb02d487c341a7bddeed555ced534455be269a5138b0039759d4"
+    },
+    {
+      "model": "Compact Recurrent",
+      "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6"
+    }
+  ]
+}

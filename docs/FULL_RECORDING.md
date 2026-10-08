@@ -1,12 +1,24 @@
 # Full-recording model tests and offline MPC
 
+## Stronger controller-time prediction test
+
+Use `python evaluate_controller_horizon.py --controller-horizon 20 --saved-only`
+to print cached two-second forecast results and open the whole-CSV comparison,
+persistence and interval-error plots. The default saved controller has a 100-ms
+interval, so 20 controller intervals means 200,000 internal steps. Use
+`--controller-config` for another controller. Omit `--saved-only` to compute missing
+predictions. All 8,199,999 targets are scored; exact-endpoint metrics omit the
+incomplete final interval. This is conditional recorded-command-preview validation,
+not a new closed-loop MPC experiment. The 200-sample test remains a short diagnostic.
+See [controller-time methodology and results](CONTROLLER_HORIZON_VALIDATION.md).
+
 Every analysis keeps the existing 18-second startup trim. For Simulation_Output_53.csv,
 10,000,001 raw rows become 8,200,001 retained rows. Two measured rows initialize the
 model; all remaining 8,199,999 samples, from 18.000020 to 100 s, are scored.
 
 ## State-model validation
 
-The main comparison uses 200 internal samples per recursive block (2 ms), followed
+The short-horizon diagnostic uses 200 internal samples per recursive block (2 ms), followed
 by a measured-state and memory reset. This gives 41,000 blocks, with 199 predictions
 in the last block. No future measured states enter the predictions inside a block.
 All four full-state models retain their original trained weights.

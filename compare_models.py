@@ -117,6 +117,8 @@ def main():
     p.add_argument('--reinit-every', type=int, help='Recursive reset horizon; default is 200 internal prediction samples')
     p.add_argument('--saved-only', action='store_true', help='Load cached results only; no inference')
     p.add_argument('--allow-prefix', action='store_true', help='Permit explicitly limited evaluations; both must cover identical targets')
+    p.add_argument('--controller-config', type=Path, help='Saved MPC config defining the physical control interval')
+    p.add_argument('--controller-horizon', type=int, default=20, help='Controller intervals to forecast with --controller-config')
     a = p.parse_args()
     if a.plot_points < 2:
         p.error('--plot-points must be at least 2')
@@ -138,6 +140,13 @@ def main():
         if not history.is_file() or len(json.loads(history.read_text())) < expected:
             p.error(f'Training has not completed: {checkpoint.parent}')
         loaded.append(ck)
+    if a.controller_config:
+        from common.horizons import controller_protocol
+        if a.reinit_every is not None:
+            p.error('Use --controller-config or --reinit-every, not both')
+        protocol = controller_protocol(a.controller_config, float(loaded[0]['scaler']['sampling_interval_seconds']), a.controller_horizon)
+        a.reinit_every = protocol['internal_horizon_steps']
+        print('Controller-time validation: ' + json.dumps(protocol, indent=2), flush=True)
     if a.reinit_every is None:
         a.reinit_every = 200
     if a.reinit_every < 1:
