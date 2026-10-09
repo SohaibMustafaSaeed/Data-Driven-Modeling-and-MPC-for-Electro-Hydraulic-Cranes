@@ -44,10 +44,8 @@ def ensure_results(root, checkpoint, architecture, scenarios, args):
             if report.get('max_rows') is not None and (not args.allow_prefix):
                 raise ValueError(f'Prefix evaluation requires --allow-prefix: {folder}')
             continue
-        if folder.exists() and any(folder.iterdir()):
-            raise ValueError(f'Incomplete result folder: {folder}; supply a fresh result folder for this model')
         if args.saved_only:
-            raise FileNotFoundError(f'Missing saved evaluation: {folder}')
+            raise FileNotFoundError(f'Missing local prediction arrays: {folder}; omit --saved-only to regenerate from your dataset')
         command = [sys.executable, str(ROOT / 'common/evaluate.py'), '--architecture', architecture, '--checkpoint', str(checkpoint), '--output-dir', str(root), '--test-file', args.test_file, '--mode', 'measured' if mode == 'measured_one_step' else 'recursive', '--no-show']
         if tag.startswith('recursive_reinit'):
             command += ['--reinit-every', str(args.reinit_every)]

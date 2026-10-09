@@ -6,3 +6,40 @@ __pycache__/
 *.nbi
 *.tmp
 *.incomplete.npy
+
+# Regenerable experiment output; curated publication summaries live in docs/results.
+/results/
+/*/results/
+/MPC offline Model/results/
+/Local Experiments/
+**/*_backup_*/
+**/source_backups/
+.venv*/
+.pytest_cache/
+*.log
+*.npy
+*.npz
+!/*/artifacts/*.npz
+!/MPC offline Model/artifacts/mechanical_plant/*.npz
+
+# Curated publication figures; keep retired diagnostics locally.
+/docs/figures/*.png
+!/docs/figures/mpc_pipeline.png
+!/docs/figures/model_comparison_2s_angles.png
+!/docs/figures/model_comparison_2s_velocities.png
+!/docs/figures/prediction_error_vs_lead.png
+!/docs/figures/mpc_reachable_tip_path.png
+!/docs/figures/mpc_reachable_tip_tracking.png
+!/docs/figures/mpc_reachable_both_booms.png
+!/docs/figures/mpc_reachable_tip_error.png
+!/docs/figures/mpc_recorded_tip_path.png
+!/docs/figures/mpc_recorded_tip_tracking.png
+!/docs/figures/mpc_recorded_both_booms.png
+!/docs/figures/mpc_recorded_tip_error.png
+!/docs/figures/recorded_replay_vs_mpc.png
+!/docs/figures/slsqp_iteration_study.png
+!/docs/figures/activity_selector_ab.png
+
+!/docs/results/
+!/docs/results/*.csv
+!/docs/results/*.json

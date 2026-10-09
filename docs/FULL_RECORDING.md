@@ -1,108 +1,13 @@
-# Full-recording model tests and offline MPC
+# Whole-recording methodology
 
-## Stronger controller-time prediction test
+Every primary full-recording test retains the unchanged 18-second startup trim. Simulation_Output_53.csv has 8,200,001 retained rows. Two measured initialization rows leave 8,199,999 scored targets from CSV time 18.000020 to 100 s.
 
-Use `python evaluate_controller_horizon.py --controller-horizon 20 --saved-only`
-to print cached two-second forecast results and open the whole-CSV comparison,
-persistence and interval-error plots. The default saved controller has a 100-ms
-interval, so 20 controller intervals means 200,000 internal steps. Use
-`--controller-config` for another controller. Omit `--saved-only` to compute missing
-predictions. All 8,199,999 targets are scored; exact-endpoint metrics omit the
-incomplete final interval. This is conditional recorded-command-preview validation,
-not a new closed-loop MPC experiment. The 200-sample test remains a short diagnostic.
-See [controller-time methodology and results](CONTROLLER_HORIZON_VALIDATION.md).
+The 2-ms test predicts 200 internal steps before measured/memory reset and is a short diagnostic. The main surrogate test predicts 20 actual controller intervals: 20 x 100 ms = 2 s, or 200,000 internal steps. It uses 41 reset blocks; the last has 199,999 predictions. Every target is scored. Interval-endpoint metrics exclude the incomplete final interval, giving 819 exact endpoints. Known recorded preprocessed commands are provided as preview; future state measurements are not fed inside a block.
 
-Every analysis keeps the existing 18-second startup trim. For Simulation_Output_53.csv,
-10,000,001 raw rows become 8,200,001 retained rows. Two measured rows initialize the
-model; all remaining 8,199,999 samples, from 18.000020 to 100 s, are scored.
+The controller experiment is different: 100-ms held commands, a 200-ms planning horizon, two command blocks, GRU prediction and an independent mechanical Compact plant. The plant advances continuously; only its current mechanical feedback corrects the GRU state estimate. It is not reset to future recorded states. Both final runs cover all 8,199,999 targets and 820 updates. The final action advances 9,999 internal samples. References beyond EOF are lookahead only, not scored recording targets.
 
-## State-model validation
+Primary full-MPC tracking scores every internal sample. The existing short five-second iteration study and saved recorded-command replay score control endpoints. Replay-versus-MPC improvements therefore compare matching endpoints; full-sample MPC values remain separate.
 
-The short-horizon diagnostic uses 200 internal samples per recursive block (2 ms), followed
-by a measured-state and memory reset. This gives 41,000 blocks, with 199 predictions
-in the last block. No future measured states enter the predictions inside a block.
-All four full-state models retain their original trained weights.
+All published time figures use the whole retained recording. Every sample contributes to mean/min/max envelopes. Static exported figures preserve that coverage; raw-sample interactive zoom requires regenerated local arrays.
 
-From the portable project root, with data paths configured:
-
-```powershell
-python compare_models.py --reinit-every 200 --saved-only
-python summarize_comparison.py --reinit-every 200
-```
-
-The first command prints the comparison and opens a separate full-recording figure
-for each model/state. The second displays whole-recording mechanical overviews,
-persistence baselines and error at every prediction lead. Add --no-show to save only.
-Use --reinit-every 100 for an optional 1-ms test. Individual model test scripts now
-default to 200. Use --reinit-every 0 explicitly for continuous recursive prediction.
-
-From the original CSV workspace:
-
-```powershell
-& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\full state model\compareModels.py" --reinit-every 200 --saved-only
-```
-
-Global metrics score every retained target. Per-second error tables and mean/min/max
-plot envelopes also consume every sample. Interactive time plots reload visible
-samples during zoom. The display budget changes rendering, not metric coverage.
-Plots use 1-R? in scientific notation so near-one values are not printed as perfect.
-
-## Actual closed-loop MPC experiment
-
-The completed run uses GRU inside the optimizer and a separate 1,060-parameter
-mechanical Compact model as the plant. The latter contains only four mechanical
-states and two commands, plus their differences. No hydraulic/electrical inputs
-are used in the mechanical plant.
-
-```powershell
-python "MPC offline Model/offline_mpc.py" --full-recording --tracking-space cartesian --reference-mode plant-generated --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --output-dir "MPC offline Model/results/full_csv_patu_100ms" --overwrite
-```
-
-This configuration uses a 100-ms held command and a 200-ms prediction horizon. It
-performs 820 optimizer solves; the last action advances 9,999 internal samples.
-These are controller settings, not the 200-sample (2-ms) surrogate-test horizon.
-The script's older 1-ms control defaults remain available when those flags are omitted.
-The tested configuration, solve times and convergence rate are reported in the README.
-It is an offline experiment and has not demonstrated real-time control.
-
-The plant advances continuously after each selected action. Its mechanical feedback
-corrects only the corresponding fields of the GRU state estimate. It is never reset
-to the future recorded crane states. Optimizer candidates do not advance the plant.
-
-The mechanical plant fails recorded-command reproduction over the whole recording,
-so the run explicitly uses a known reachable plant-generated reference: replay of
-held recorded commands through the independent mechanical plant. Reference preview
-is supplied to MPC; the recorded commands are not used as its prescribed solution.
-The README's main trajectory plots show reference versus MPC-controlled plant,
-not four surrogates' forward-kinematic reconstructions of a measured-reset test.
-
-## Print and reopen the completed MPC results
-
-```powershell
-python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/full_csv_patu_100ms"
-```
-
-From the original CSV workspace:
-
-```powershell
-& ".\.venv_fast2\Scripts\python.exe" "MPC based Controller\Final Codes\MPC offline Model\offline_mpc.py" --plot-results "MPC based Controller\Final Codes\MPC offline Model\results\full_csv_patu_100ms"
-```
-
-This loads results without re-solving, prints metrics, and opens whole-recording
-reference/plant time plots and x-z paths for both booms together, lift alone, jib
-alone and the end effector. Windows remain open until closed. No single selected
-prediction horizon is featured as a full-recording result.
-
-The result folder contains every internal predicted full state, mechanical plant
-state, reference state and tip position/velocity in micro_*.npy arrays. Global
-tracking and mismatch metrics use all internal samples. Endpoint metrics are saved
-separately. recording_coverage.json proves completion and includes the exact tail.
-
-## Validation
-
-The 200-step batched kernels were checked for bitwise equality with the original
-per-block kernels, correct reset boundaries and a partial final block. Perturbing
-future measured states inside a block leaves its forecasts unchanged. All four
-original checkpoint hashes match. Lead-step metric counting and partial-block
-statistics were checked independently. The completed MPC run scores all retained
-samples, rather than extrapolating a short episode's metrics to the full recording.
+See the main README for exact commands and the final scientific results. No models were retrained during consolidation.

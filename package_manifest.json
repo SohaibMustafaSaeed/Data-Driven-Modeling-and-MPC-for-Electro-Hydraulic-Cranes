@@ -50,31 +50,11 @@
     }
   },
   "results": [
-    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/measured_one_step",
-    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive",
-    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive_reinit500",
-    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/measured_one_step",
-    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive",
-    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit500",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/measured_one_step",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit20",
-    "MPC offline Model/results/20261008T124105_070293Z",
-    "MPC offline Model/results/verified_one_second",
-    "MPC offline Model/results/verified_one_second_v2",
-    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/measured_one_step",
-    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive",
-    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit500",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit500",
-    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive_reinit200",
-    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit200",
-    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit200",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit200",
-    "MPC offline Model/results/full_csv_patu_100ms",
-    "GRU Latent/results/Simulation_Output_53/checkpoint_b9264f31b3731f5f/recursive_reinit200000",
-    "LSTM/results/Simulation_Output_53/checkpoint_86a34da358160202/recursive_reinit200000",
-    "Transformers/results/Simulation_Output_53/checkpoint_ac2b53cfda13bb02/recursive_reinit200000",
-    "Compact Recurrent/results/Simulation_Output_53/checkpoint_e9954c5988083ce0/recursive_reinit200000"
+    "docs/results/mpc_predictor_comparison.csv",
+    "docs/results/slsqp_iteration_study.csv",
+    "docs/results/final_gru_reference_comparison.csv",
+    "docs/results/recorded_replay_vs_mpc.csv",
+    "docs/results/model_mechanical_comparison_2s.csv"
   ],
   "source_workspace": "C:\\Data\\Nitin Project\\Dataset1\\datafinal\\Imotiondata\\CSV",
   "checkpoint_weights_modified": false,
@@ -92,7 +72,6 @@
     "prediction_copies": "matching_size_shape_dtype_and_1000_sample_rows_each",
     "full_training_or_full_evaluation_rerun": false
   },
-  "bundled_result_bytes": 33395588480,
   "kinematic_mpc": {
     "geometry_source": "User-supplied PATU assembly vectors and base frame",
     "geometry_file": "MPC offline Model/geometry_patu.json",
@@ -151,7 +130,8 @@
     "scored_microsteps": 8199999,
     "last_control_block_samples": 9999,
     "reference": "explicit plant-generated held-recorded-command replay",
-    "results": "MPC offline Model/results/full_csv_patu_100ms"
+    "results": "docs/results/final_gru_reference_comparison.csv",
+    "final_recorded_reference_complete": true
   },
   "new_analysis_validation": {
     "model_checkpoints_unchanged": true,
@@ -170,7 +150,7 @@
     "samples_per_control_interval": 10000,
     "internal_horizon_steps": 200000,
     "prediction_duration_seconds": 2.0,
-    "controller_config": "MPC offline Model/results/full_csv_patu_100ms/config.json",
+    "controller_config": "MPC offline Model/configs/final_gru_mpc.json",
     "command_policy": "recorded prepared command preview at the original sample rate",
     "interpretation": "conditional dynamics validation over the controller time horizon; not a closed-loop MPC run",
     "predictions_per_model": 8199999,
@@ -196,5 +176,21 @@
         "checkpoint_sha256": "e9954c5988083ce075bfb23f5b55f587a9d7f482a8d097bdfcfb97a6efc197f6"
       }
     ]
+  },
+  "results_policy": {
+    "bundled": "curated small CSV/JSON/figures only; trained artifacts remain Git LFS",
+    "generated_arrays": "local and ignored",
+    "scientific_weights_unchanged": true,
+    "history_rewritten": false
+  },
+  "final_controller": {
+    "predictor": "GRU",
+    "parameters": 4098,
+    "plant": "mechanical Compact",
+    "plant_parameters": 1060,
+    "maxiter": 5,
+    "control_interval_s": 0.1,
+    "horizon_s": 0.2,
+    "config": "MPC offline Model/configs/final_gru_mpc.json"
   }
 }

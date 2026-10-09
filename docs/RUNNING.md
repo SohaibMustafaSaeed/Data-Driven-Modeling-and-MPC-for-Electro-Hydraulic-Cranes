@@ -1,315 +1,76 @@
-# Running the models and offline MPC
+# Dataset, preprocessing and optional training
 
-## Stronger controller-time prediction test
+Run from the repository root with Python 3.12. The main README contains the tested installation and experiment commands.
 
-Use `python evaluate_controller_horizon.py --controller-horizon 20 --saved-only`
-to print cached two-second forecast results and open the whole-CSV comparison,
-persistence and interval-error plots. The default saved controller has a 100-ms
-interval, so 20 controller intervals means 200,000 internal steps. Use
-`--controller-config` for another controller. Omit `--saved-only` to compute missing
-predictions. All 8,199,999 targets are scored; exact-endpoint metrics omit the
-incomplete final interval. This is conditional recorded-command-preview validation,
-not a new closed-loop MPC experiment. The 200-sample test remains a short diagnostic.
-See [controller-time methodology and results](CONTROLLER_HORIZON_VALIDATION.md).
-
-This directory is the project root. Scripts resolve artifacts relative to their
-own location and do not import code from the original project folders.
-Run the commands below from this directory using Python 3.12.
-
-## Layout
-
-```text
-Final Codes/
-├── Data Preprocessing/preprocess_dataset.py
-├── Transformers/
-│   ├── transformer.py
-│   ├── test.py
-│   ├── artifacts/
-│   └── results/
-├── GRU Latent/
-│   ├── gru.py
-│   ├── test.py
-│   ├── artifacts/
-│   └── results/
-├── LSTM/
-│   ├── LSTM.py
-│   ├── test.py
-│   ├── artifacts/
-│   └── results/
-├── Compact Recurrent/
-│   ├── trainCompactLatent.py
-│   ├── test.py
-│   ├── artifacts/
-│   └── results/
-├── MPC offline Model/
-│   ├── offline_mpc.py
-│   ├── reference_replay.py     # Recorded-command reproduction helpers
-│   ├── plant/                 # Mechanical model, trainer, and evaluator
-│   ├── artifacts/mechanical_plant/
-│   └── results/
-├── common/                    # Shared data, evaluation, and path utilities
-├── compare_models.py
-├── requirements.txt
-├── requirements-lock.txt
-└── package_manifest.json
-```
-
-All four full-state models and the independent mechanical plant include completed
-trained checkpoints. Transformer completed 60 epochs, and all four models have
-full-record cached evaluations with matched reset-200 horizons.
-
-## Installation
-
-```powershell
-python -m venv .venv
-& ".\.venv\Scripts\python.exe" -m pip install -r requirements.txt
-```
-
-Use this environment's Python for the commands below; activating the environment
-is another option. requirements-lock.txt records the exact installed versions
-used for the package checks, including the CPU PyTorch build. Popup plots need
-a graphical desktop and Python's Tk support. --no-show saves plots without a GUI.
-
-## Dataset layout and paths
-
-By default, put the raw recordings in this layout:
+## Dataset layout
 
 ```text
 data/
-├── Train/Simulation_Output_00.csv ...
-└── Test/Simulation_Output_53.csv ...
+  Train/Simulation_Output_00.csv ... Simulation_Output_42.csv
+  Test/Simulation_Output_53.csv
+  preprocessed/                 generated locally, ignored by Git
 ```
 
-Alternatively, set the directory containing Train and Test:
+Set IMOTION_DATA_ROOT to the parent of Train/ and Test/. Set IMOTION_PREPROCESSED_DIR to the prepared output directory. The defaults are project/data and project/data/preprocessed. The shipped experiments used 43 training recordings, with each recording's first 90% retained samples used for training/scaler fitting and its suffix used for validation. Keep the original held-out recording in Test/, never Train/. Raw data is not included.
 
-```powershell
-$env:IMOTION_DATA_ROOT = "D:\YourDataset\CSV"
-```
-
-This is the one raw-data path to change. The two short path comments in
-common/project.py identify these settings. Use --test-file with an absolute
-path to select a particular CSV; relative filenames are looked up under Test.
-Raw CSVs and prepared arrays are not bundled or committed.
-
-Each CSV must contain these columns, with these exact names:
+CSV headers must match exactly. Extra columns may exist; the reader selects these 24 signals in this order:
 
 ```text
-ulift[V], speedref[rad/s], speedpmsm[rad/s], iqref[A], udref[V], uqref[V],
-id[A], iq[A], psid[Wb], psiq[Wb], pumppressure[Pa], plinepistonlift[Pa],
-plinerodlift[Pa], ppistonsidelift[Pa], prodsidelift[Pa], thetalift[rad],
-ujib[V], plinepistonjib[Pa], plinerodjib[Pa], ppistonjib[Pa], prodjib[Pa],
-thetajib[rad], thetaliftdot[rad/s], thetajibdot[rad/s]
+ulift[V]
+speedref[rad/s]
+speedpmsm[rad/s]
+iqref[A]
+udref[V]
+uqref[V]
+id[A]
+iq[A]
+psid[Wb]
+psiq[Wb]
+pumppressure[Pa]
+plinepistonlift[Pa]
+plinerodlift[Pa]
+ppistonsidelift[Pa]
+prodsidelift[Pa]
+thetalift[rad]
+ujib[V]
+plinepistonjib[Pa]
+plinerodjib[Pa]
+ppistonjib[Pa]
+prodjib[Pa]
+thetajib[rad]
+thetaliftdot[rad/s]
+thetajibdot[rad/s]
 ```
 
-The loader orders the selected columns explicitly; extra columns are allowed.
-Filenames must be unique across Train and Test. Rows must be chronological,
-finite, and uniformly sampled at 10 microseconds. Files are enumerated by sorted
-filename and retain independent sequence boundaries; records are not joined.
+Commands occupy columns 0 and 16. The other 22 signals are state targets. The mechanical plant selects thetalift, thetajib, thetaliftdot, thetajibdot and the two commands, and appends recent differences to form 12 features.
 
-## Preprocessing
+## Prepare
 
 ```powershell
-python "Data Preprocessing/preprocess_dataset.py"
+$env:IMOTION_DATA_ROOT = (Resolve-Path ".\data").Path
+$env:IMOTION_PREPROCESSED_DIR = Join-Path $env:IMOTION_DATA_ROOT "preprocessed"
+python check_setup.py --data
+python "Data Preprocessing/preprocess_dataset.py" --skip-initial-rows 1800000 --train-fraction 0.9
 ```
 
-Explicit directories are also supported:
+Preprocessing removes the first 18 seconds at 10-us sampling and writes float32 memory-mapped arrays, scaler.json and training/testing manifests. Normalization is training-only. Existing valid caches are reused; different raw-file signatures or normalization trigger regeneration. The two command columns use centered Savitzky-Golay smoothing (51 rows, polynomial order 3), so these are offline prepared signals and deployment causality is not claimed.
+
+When evaluating shipped checkpoints, test normalization is taken from the checkpoint. A newly fitted training scaler must not be substituted for a shipped checkpoint's scaler. Physical reconstruction is normalized * std + mean. Use the original data and split to reproduce numerical results.
+
+## Optional training
+
+The trained artifacts are shipped through Git LFS. Training is not needed to view results or repeat evaluation/MPC. To train new models, write to new output directories so shipped checkpoints and hashes remain intact:
 
 ```powershell
-python "Data Preprocessing/preprocess_dataset.py" --train-dir "D:\YourDataset\CSV\Train" --test-dir "D:\YourDataset\CSV\Test" --output-dir "D:\YourPreparedDataset"
-$env:IMOTION_PREPROCESSED_DIR = "D:\YourPreparedDataset"
+python "GRU Latent/gru.py" --output-dir "results/new_training/gru"
+python "LSTM/LSTM.py" --output-dir "results/new_training/lstm"
+python "Transformers/transformer.py" --output-dir "results/new_training/transformer"
+python "Compact Recurrent/trainCompactLatent.py" --output-dir "results/new_training/compact"
+python "MPC offline Model/plant/trainMechanicalCompact.py" --output-dir "results/new_training/mechanical"
 ```
 
-Defaults remove the first 1,800,000 rows (18 seconds) from each recording.
-Within each retained training recording, the first 90% is training and the last
-10% is validation. Normalization statistics use training portions only. Test
-recordings contribute to neither fitting nor training. Prepared recordings are
-24-column float32 memory-mapped .npy files; scaler.json and split manifests
-record feature order, boundaries, and sampling interval. Manifest array paths
-are relative to the prepared dataset, so the prepared folder can be relocated.
-Historical checkpoint manifests are resolved by filename against your selected
-prepared training directory rather than depending on the original Windows path.
+Inspect --help and the shipped artifacts/config.json and training_history.json for the actual architecture/curriculum. The published full-state Compact curriculum differs from newer trainers. Fresh optimization, seeds and software may not reproduce the shipped weights exactly. Changing model checkpoints creates a new experiment, not the frozen controller's reproduction.
 
-Only the two command columns use a centered 51-row, order-3 Savitzky-Golay
-filter. This uses future command samples and is an offline preprocessing
-pipeline. Live causal-control performance is not established by these results.
-Change startup trimming with --skip-initial-rows only when retraining models for
-that preprocessing; included checkpoints retain their original preprocessing.
+## Generated results
 
-To reuse this workspace's already prepared data without copying it:
-
-```powershell
-$env:IMOTION_DATA_ROOT = "C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV"
-$env:IMOTION_PREPROCESSED_DIR = "C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\MPC based Controller\Dataset preprocessed"
-```
-
-## Training
-
-All full-state models form 48 features from the current 24 signals and their
-recent differences. They predict 22 normalized state increments and reconstruct
-the next state by adding the increments to the current state. Commands are inputs.
-All four retain a direct linear residual skip; their temporal memory mechanisms
-differ. The packaged training/inference implementations preserve the original
-architectures and checkpoint formats.
-
-To retrain Transformer while preserving the included checkpoint:
-
-```powershell
-python "Transformers/transformer.py" --epochs 60 --output-dir "Transformers/artifacts/retrained"
-```
-
-The other artifacts directories already contain trained models. To retrain:
-
-```powershell
-python "GRU Latent/gru.py" --epochs 60 --overwrite
-python "LSTM/LSTM.py" --epochs 60 --overwrite
-python "Compact Recurrent/trainCompactLatent.py" --epochs 60 --overwrite
-```
-
-Use --output-dir with a new folder to preserve the bundled artifacts. Trainers
-refuse a nonempty destination unless --overwrite is provided. GRU/LSTM archive
-their previous checkpoints when overwriting; use a new destination for guaranteed
-preservation for every architecture. New weights invalidate prior result hashes.
-
-GRU2/LSTM4/Transformer default to recursive horizons 100/500/1000, sampled
-20%/60%/20% after warmup, with angle and angular-velocity loss weights of 4.
-Their best checkpoint uses weighted 500-step validation. The original Compact
-trainer has its original two-horizon curriculum and checkpoint-selection rule;
-these historical differences are printed by the comparison and are not erased.
-Use --help for dimensions, training horizons, loss weights, and optimizer options.
-
-Artifacts include best_model.pt, latest_model.pt, best_numba_weights.npz,
-training_history.json, and config.json where available. Checkpoints contain
-architecture configuration, model weights, residual scale, normalization, and
-training provenance. Training uses PyTorch; deployed CPU evaluation uses Numba.
-
-## Testing each model
-
-Every retained sample is evaluated by default, including when short reset horizons
-repeat across the whole recording. Plots now use every sample in min/max display
-bands, with interactive zoom for detail. See [whole-recording coverage](FULL_RECORDING.md).
-
-
-```powershell
-python "GRU Latent/test.py" --reinit-every 200
-python "LSTM/test.py" --reinit-every 200
-python "Compact Recurrent/test.py" --reinit-every 200
-python "Transformers/test.py" --reinit-every 200
-```
-
-Default test recording: Simulation_Output_53.csv. Each command evaluates recursive prediction with the selected reset interval.
-Use --reinit-every 0 explicitly for continuous recursive evaluation.
-Use --mode measured --reinit-every 0 for measured-input one-step testing. These testing commands perform evaluation;
-the comparison command below reuses matching completed evaluations.
-
-Results go to each model's results/<recording>/checkpoint_<SHA256 prefix>/<mode>/.
-They include physical-unit predictions, per-feature MAE/RMSE/R2/maximum error,
-NRMSE divided by training standard deviation, persistence error, CPU call timing,
-and amortized compiled-loop throughput. Warm compilation is excluded from timing.
---max-rows explicitly limits an evaluation for a quick check; it is not a full
-recording result. --checkpoint, --dataset-dir, and --output-dir override defaults.
-
-## Compare all four models and open separate plots
-
-```powershell
-python compare_models.py --reinit-every 200
-```
-
-The comparison prints all per-feature metrics and saved timing summaries for
-the selected reset-200 evaluation. Matching saved
-results are reused. Missing evaluations are generated once; --saved-only disables
-that inference. Default popups are 88 separate figures for reset-200: one model
-versus recorded truth for each of 22 states. Close every window to finish.
-
-```powershell
-python compare_models.py --reinit-every 200 --plot-mode mpc
-python compare_models.py --reinit-every 200 --plot-mode all
-python compare_models.py --reinit-every 200 --no-show
-```
-
---plot-mode all opens all scenarios requested by --mode. The default reset-only
-mode opens 88 model/state figures; --mode both --plot-mode all explicitly includes
-three scenarios and opens 264 model/state figures. Figures are also saved
-under results/comparison/. Display thinning does not change the saved full-row
-metrics. Checkpoint hashes, feature order, scaler, timestep, target range, reset
-horizon, test source, and training split metadata are checked. Different historical
-training objectives and benchmark dates remain visible in the printed provenance.
-
-Bundled main results use reset-200 for all four models. Reset-20, reset-500 and
-continuous rollouts are retained as historical diagnostics. Saved evaluation metadata uses project-relative checkpoint paths and
-raw:/prepared: dataset paths; the original weights and prediction arrays are unchanged.
-Embedded checkpoint metadata retains the historical training paths for provenance.
-
-## Offline MPC
-
-Whole-recording MPC is the default when --duration is omitted. Use --full-recording
-to request this explicitly. It advances and scores every internal sample, including
-the final partial control interval. See [full CSV commands](FULL_RECORDING.md).
-
-
-The default objective now tracks the Cartesian end effector using exact PATU
-local link vectors and absolute boom angles. See [Cartesian MPC](CARTESIAN_MPC.md)
-for geometry, commands, objective weights, ten popup plots, and Cartesian metrics.
-Use --tracking-space joint to select the original joint objective.
-
-The full-state GRU predicts candidate futures. A separately trained, mechanical-only
-Compact model acts as the independent simulated plant. Its 12 features are four
-mechanical states, two commands, and their differences. It predicts four mechanical
-state increments and uses no hydraulic/electrical inputs. Mechanical feedback
-corrects the predictor after each committed action. The plant is not used inside
-optimizer candidate rollouts.
-
-Show the completed full-recording MPC experiment immediately, without re-solving or needing
-raw data:
-
-```powershell
-python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/full_csv_patu_100ms"
-```
-
-Repeat the completed full-recording experiment with a reachable mechanical-plant reference:
-
-```powershell
-python "MPC offline Model/offline_mpc.py" --full-recording --reference-mode plant-generated --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --output-dir "MPC offline Model/results/full_csv_patu_100ms" --overwrite
-```
-
-To assess tracking of the original recording, use --reference-mode recorded.
-The script first checks recorded-command reproduction; a failing reproduction
-gate stops that experiment. Inspect the saved reproduction report before choosing
---allow-reference-mismatch. Plant-generated-reference success demonstrates this
-simulated setup, not tracking of the original recording or a physical crane.
-
-Defaults: 100 internal 10-microsecond samples per held control action (1 ms),
-100 control intervals per prediction horizon (100 ms), ten command move blocks,
-and bounded SLSQP optimization. This is an offline optimizer, not a demonstrated
-1-ms real-time controller. --horizon-ms, --moves, --maxiter, costs, command bounds,
---start-seconds, and --test-file are configurable. Results are saved under
-MPC offline Model/results/<timestamp>/ with tracking, model mismatch, reproduction,
-optimizer diagnostics, trajectories, command plans, and plots. Windows stay open
-until closed. --no-show saves plots only.
-
-The mechanical plant's trained artifacts are bundled. To retrain/test it:
-
-```powershell
-python "MPC offline Model/plant/trainMechanicalCompact.py" --epochs 60 --overwrite
-python "MPC offline Model/plant/testMechanicalCompact.py" --mpc-horizons 100 500 2000
-```
-
-## GitHub and saved results
-
-The original source project remains intact. package_manifest.json lists copied
-checkpoints, hashes, and result folders. The historical full-state predictions
-occupy approximately 19 GB; the large .npy files require Git LFS. This directory
-includes .gitattributes for .pt/.npy/.npz and .gitignore for datasets, environments,
-temporary files, and compiled caches.
-
-From this directory, initialize Git LFS before adding the files:
-
-```powershell
-git init
-git lfs install
-git add .
-```
-
-Publishing needs enough LFS storage for the bundled results. To publish only code
-and checkpoints, exclude the model results directories from your Git commit;
-evaluators can recreate them from the dataset. No repository or upload is created
-by the packaging step.
+Model prediction arrays go to each model's results/<recording>/checkpoint_<hash>/<mode>/ tree. MPC experiments go to MPC offline Model/results/<profile>/. These are local, regenerable and ignored. Publication tables and figures live in docs/results and docs/figures. Use report_results.py and view_results.py to inspect bundled evidence without raw arrays.

@@ -53,5 +53,5 @@ def load_test(source, dataset, scaler, out):
     count = sum((len(c) for c in read_chunks(source, skip, 100000)))
     if count < 51:
         raise ValueError('Need at least 51 retained rows for the trained smoothing pipeline')
-    path = convert_recording(source, out / 'data', count, skip, 100000, scaler)
+    path = convert_recording(source, candidate.parent, count, skip, 100000, scaler)
     return (np.load(path, mmap_mode='r'), path)

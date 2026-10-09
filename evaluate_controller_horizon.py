@@ -50,7 +50,7 @@ def interval_metrics(cache, prediction, mean, std, block, intervals):
 
 def main():
     parser = argparse.ArgumentParser(description='Validate dynamics over a real controller-time horizon across the entire retained CSV')
-    parser.add_argument('--controller-config', type=Path, default=ROOT / 'MPC offline Model/results/full_csv_patu_100ms/config.json')
+    parser.add_argument('--controller-config', type=Path, default=ROOT / 'MPC offline Model/configs/final_gru_mpc.json')
     parser.add_argument('--controller-horizon', type=int, default=20)
     parser.add_argument('--test-file', type=Path, default=Path('Simulation_Output_53.csv'))
     parser.add_argument('--saved-only', action='store_true')
@@ -71,7 +71,8 @@ def main():
             raise ValueError('Model/controller time grids differ')
         fp = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
         directory = ROOT / folder / 'results' / args.test_file.stem / f'checkpoint_{fp[:16]}' / f'recursive_reinit{protocol["internal_horizon_steps"]}'
-        if not (directory / 'evaluation.json').is_file():
+        required = ('evaluation.json', 'metrics.csv', 'predictions_physical.npy', 'recording_coverage.json')
+        if not all((directory / filename).is_file() for filename in required):
             if args.saved_only:
                 raise FileNotFoundError(f'Missing controller-time predictions for {name}; omit --saved-only to compute them')
             command = [sys.executable, str(ROOT / folder / 'test.py'), '--controller-config', str(args.controller_config),

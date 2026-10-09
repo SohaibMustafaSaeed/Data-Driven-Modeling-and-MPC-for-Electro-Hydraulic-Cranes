@@ -1,7 +1,0 @@
-{
-  "position_RMSE_m": 0.0186743112785136,
-  "position_MAE_m": 0.01729364370353184,
-  "position_max_error_m": 0.028018713495358276,
-  "final_position_error_m": 0.026842365591428708,
-  "scored_microsteps": 8199999
-}

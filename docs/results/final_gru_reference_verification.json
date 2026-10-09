@@ -1,0 +1,15 @@
+{
+  "predictor": "gru",
+  "maxiter": 5,
+  "controller_settings_identical": true,
+  "initial_conditions_identical": true,
+  "recorded_replay_identical": true,
+  "permitted_differences": [
+    "allow_reference_mismatch",
+    "output_dir",
+    "reference_mode"
+  ],
+  "scored_microsteps_per_run": 8199999,
+  "replay_comparison_scope": "matching control endpoints",
+  "further_experiments_launched": false
+}

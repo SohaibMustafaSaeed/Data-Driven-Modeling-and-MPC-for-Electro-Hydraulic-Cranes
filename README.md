@@ -1,338 +1,285 @@
-# Data-Driven Modeling and MPC for Electro-Hydraulic Cranes
+# Learned Dynamics and Offline MPC for an Electro-Hydraulic Forestry Crane
 
-This project compares four full-state dynamics models and uses a **separate, small
-mechanical Compact Recurrent model as the simulated plant for offline MPC**.
-The main trajectory results below are **reference versus controlled mechanical
-plant**, across every retained sample of `Simulation_Output_53.csv`.
+This project compares four learned full-state dynamics models and tests them in offline model predictive control (MPC). The control target is the Cartesian crane-tip trajectory: **x, z, vx, vz**.
 
-The stronger model validation now forecasts **20 actual controller intervals
-(2 seconds)** before a measured reset. The existing **200 internal-step (2-ms)**
-test remains a separate short-horizon diagnostic. No checkpoint weights changed.
+**Final selected controller: a 4,098-parameter full-state GRU predicts inside MPC; a separate 1,060-parameter mechanical Compact Recurrent model is the independent simulated plant.** LSTM, Transformer and full-state Compact remain comparison models. The neural control policy described at the end has not been trained.
 
-## MPC: reference versus the mechanical plant
+![Offline MPC architecture and mechanical feedback](docs/figures/mpc_pipeline.png)
 
-```text
-End-effector reference -> MPC optimizer using the full-state GRU
-                      -> selected lift/jib commands
-                      -> independent 1,060-parameter mechanical Compact plant
-                      -> four mechanical states -> PATU kinematics -> tip trajectory
-                      -> mechanical feedback to the next MPC solve
+The optimizer evaluates candidate commands using the full-state predictor. Only after selecting a command does the independent mechanical plant advance. Its current mechanical state feeds back to the next solve; future measured recording states are not used to refresh the controller. Plant-generated reference replay uses the mechanical plant before optimization, but optimizer trials do not use it.
+
+## Start here: reproduce the workflow
+
+Use Python **3.12**. From the cloned repository root:
+
+```powershell
+git lfs install
+git lfs pull
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python check_setup.py
+python report_results.py
+python view_results.py --experiment recorded
 ```
 
-The mechanical plant has 12 input features: four mechanical states, two commands,
-and their six recent changes. It predicts four state increments and adds them to
-the current state. Hydraulic and electrical states are not inputs to this plant.
-The 4,098-parameter GRU predicts full-state dynamics inside the optimizer; the plant
-is advanced only after a command is selected. LSTM, Transformer and the full-state
-Compact model are part of the surrogate comparison, not additional MPC plants.
+The last two commands show the bundled findings without the dataset or expensive optimization. `requirements-lock.txt` records the exact tested environment. For that environment, including the CPU Torch build, use `python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-lock.txt` instead of the unpinned requirements command.
 
-This completed experiment covers **8,199,999 internal samples**, from CSV time
-18.000020 to 100.000000 s, after the existing 18-second trim. The mechanical plant
-starts from two measured rows and then advances continuously under MPC commands.
-It is **never reset to future recorded states**. Every internal sample is scored.
+Place the raw dataset in `data/Train/` and `data/Test/`, or point the environment variables to the equivalent folders:
 
-| Controller setting | Completed run |
+```powershell
+$env:IMOTION_DATA_ROOT = (Resolve-Path ".\data").Path
+$env:IMOTION_PREPROCESSED_DIR = Join-Path $env:IMOTION_DATA_ROOT "preprocessed"
+python check_setup.py --data --test-only
+```
+
+For inference with the shipped checkpoints, only `data/Test/Simulation_Output_53.csv` is needed. Evaluation/MPC automatically prepares that recording with the checkpoint's training-only scaler and reuses a shared test cache. Full preprocessing of the training set is optional unless training new models.
+
+To reproduce the shipped checkpoints' training setup, use the original data split: training recordings `Simulation_Output_00.csv` through `Simulation_Output_42.csv`, with `Simulation_Output_53.csv` held out in `Test/`. The preflight checks original training filenames and required headers. Other test recordings can be evaluated with `--test-file`. A different training dataset will not reproduce the numerical tables below merely by using the same code.
+
+To evaluate the models over the whole retained test recording:
+
+```powershell
+python evaluate_controller_horizon.py --controller-horizon 20 --no-show
+python compare_models.py --controller-config "MPC offline Model/configs/final_gru_mpc.json" --controller-horizon 20 --saved-only
+```
+
+The first command computes missing local forecasts; the second loads them and opens individual model/state figures. Omit `--no-show` to open the overview and persistence figures. New generated results are ignored by Git.
+
+The short **200 internal-step / 2-ms diagnostic** is separate:
+
+```powershell
+python compare_models.py --reinit-every 200 --no-show
+python summarize_comparison.py --reinit-every 200
+```
+
+Run the final experiments with every frozen controller setting, including exact command bounds:
+
+```powershell
+python reproduce_mpc.py --experiment reachable --no-show
+python reproduce_mpc.py --experiment recorded --no-show
+python consolidate_mpc.py --runs "MPC offline Model/results/reachable" "MPC offline Model/results/recorded" --comparison references
+```
+
+`recorded` passes `--allow-reference-mismatch`; the reproduction diagnostic is still saved. These full runs take roughly 15-20 minutes each on the measured CPU and generate about 2.8 GB per run. Runtime depends on the machine and solver behaviour. Run serially for comparable timing. Existing nonempty output folders are refused; choose a fresh `--output-dir` rather than overwrite artifacts.
+
+The corresponding core commands are:
+
+```powershell
+python "MPC offline Model/offline_mpc.py" --checkpoint "GRU Latent/artifacts/best_model.pt" --full-recording --tracking-space cartesian --reference-mode plant-generated --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --lift-bounds -0.9999999723274773 1.0000032089789734 --jib-bounds -0.9999999978489263 1.00000154537254 --output-dir "MPC offline Model/results/reachable" --no-show
+python "MPC offline Model/offline_mpc.py" --checkpoint "GRU Latent/artifacts/best_model.pt" --full-recording --tracking-space cartesian --reference-mode recorded --allow-reference-mismatch --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --lift-bounds -0.9999999723274773 1.0000032089789734 --jib-bounds -0.9999999978489263 1.00000154537254 --output-dir "MPC offline Model/results/recorded" --no-show
+```
+
+The remaining core defaults now match the selected configuration. `reproduce_mpc.py --experiment recorded --print-command-only` prints all flags explicitly without launching optimization.
+
+Reopen results without solving again:
+
+```powershell
+python report_results.py --section final
+python report_results.py --section replay
+python view_results.py --experiment reachable
+python view_results.py --experiment recorded
+python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/recorded"
+```
+
+The first four use small bundled tables/figure exports. The last requires a completed local run and its generated arrays, and supports full-resolution interactive time plots. Plot windows remain open until closed.
+
+## Data and system
+
+| Setting | Value |
 | --- | --- |
-| Internal model sample time | 10 µs |
-| Held command / control interval | 100 ms = 10,000 internal samples |
-| Prediction horizon | 200 ms = 2 control intervals |
-| Planned command blocks | 2; 4 optimization variables |
-| Control updates | 820 |
-| Final control block | 9,999 internal samples; final CSV sample included |
-| Optimizer | Bounded SLSQP, maximum 5 iterations per update |
-| Tracking objective | Cartesian tip position/velocity and terminal errors |
-| Reference | Mechanical-plant replay of held recorded commands |
+| Held-out recording | Simulation_Output_53.csv |
+| Startup trim | 18 seconds / 1,800,000 rows |
+| Retained interval | Approximately 18-100 s |
+| Retained rows | 8,200,001 |
+| Measured initialization rows | 2 |
+| Scored targets | 8,199,999, including the final partial block |
+| Internal sampling interval | 10 microseconds |
+| Full-state signals | 22 physical states plus lift/jib commands |
+| Full-state model features | Current 24 signals and their recent changes: 48 features |
+| Mechanical plant features | Four mechanical states, two commands, and six recent changes: 12 features |
 
-The recorded-command reproduction gate fails over the full recording: the
-mechanical plant does not exactly reproduce the recorded crane trajectory.
-Therefore this run explicitly uses a **plant-generated reference**, obtained by
-replaying the known recorded commands through the independent mechanical model.
-That establishes a reachable target within this learned plant. It is not the
-recorded physical crane trajectory and is not an independent hardware validation.
-The optimizer sees reference preview, not future measured plant states or the
-future recorded command sequence as a prescribed solution.
+The mechanical states are lift angle, jib angle, lift angular velocity and jib angular velocity. Models predict residual increments and add them to the current state. Full-state models output 22 increments; the independent plant outputs four.
 
-### End-effector reference versus MPC trajectory
+Normalization is fitted on training portions only. Physical reconstruction is **normalized x standard deviation + mean**. The corrected activity selector uses that same expression. Training uses per-recording prefixes; validation uses the remaining suffixes, and the held-out test recording is excluded from fitting/training.
 
-![Reference versus MPC end-effector trajectory: independent mechanical plant, complete retained CSV](docs/figures/mpc_jib_boom_trajectory_full_csv.png)
+**Centered Savitzky-Golay command smoothing is retained offline preprocessing. Deployment causality is not claimed.** The two-second validation supplies known preprocessed command preview at the original sampling rate. MPC instead evaluates its candidate held-command plans. These input assumptions are explicitly different.
 
-![Reference versus MPC end-effector position and velocity across the complete retained CSV](docs/figures/mpc_end_effector_full_csv.png)
+[Dataset columns, setup and training](docs/RUNNING.md) describes the CSV schema and optional training entrypoints. No models were retrained during experimental consolidation.
 
-![Reference-to-MPC end-effector errors across the complete retained CSV](docs/figures/mpc_end_effector_error_full_csv.png)
+## PATU crane geometry
 
-These are controlled-plant results, replacing the previously featured four-model
-FK trajectory gallery. Every sample contributes to the plotted mean and min/max
-envelope; x–z plots also retain per-bin bounding boxes. Full-resolution arrays
-remain available, and interactive time plots load the visible samples when zoomed.
+```text
+base = (-0.09, 1.4261) m
+lift_vector = (2.886080943, 0.019892554) m
+jib_vector = (2.035, 0.245) m
+elbow = base + R(lift_absolute_angle) @ lift_vector
+tip = elbow + R(jib_absolute_angle) @ jib_vector
+```
 
-### Both booms, and each boom separately
+Lift and jib angles are absolute world-horizontal orientations. The full local vectors contain the geometric offsets; no extra offset is added. Forward kinematics produces elbow and tip x/z, and the analytic velocity transformation produces vx/vz. Geometry is stored in `MPC offline Model/geometry_patu.json`. Slew, flexibility and physical-hardware calibration are outside this planar experiment.
 
-![Reference versus controlled lift and jib tip paths together, full CSV](docs/figures/mpc_both_boom_trajectories_full_csv.png)
+## Main surrogate comparison: two-second recursive prediction
 
-![Lift tip reference versus MPC trajectory, full CSV](docs/figures/mpc_lift_boom_trajectory_full_csv.png)
-
-![Both boom angles and angular velocities, reference versus MPC plant, full CSV](docs/figures/mpc_both_booms_full_csv.png)
-
-[Separate lift-state plot](docs/figures/mpc_lift_full_csv.png) ·
-[separate jib-state plot](docs/figures/mpc_jib_full_csv.png).
-
-### Measured MPC results
-
-All metrics below use every internal 10-µs sample, excluding the two initialization
-rows. Mechanical units are radians and rad/s; Cartesian units are metres and m/s.
-
-| Mechanical state | RMSE | MAE | Max absolute error |
-| --- | --- | --- | --- |
-| thetalift[rad] | 0.002857286 | 0.002701339 | 0.004278567 |
-| thetajib[rad] | 0.007663867 | 0.007032613 | 0.01234367 |
-| thetaliftdot[rad/s] | 0.00061824 | 0.0004601342 | 0.00246762 |
-| thetajibdot[rad/s] | 0.00130531 | 0.001000677 | 0.005680374 |
-
-| End-effector state | RMSE | MAE | Max absolute error |
-| --- | --- | --- | --- |
-| tip_x[m] | 0.0156468 | 0.01402741 | 0.02627369 |
-| tip_z[m] | 0.0101935 | 0.00971072 | 0.0144096 |
-| tip_vx[m/s] | 0.002615065 | 0.002014383 | 0.0112743 |
-| tip_vz[m/s] | 0.001865346 | 0.001388621 | 0.00774431 |
-
-| Metric | Result |
-| --- | --- |
-| Euclidean tip position RMSE | 18.6743 mm |
-| Euclidean tip position MAE | 17.2936 mm |
-| Maximum tip position error | 28.0187 mm |
-| Final tip position error | 26.8424 mm |
-| Mean / median solve time | 1129.22 / 1121.34 ms |
-| p95 solve time | 1193.29 ms |
-| Optimizer success rate | 0.97561% |
-| Solves exceeding the 100-ms interval | 100% |
-
-This is an **offline learned-model mismatch experiment**. The measured solve times
-do not establish real-time operation. The five-iteration limit and solver success
-rate are reported explicitly: a finite selected candidate is not proof of a
-converged optimizer. When an iteration limit is reached, the existing controller
-uses its best finite bounded candidate, including the warm-start and hold-command
-candidates. Tracking errors and GRU-versus-plant mismatch are saved separately.
-
-![Solve time and objective throughout the full controller run](docs/figures/mpc_solve_time_and_cost.png)
-
-[MPC summary and solver metrics](docs/results/mpc_full_csv_summary.json) ·
-[all-sample mechanical tracking metrics](docs/results/mpc_full_csv_tracking_metrics.csv) ·
-[all-sample end-effector metrics](docs/results/mpc_full_csv_end_effector_metrics.csv) ·
-[reference reproduction diagnostic](docs/results/mpc_full_csv_reproduction_metrics.csv) ·
-[coverage proof](docs/results/mpc_full_csv_recording_coverage.json).
-
-## Prediction validation over 20 actual controller intervals
-
-The stronger dynamics test uses the **actual 100-ms interval of the published
-controller**, read from its saved configuration: **20 × 100 ms = 2 seconds**, or
-**200,000 internal model steps**. This is separate from 20 internal samples
-(0.2 ms) and 200 internal samples (2 ms). High R² in those tiny-horizon tests
-does not establish predictive accuracy over an MPC-relevant duration.
-
-All four models now have a recomputed **two-second recursive forecast test across
-the entire retained CSV**: 8,199,999 targets each, 41 measured-reset blocks, and
-199,999 predictions in the final partial block. Each block starts from two
-measured rows and reset memory. There are no measured-state refreshes inside a
-forecast block. Every retained target contributes to the global error metrics.
+The saved controller interval is **100 ms**. Validation spans **20 controller intervals = 2 s = 200,000 internal samples**. Each block starts from two measured rows and reset memory, with no measured-state refresh inside the block. All retained targets are scored: 41 reset blocks, including a 199,999-prediction final block. The Transformer uses causal attention and a capped history window; no future states are provided.
 
 | Model | Lift angle RMSE [rad] | Jib angle RMSE [rad] | Lift velocity RMSE [rad/s] | Jib velocity RMSE [rad/s] |
 | --- | --- | --- | --- | --- |
 | GRU | 0.00267003 | 0.00419828 | 0.00434339 | 0.00561563 |
 | LSTM | 0.00304465 | 0.00475421 | 0.00398889 | 0.00561928 |
 | Transformer | 0.00340935 | 0.00841001 | 0.00503473 | 0.00952408 |
-| Compact Recurrent | 0.00210751 | 0.00235846 | 0.00321849 | 0.0037923 |
-| Hold initial measured state | 0.018517 | 0.0234549 | 0.00611215 | 0.00979436 |
+| Compact Recurrent | 0.00210751 | 0.00235846 | 0.00321849 | 0.00379230 |
+| Persistence | 0.0185170 | 0.0234549 | 0.00611215 | 0.00979436 |
 
-The persistence baseline freezes all states at the initial measured row of each
-two-second block. Errors are reported in physical units and relative to that
-baseline. Angle R² can remain high because boom angle varies slowly across the
-recording; angular velocity and pressure errors reveal additional limitations.
-These results establish conditional predictive skill on this held-out recording,
-not perfect model quality or general performance on other operating conditions.
+Persistence holds the initial measured state fixed for each forecast block. Compact has the best standalone mechanical prediction metrics on this selected held-out recording. Its historical training curriculum differs from the newer recurrent/Transformer trainers; this is not a claim of identical training objectives or universal architectural superiority.
 
-![Two-second forecasts across the entire CSV: lift and jib angles](docs/figures/controller20_full_csv_angles.png)
+![Whole-recording two-second angle predictions](docs/figures/model_comparison_2s_angles.png)
 
-![Two-second forecasts across the entire CSV: lift and jib angular velocities](docs/figures/controller20_full_csv_velocities.png)
+![Whole-recording two-second angular velocity predictions](docs/figures/model_comparison_2s_velocities.png)
 
-### Why the earlier plots looked perfect
+![Prediction lead error versus persistence, aggregated over every forecast block](docs/figures/prediction_error_vs_lead.png)
 
-| GRU forecast duration | Lift velocity RMSE [rad/s] | Lift velocity R? | Jib velocity RMSE [rad/s] | Jib velocity R? |
+Exact endpoint statistics use 819 complete control intervals: 41 endpoints at leads 1-19 and 40 at the full two-second lead. The partial final interval remains included in all-sample metrics. Time-plot bin means/min/max envelopes consume every sample; metric scores are not display-thinned.
+
+The 200-internal-step test is only **2 ms**, and the earlier 20-sample test only **0.2 ms**. Frequent measured resets leave little time for error growth; R2 values rounded near one do not establish useful long-horizon accuracy. [All three durations](docs/results/forecast_duration_comparison.csv) show this using unchanged checkpoints. The two-second test is conditional dynamics validation, not a new two-second MPC optimization experiment.
+
+## Selecting the MPC prediction model
+
+GRU and full-state Compact were tested with identical initial conditions, byte-identical reachable references and the same independent mechanical plant. Both full-recording runs used 100-ms commands, a 200-ms horizon, two move blocks, maxiter=5, and identical geometry, cost/scales and exact bounds.
+
+| Metric | GRU | Full-state Compact |
+| --- | --- | --- |
+| Parameters | 4,098 | 4,246 |
+| Tip-position RMSE [mm] | 18.674 | 40.328 |
+| Tip-position MAE [mm] | 17.294 | 35.669 |
+| Maximum tip error [mm] | 28.019 | 66.944 |
+| Final tip error [mm] | 26.842 | 63.807 |
+| Mechanical RMS NRMSE | 0.045866 | 0.068704 |
+| Mean solve time [ms] | 1,113.33 | 964.06 |
+| Solver success [%] | 0.976 | 6.829 |
+
+Compact was 13.4% faster on average, but its Cartesian position RMSE was 116% higher and aggregate mechanical tracking error 49.8% higher. **GRU was selected for MPC.** Compact had better standalone recursive prediction here; GRU performed substantially better when embedded in the optimization loop. This result does not establish that Compact is globally worse, and the cause of this transfer gap has not been isolated.
+
+Mechanical RMS NRMSE is the RMS of four per-state RMSE/training-standard-deviation ratios, not a mixture of radians and rad/s. [Complete predictor comparison](docs/results/mpc_predictor_comparison.csv) and [percentage differences](docs/results/mpc_predictor_differences.csv) include timing, saturation and mismatch metrics.
+
+## Optimizer iteration study
+
+The GRU study used the same five-second segment for all three limits: `--start-seconds 38.10001` relative to retained data, corresponding to CSV time 56.10001-61.10001 s. Both booms move meaningfully. Existing short-episode metrics score control endpoints; the scope is identical across these three runs.
+
+| Maxiter | Tip RMSE [mm] | Solver success [%] | Mean solve [ms] | p95 [ms] |
 | --- | --- | --- | --- | --- |
-| 20 internal samples: 0.2 ms | 3.390756e-06 | 0.999999953803 | 5.765094e-06 | 0.999999914737 |
-| 200 internal samples: 2 ms | 3.282399e-05 | 0.999995670871 | 5.656502e-05 | 0.999991791858 |
-| 20 controller intervals: 2 s | 0.004343389 | 0.924198934171 | 0.005615626 | 0.919100580508 |
+| 5 | 5.925 | 48 | 1,153.7 | 1,910.6 |
+| 10 | 6.418 | 84 | 1,677.3 | 3,999.2 |
+| 20 | 5.886 | 92 | 2,107.9 | 7,738.6 |
 
-These use the same checkpoint and recording. The shorter horizons have much less
-time to accumulate error before a measured reset. Near-one R? at 0.2 or 2 ms
-does not imply near-one R? over two seconds. [All models and states at all three
-durations](docs/results/forecast_duration_comparison.csv) are saved for comparison.
+![Tracking accuracy versus iteration budget and computational cost](docs/figures/slsqp_iteration_study.png)
 
-### Error and persistence at every controller prediction interval
+More iterations strongly increased formal convergence but did not materially improve Cartesian tracking. Twenty iterations reduced position RMSE by only 0.66% relative to five, while mean solve time increased about 83%. **Maxiter=5 was retained.** When SLSQP reaches its limit, the existing controller selects the best finite bounded evaluated candidate, including hold, warm-start and finite-difference probe candidates. `solver_success=False` therefore does not mean no command was produced; it still limits claims of optimizer convergence.
 
-The first figure scores every internal sample within each 100-ms lead interval,
-aggregated across all forecast blocks throughout the CSV. The second scores exact
-100-ms endpoints at leads 1 through 20. An incomplete final interval is included
-in all-sample metrics but excluded from exact-endpoint metrics: **819 exact
-endpoints per model** are available, with 40 at the full two-second lead and 41
-at each earlier lead. No target beyond the CSV is invented.
-
-![Controller-interval forecast errors versus holding the measured state](docs/figures/controller20_interval_errors.png)
-
-![Exact controller-endpoint forecast errors versus persistence](docs/figures/controller20_endpoint_errors.png)
-
-**Input assumption:** this test supplies the known recorded, preprocessed command
-sequence at its original sample rate. It evaluates dynamics conditional on a
-command preview, not the optimizer's ability to choose commands. Those commands
-are not forced into 100-ms holds; forcing them into holds while scoring against
-the original recording would also introduce command-approximation error. The
-existing centered command smoothing remains offline preprocessing. This test
-therefore does not establish deployment causality or closed-loop MPC tracking.
-
-**Controller distinction:** the completed mechanical-plant MPC run above still
-uses a two-interval, 200-ms planning horizon. This new 20-interval test does not
-change that optimizer, its commands, its convergence rate or its measured tracking
-results. The model-validation horizon and closed-loop controller experiment are
-reported separately. The mechanical plant remains the only simulated MPC plant;
-the four state-model forecasts are not four end-effector tracking experiments.
-
-[All-state errors, R² and persistence](docs/results/controller20_all_state_metrics.csv) ·
-[errors at all 20 intervals and exact endpoints](docs/results/controller20_metrics_by_interval.csv) ·
-[model summary](docs/results/controller20_model_summary.csv) ·
-[whole-CSV coverage](docs/results/controller20_recording_coverage.csv) ·
-[duration, command assumption and checkpoint provenance](docs/results/controller20_protocol.json).
-
-From the project root, with dataset paths configured:
+These profiles reproduce the saved study, and never run automatically:
 
 ```powershell
-python evaluate_controller_horizon.py --controller-horizon 20 --saved-only
-python compare_models.py --controller-config "MPC offline Model/results/full_csv_patu_100ms/config.json" --controller-horizon 20 --saved-only
+python reproduce_mpc.py --experiment gru_compare --no-show
+python reproduce_mpc.py --experiment compact_compare --no-show
+python reproduce_mpc.py --experiment iteration5 --no-show
+python reproduce_mpc.py --experiment iteration10 --no-show
+python reproduce_mpc.py --experiment iteration20 --no-show
 ```
 
-The first command prints cached metrics and opens the complete-recording overviews
-and persistence/lead plots. The second opens a separate full-recording figure for
-each model/state. Omit `--saved-only` in the first command to compute missing
-forecasts. Pass another completed controller's `--controller-config` to convert
-its actual interval duration automatically. Add `--no-show` to save without GUI.
+## Final Cartesian MPC experiments
 
-## Short-horizon diagnostic: 200 internal-step measured resets
+Both final experiments use the selected GRU and fixed controller settings. Each completes 820 updates and scores all 8,199,999 internal samples. Controller settings, initialization and replay conditions were verified identical; only the desired reference and its reproduction-gate override differ.
 
-| Setting | Value |
-| --- | --- |
-| Models | GRU, LSTM, Transformer, Compact Recurrent |
-| Internal step | 10 µs |
-| Prediction block before measured reset | 200 samples = 2 ms |
-| Complete-CSV predictions per model | 8,199,999 |
-| Reset blocks | 41,000 |
-| Last block | 199 predictions |
-| Reset | Two measured rows, with memory reset |
-| Inside a block | Commands and predicted states; no future measured states |
+### Reachable plant-generated reference
 
-The Transformer uses causal history, capped at its trained window. Its history
-starts empty at each reset. All four evaluation kernels use native Numba float32
-inference; physical metrics use reconstructed outputs. Normalization, targets and
-reset boundaries match. Compact retains its historical different training
-curriculum; this is not a claim of identical training objectives across all four.
+Recorded commands are replayed through the independent mechanical Compact plant, producing a reachable mechanical trajectory that PATU kinematics converts to a Cartesian target. MPC receives target preview, not the generating future commands. This isolates control performance inside a learned-model mismatch experiment; it is not physical-hardware validation.
 
-| Model | Parameters | Mean NRMSE, all 22 states | Mean NRMSE, mechanics | 200-step median [µs] |
-| --- | --- | --- | --- | --- |
-| GRU | 4098 | 0.0003972997 | 0.001331286 | 297.9 |
-| LSTM | 4946 | 0.0003988728 | 0.001339987 | 324.7 |
-| Transformer | 4710 | 0.0004022796 | 0.001323912 | 2558.15 |
-| Compact Recurrent | 4246 | 0.0003874854 | 0.00133942 | 250.6 |
+![Reachable target versus controlled mechanical-plant tip path, whole CSV](docs/figures/mpc_reachable_tip_path.png)
 
-Even 200 internal samples spans only **2 ms**. High R² is expected for slowly
-moving boom states under frequent measurement resets and does not establish
-long-horizon accuracy. Plots now display **1 − R² in scientific notation**,
-instead of rounding near-one values to `1.000000`. Persistence RMSE and error by
-prediction lead provide more useful context. A ratio of model RMSE to persistence
-RMSE below one indicates improvement over holding the measured state fixed.
+![Reachable tip x,z,vx,vz tracking across the whole recording](docs/figures/mpc_reachable_tip_tracking.png)
 
-![200-step reset angle predictions across the complete retained CSV](docs/figures/reset200_full_csv_angles.png)
+### Recorded physical trajectory: model/reference mismatch
 
-![200-step reset angular velocity predictions across the complete retained CSV](docs/figures/reset200_full_csv_velocities.png)
+The recorded trajectory is used directly despite imperfect recorded-command reproduction by the mechanical plant. The question is whether MPC can choose a different command sequence that tracks that desired motion better than replay. Replay failure does not establish mathematical unreachability. The explicit mismatch flag allows this experiment while preserving the diagnostic.
 
-![Model RMSE versus persistence on all retained samples](docs/figures/reset200_mechanical_persistence.png)
+![Original desired tip path versus MPC-controlled mechanical plant, whole CSV](docs/figures/mpc_recorded_tip_path.png)
 
-![Errors at each prediction lead, aggregated over every block of the entire CSV](docs/figures/reset200_error_by_lead.png)
+![Original target, held replay and MPC across the entire retained recording](docs/figures/recorded_replay_vs_mpc.png)
 
-[All-state MAE, RMSE, R², 1−R², NRMSE and persistence](docs/results/reset200_all_state_metrics.csv) ·
-[metrics by lead 1–200](docs/results/reset200_metrics_by_prediction_step.csv) ·
-[model summary and timing](docs/results/reset200_model_summary.csv) ·
-[complete-recording coverage](docs/results/reset200_recording_coverage.csv).
+| All-internal-sample metric | Reachable reference | Recorded reference |
+| --- | --- | --- |
+| Tip-position RMSE [mm] | 18.674 | 26.085 |
+| MAE [mm] | 17.294 | 21.298 |
+| Maximum error [mm] | 28.019 | 79.115 |
+| Final error [mm] | 26.842 | 6.994 |
+| Mean solve [ms] | 1,116.0 | 1,111.9 |
+| Solver success [%] | 0.976 | 19.878 |
+| Lift saturation [%] | 12.683 | 56.098 |
+| Jib saturation [%] | 25.854 | 33.415 |
 
-The four-model FK trajectory plots and reset-20 results remain as historical
-diagnostics. They are not MPC tracking results and are no longer the main
-trajectory figures in this README.
+These columns score different desired trajectories; their difference is not an algorithm improvement.
 
-## Run, print metrics, and open the saved plots
+The replay-versus-MPC comparison uses **matching control endpoints**, because the saved reproduction diagnostic stores endpoints. Primary MPC metrics above still score every internal sample. This explains the small rounding difference in recorded-reference RMSE below.
 
-Run these commands from the repository root after configuring the data paths.
-The saved-result commands do not rerun inference or optimization.
+| Endpoint position metric | Held recorded-command replay | GRU MPC | Improvement |
+| --- | --- | --- | --- |
+| RMSE [mm] | 108.129 | 26.086 | 75.88% |
+| MAE [mm] | 99.883 | 21.303 | 78.67% |
+| Maximum error [mm] | 172.170 | 79.090 | 54.06% |
+| Final error [mm] | 133.231 | 6.994 | 94.75% |
 
-```powershell
-python compare_models.py --reinit-every 200 --saved-only
-python summarize_comparison.py --reinit-every 200
-python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/full_csv_patu_100ms"
-```
+Lift- and jib-angle RMSE improved 76.3% and 77.2%. Lift-velocity RMSE improved only 0.8%, and vertical tip-velocity RMSE only 0.65%. MPC strongly improved position tracking relative to replay, but velocity tracking remained difficult and the recorded-reference task required much more lift saturation. These are simulations using an independent learned mechanical plant, not measured crane responses to the selected MPC commands.
 
-The comparison opens a separate figure for each model/state. The MPC command
-prints its metrics and opens the complete-recording reference/plant, end-effector,
-both-boom, lift-only and jib-only plots. Windows remain open until closed.
-Add `--no-show` to save without opening windows.
+[Final full table](docs/results/final_gru_reference_comparison.csv), [matching endpoint replay comparison](docs/results/recorded_replay_vs_mpc.csv), [reachable coverage](docs/results/mpc_reachable_coverage.json) and [recorded coverage](docs/results/mpc_recorded_coverage.json) contain the full numerical evidence.
 
-To recompute the model comparison over every retained sample:
+## Final frozen MPC configuration
 
-```powershell
-python "GRU Latent/test.py" --reinit-every 200
-python "LSTM/test.py" --reinit-every 200
-python "Transformers/test.py" --reinit-every 200
-python "Compact Recurrent/test.py" --reinit-every 200
-python compare_models.py --reinit-every 200 --saved-only
-python summarize_comparison.py --reinit-every 200
-```
+**Predictor: full-state GRU, 4,098 parameters. Plant: independent mechanical Compact Recurrent, 1,060 parameters. Tracking: Cartesian x,z,vx,vz. Internal timestep: 10 microseconds. Command interval: 100 ms. Horizon: 200 ms. Move blocks: two. Optimizer: bounded SLSQP, maxiter=5.**
 
-Use `--reinit-every 100` to run the optional 1-ms, 100-sample comparison. Defaults
-are now 200. A continuous autonomous rollout is explicit `--reinit-every 0` in an
-individual model test. No training is required to change an evaluation horizon.
+Position/velocity scales are 0.01 m and 0.1 m/s. Cartesian position, velocity, terminal-position and terminal-velocity weights are 1, 0.1, 5 and 1. Effort is 0.0001, smoothness 0.001, finite-difference step 0.03 and ftol 1e-8. Joint objective weights are zero in Cartesian mode. [The portable frozen configuration](MPC%20offline%20Model/configs/final_gru_mpc.json) records all exact bounds and checkpoint hashes.
 
-To repeat the completed full-CSV MPC experiment:
+**This is an offline MPC teacher, not a real-time online controller. Every solve exceeded the 100-ms interval.** Formal convergence and predicted-cost improvement over holding the previous command are separate from plant tracking accuracy. Optimizer timing excludes kernel compilation and does not imply deadline compliance.
 
-```powershell
-python "MPC offline Model/offline_mpc.py" --full-recording --tracking-space cartesian --reference-mode plant-generated --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --output-dir "MPC offline Model/results/full_csv_patu_100ms" --overwrite
-```
-
-`--overwrite` archives the previous result folder. Controller `--horizon` counts
-control intervals; comparison `--reinit-every` counts internal samples. The tested
-100-ms command interval is explicitly configured here; the MPC script's older
-1-ms default remains available and requires many more optimizer solves.
-
-## PATU geometry, data, and artifacts
+## Repository map and result policy
 
 ```text
-base = (-0.09, 1.4261) m
-lift_vector = (2.886080943, 0.019892554) m
-jib_vector = (2.035, 0.245) m
-p_elbow = base + R(theta_lift_absolute) @ lift_vector
-p_tip = p_elbow + R(theta_jib_absolute) @ jib_vector
+project/
+  Data Preprocessing/preprocess_dataset.py
+  GRU Latent/                 final GRU predictor, trainer, test, artifacts
+  LSTM/                       comparison model, trainer, test, artifacts
+  Transformers/               comparison model, trainer, test, artifacts
+  Compact Recurrent/          full-state comparison model and artifacts
+  MPC offline Model/
+    offline_mpc.py             Cartesian MPC
+    crane_kinematics.py        FK and analytic velocities
+    geometry_patu.json         exact PATU vectors
+    configs/final_gru_mpc.json frozen scientific settings
+    plant/                    independent mechanical model, trainer and test
+    artifacts/mechanical_plant/
+  compare_models.py
+  evaluate_controller_horizon.py
+  summarize_comparison.py
+  reproduce_mpc.py            explicit frozen experiment profiles
+  consolidate_mpc.py          summarize regenerated local runs
+  check_setup.py              dependencies, checkpoints and dataset preflight
+  report_results.py           print bundled tables without the dataset
+  view_results.py             open bundled publication figures
+  docs/figures/               curated final figures
+  docs/results/               lightweight published numerical evidence
+  README.md
 ```
 
-Both angles are absolute relative to the world horizontal. Full local vectors
-include the geometric offsets; none are added again. Cartesian velocities use
-the analytic Jacobian. The geometry is configured in
-`MPC offline Model/geometry_patu.json`.
+Checkpoint files and existing exported inference weights retain Git LFS tracking. Raw data, prepared caches, environments, Python caches, generated prediction arrays, local experiments and archived overwritten runs are ignored. Large generated result trees are no longer part of the current publication tree; their original local copies and Git history remain intact. A new clone downloads the trained artifacts and curated summaries/figures, then regenerates arrays from the dataset when needed. Historical LFS objects in prior commits are not rewritten or deleted by this cleanup.
 
-Raw recordings belong in `Train/` and `Test/`. Set `IMOTION_DATA_ROOT` to their
-parent folder and `IMOTION_PREPROCESSED_DIR` to prepared arrays. Keep the existing
-18-second trim and training-only normalization. The centered command smoothing
-is retained as offline preprocessing consistent with the trained checkpoints.
+## What happens next
 
-Training entrypoints: `GRU Latent/gru.py`, `LSTM/LSTM.py`,
-`Transformers/transformer.py`, `Compact Recurrent/trainCompactLatent.py`, and
-`MPC offline Model/plant/trainMechanicalCompact.py`.
-All four full-state artifacts and the 1,060-parameter mechanical artifact are
-included. Large arrays and checkpoints use Git LFS. Run `git lfs pull` after
-cloning to obtain them. No weights changed for these analyses.
+The MPC configuration is now frozen. The next research stage is to:
 
-[Dataset, preprocessing and training commands](docs/RUNNING.md) ·
-[full-recording methodology](docs/FULL_RECORDING.md) ·
-[Cartesian MPC and PATU geometry](docs/CARTESIAN_MPC.md).
+1. Generate many MPC-controlled trajectories under varied initial states and references.
+2. Save teacher examples: current state, desired future trajectory, previous command and selected command.
+3. Train a lightweight neural policy to approximate the MPC mapping.
+4. Compare its commands against MPC commands.
+5. Test the learned controller on the independent mechanical plant.
+6. Later validate against a higher-fidelity simulator and physical crane.
+
+The aim is to replace expensive online optimization with a fast learned policy while retaining behaviour learned from the offline MPC teacher. **No neural controller has been trained or validated yet.**

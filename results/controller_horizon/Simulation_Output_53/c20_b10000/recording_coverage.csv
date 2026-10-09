@@ -1,5 +1,0 @@
-model,source_csv,raw_rows,startup_rows_excluded,retained_rows,initialization_rows,prediction_rows,expected_prediction_rows,full_retained_recording,first_prediction_csv_time_s,last_prediction_csv_time_s,simulated_prediction_duration_s,reset_every_samples,reset_horizon_s,reset_blocks,tail_prediction_rows
-GRU,C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\Test\Simulation_Output_53.csv,10000001,1800000,8200001,2,8199999,8199999,True,18.00002,100.0,81.99999000000001,200000,2.0,41,0
-LSTM,C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\Test\Simulation_Output_53.csv,10000001,1800000,8200001,2,8199999,8199999,True,18.00002,100.0,81.99999000000001,200000,2.0,41,0
-Transformer,C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\Test\Simulation_Output_53.csv,10000001,1800000,8200001,2,8199999,8199999,True,18.00002,100.0,81.99999000000001,200000,2.0,41,0
-Compact Recurrent,C:\Data\Nitin Project\Dataset1\datafinal\Imotiondata\CSV\Test\Simulation_Output_53.csv,10000001,1800000,8200001,2,8199999,8199999,True,18.00002,100.0,81.99999000000001,200000,2.0,41,0
