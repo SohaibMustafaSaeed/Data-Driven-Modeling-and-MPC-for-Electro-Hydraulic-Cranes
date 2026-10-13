@@ -1,0 +1,12 @@
+{
+  "train": {
+    "samples": 17500,
+    "identical_inputs": true,
+    "identical_targets": true
+  },
+  "validation": {
+    "samples": 3750,
+    "identical_inputs": true,
+    "identical_targets": true
+  }
+}

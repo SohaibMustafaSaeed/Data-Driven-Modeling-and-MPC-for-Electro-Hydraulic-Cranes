@@ -1,0 +1,357 @@
+FOCUSED GRU IMPROVEMENT STUDY
+
+  controller  parameters  tip_position_RMSE_mm  tip_position_MAE_mm  maximum_tip_error_mm  final_tip_error_mm  x_RMSE_m  z_RMSE_m  vx_RMSE_m_s  vz_RMSE_m_s  Euclidean_tip_velocity_RMSE_m_s  lift_angle_RMSE_rad  jib_angle_RMSE_rad  lift_velocity_RMSE_rad_s  jib_velocity_RMSE_rad_s  lift_saturation_percent  jib_saturation_percent  mean_abs_delta_lift_V  mean_abs_delta_jib_V  maximum_command_change_V  lift_command_delta_sign_changes  jib_command_delta_sign_changes  p95_abs_delta_lift_V  maximum_abs_delta_lift_V  lift_command_sign_changes  lift_command_sign_changes_per_second  p95_abs_delta_jib_V  maximum_abs_delta_jib_V  jib_command_sign_changes  jib_command_sign_changes_per_second  episodes  samples  failed_episodes  nonfinite_episodes  median_episode_RMSE_mm  p95_episode_RMSE_mm  worst_episode_RMSE_mm  command_RMSE_V  calls     mean_ms  median_ms     p95_ms      p99_ms  maximum_ms  deadline_miss_percent  warmup_calls  torch_threads  parameter_count                                                                                                      included                                       simulation_loop_context
+         MPC        4098              3.823172             2.631914             34.262038            4.500163  0.001994  0.003262     0.003227     0.002509                         0.004087             0.001124            0.001075                  0.000876                 0.001642                     17.6                     8.8               0.124775              0.154956                  2.000002                             1746                            2020              0.463746                  1.955104                        189                              0.514286             0.588023                 2.000002                       569                             1.548299        75     3750                0                   0                2.514535             6.365890              17.714844        0.000000   3750 1399.347270 1256.36345 2289.67518 2820.251442   3050.5158                  100.0           NaN            NaN              NaN                                                                                                           NaN                                                           NaN
+Baseline GRU        6898              8.154487             5.627090             47.670713            9.252368  0.005807  0.005725     0.002519     0.002929                         0.003863             0.002003            0.002978                  0.000996                 0.001281                      0.0                     0.0               0.036165              0.023002                  0.759163                              423                             509              0.155269                  0.696212                         59                              0.160544             0.093290                 0.759163                       102                             0.277551        75     3750                0                   0                5.121687            16.678902              28.451049        0.174371  10000    0.046287    0.04490    0.05280    0.077206      0.5054                    0.0         500.0            2.0           6898.0 Assembly, checks, train-only normalization, recurrent-state reset/update, CPU inference, conversion, clipping Saved baseline loop vs new improved loop; different run dates
+Improved GRU        6898              8.988572             5.761276             80.672786            9.995396  0.006633  0.006067     0.002653     0.003081                         0.004066             0.002008            0.003285                  0.001046                 0.001318                      0.0                     0.0               0.035035              0.023523                  0.742747                              427                             557              0.148583                  0.742747                         65                              0.176871             0.094176                 0.680045                        97                             0.263946        75     3750                0                   0                4.784319            18.055394              44.148859        0.183600  10000    0.046560    0.04490    0.05480    0.078703      0.4841                    0.0         500.0            2.0           6898.0 Assembly, checks, train-only normalization, recurrent-state reset/update, CPU inference, conversion, clipping Saved baseline loop vs new improved loop; different run dates
+
+Imitation:
+{
+  "Baseline GRU": {
+    "overall": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11425748653132586,
+      "lift_RMSE_V": 0.1780633697035875,
+      "jib_MAE_V": 0.11292385846435081,
+      "jib_RMSE_V": 0.17059919419192396,
+      "combined_RMSE_V": 0.17437122567833585,
+      "R2_lift": 0.9366018337982794,
+      "R2_jib": 0.9051953028802728,
+      "maximum_absolute_error_V": 1.741402623886444
+    },
+    "subsets": {
+      "nonsaturated": {
+        "samples": 2851,
+        "lift_MAE_V": 0.10661411005548363,
+        "lift_RMSE_V": 0.1595780459691584,
+        "jib_MAE_V": 0.09871916838983093,
+        "jib_RMSE_V": 0.14359332723202262,
+        "combined_RMSE_V": 0.1517962390523849,
+        "R2_lift": 0.930348349047958,
+        "R2_jib": 0.9135459287271444,
+        "maximum_absolute_error_V": 1.5082771770508037
+      },
+      "near_boundary": {
+        "samples": 1870,
+        "lift_MAE_V": 0.11913077940169367,
+        "lift_RMSE_V": 0.19426757243678985,
+        "jib_MAE_V": 0.12775771399759905,
+        "jib_RMSE_V": 0.19448623149319055,
+        "combined_RMSE_V": 0.1943769327118142,
+        "R2_lift": 0.950083458820479,
+        "R2_jib": 0.9201100930756867,
+        "maximum_absolute_error_V": 1.741402623886444
+      },
+      "large_transition": {
+        "samples": 790,
+        "lift_MAE_V": 0.20787068715241797,
+        "lift_RMSE_V": 0.30189278388048935,
+        "jib_MAE_V": 0.20345924778311264,
+        "jib_RMSE_V": 0.28296647534846064,
+        "combined_RMSE_V": 0.2925827055126831,
+        "R2_lift": 0.8248501474190371,
+        "R2_jib": 0.7437452706484379,
+        "maximum_absolute_error_V": 1.741402623886444
+      },
+      "low_velocity": {
+        "samples": 569,
+        "lift_MAE_V": 0.11972986628564837,
+        "lift_RMSE_V": 0.1766502032793329,
+        "jib_MAE_V": 0.12359214376659924,
+        "jib_RMSE_V": 0.1776582945981125,
+        "combined_RMSE_V": 0.17715496600171748,
+        "R2_lift": 0.9016512021679718,
+        "R2_jib": 0.47843188559564187,
+        "maximum_absolute_error_V": 0.9345091607548329
+      },
+      "moving": {
+        "samples": 3181,
+        "lift_MAE_V": 0.1132786169682295,
+        "lift_RMSE_V": 0.17831496841720082,
+        "jib_MAE_V": 0.1110155735423202,
+        "jib_RMSE_V": 0.16930547120435843,
+        "combined_RMSE_V": 0.17386858621004136,
+        "R2_lift": 0.9402892286699089,
+        "R2_jib": 0.9176691394880557,
+        "maximum_absolute_error_V": 1.741402623886444
+      }
+    }
+  },
+  "Improved GRU": {
+    "overall": {
+      "samples": 3750,
+      "lift_MAE_V": 0.12510111046375652,
+      "lift_RMSE_V": 0.18987676234010095,
+      "jib_MAE_V": 0.11897383996823395,
+      "jib_RMSE_V": 0.17710005248977745,
+      "combined_RMSE_V": 0.18359958260933099,
+      "R2_lift": 0.9279106423017948,
+      "R2_jib": 0.8978323782738556,
+      "maximum_absolute_error_V": 1.690451798672058
+    },
+    "subsets": {
+      "nonsaturated": {
+        "samples": 2851,
+        "lift_MAE_V": 0.11977698466534807,
+        "lift_RMSE_V": 0.17696947000064908,
+        "jib_MAE_V": 0.10618244880297613,
+        "jib_RMSE_V": 0.15347761218308104,
+        "combined_RMSE_V": 0.1656405305982368,
+        "R2_lift": 0.9143392584369773,
+        "R2_jib": 0.9012341058508245,
+        "maximum_absolute_error_V": 1.540198981002067
+      },
+      "near_boundary": {
+        "samples": 1870,
+        "lift_MAE_V": 0.1263943277112879,
+        "lift_RMSE_V": 0.19966440127106933,
+        "jib_MAE_V": 0.12875903910916817,
+        "jib_RMSE_V": 0.1962541409713872,
+        "combined_RMSE_V": 0.1979666145886115,
+        "R2_lift": 0.9472715338123514,
+        "R2_jib": 0.9186510688495835,
+        "maximum_absolute_error_V": 1.690451798672058
+      },
+      "large_transition": {
+        "samples": 790,
+        "lift_MAE_V": 0.201174451653151,
+        "lift_RMSE_V": 0.2938489989308257,
+        "jib_MAE_V": 0.1971196310523163,
+        "jib_RMSE_V": 0.2763205223315203,
+        "combined_RMSE_V": 0.2852194464217093,
+        "R2_lift": 0.8340593669020058,
+        "R2_jib": 0.7556410776232898,
+        "maximum_absolute_error_V": 1.690451798672058
+      },
+      "low_velocity": {
+        "samples": 569,
+        "lift_MAE_V": 0.13191258479403176,
+        "lift_RMSE_V": 0.18984015171808788,
+        "jib_MAE_V": 0.132003450981728,
+        "jib_RMSE_V": 0.18727775584021192,
+        "combined_RMSE_V": 0.18856330639455368,
+        "R2_lift": 0.8864160631947807,
+        "R2_jib": 0.4204212568839798,
+        "maximum_absolute_error_V": 0.8905654049356049
+      },
+      "moving": {
+        "samples": 3181,
+        "lift_MAE_V": 0.12388271093721563,
+        "lift_RMSE_V": 0.1898833103050474,
+        "jib_MAE_V": 0.11664317393029677,
+        "jib_RMSE_V": 0.17521719957522655,
+        "combined_RMSE_V": 0.18269748022261786,
+        "R2_lift": 0.9322903345446388,
+        "R2_jib": 0.911819178830427,
+        "maximum_absolute_error_V": 1.690451798672058
+      }
+    }
+  }
+}
+
+Closed-loop:
+{
+  "Improved GRU": {
+    "tip_position_RMSE_mm": 8.988571580571227,
+    "tip_position_MAE_mm": 5.7612757519952424,
+    "maximum_tip_error_mm": 80.67278637398768,
+    "final_tip_error_mm": 9.995396448907403,
+    "x_RMSE_m": 0.006632637662805602,
+    "z_RMSE_m": 0.0060665094323659775,
+    "vx_RMSE_m_s": 0.002653324535446419,
+    "vz_RMSE_m_s": 0.0030810440879618308,
+    "Euclidean_tip_velocity_RMSE_m_s": 0.0040660747364462575,
+    "lift_angle_RMSE_rad": 0.002008086688564072,
+    "jib_angle_RMSE_rad": 0.0032849003788977755,
+    "lift_velocity_RMSE_rad_s": 0.0010460736426991545,
+    "jib_velocity_RMSE_rad_s": 0.0013176558851815312,
+    "lift_saturation_percent": 0.0,
+    "jib_saturation_percent": 0.0,
+    "mean_abs_delta_lift_V": 0.035034669221775276,
+    "mean_abs_delta_jib_V": 0.02352269441947101,
+    "maximum_command_change_V": 0.7427466808598135,
+    "lift_command_delta_sign_changes": 427,
+    "jib_command_delta_sign_changes": 557,
+    "p95_abs_delta_lift_V": 0.14858309477567666,
+    "maximum_abs_delta_lift_V": 0.7427466808598135,
+    "lift_command_sign_changes": 65,
+    "lift_command_sign_changes_per_second": 0.17687074829931973,
+    "p95_abs_delta_jib_V": 0.09417552897939638,
+    "maximum_abs_delta_jib_V": 0.6800453215837479,
+    "jib_command_sign_changes": 97,
+    "jib_command_sign_changes_per_second": 0.2639455782312925,
+    "episodes": 75,
+    "samples": 3750,
+    "failed_episodes": 0,
+    "nonfinite_episodes": 0,
+    "median_episode_RMSE_mm": 4.784318716378871,
+    "p95_episode_RMSE_mm": 18.05539398914016,
+    "worst_episode_RMSE_mm": 44.14885901517738
+  },
+  "Baseline GRU": {
+    "tip_position_RMSE_mm": 8.154487015537779,
+    "tip_position_MAE_mm": 5.627090107015228,
+    "maximum_tip_error_mm": 47.67071257499537,
+    "final_tip_error_mm": 9.2523682860308,
+    "x_RMSE_m": 0.005807215905604824,
+    "z_RMSE_m": 0.005724674830264559,
+    "vx_RMSE_m_s": 0.0025185755318912983,
+    "vz_RMSE_m_s": 0.002928544918089051,
+    "Euclidean_tip_velocity_RMSE_m_s": 0.003862589551985396,
+    "lift_angle_RMSE_rad": 0.0020027523327618988,
+    "jib_angle_RMSE_rad": 0.0029778801528764815,
+    "lift_velocity_RMSE_rad_s": 0.0009959023309652711,
+    "jib_velocity_RMSE_rad_s": 0.0012808563819775875,
+    "lift_saturation_percent": 0.0,
+    "jib_saturation_percent": 0.0,
+    "mean_abs_delta_lift_V": 0.03616464976719468,
+    "mean_abs_delta_jib_V": 0.02300164969571563,
+    "maximum_command_change_V": 0.7591630736723181,
+    "lift_command_delta_sign_changes": 423,
+    "jib_command_delta_sign_changes": 509,
+    "p95_abs_delta_lift_V": 0.15526936298709196,
+    "maximum_abs_delta_lift_V": 0.6962118902023529,
+    "lift_command_sign_changes": 59,
+    "lift_command_sign_changes_per_second": 0.16054421768707483,
+    "p95_abs_delta_jib_V": 0.09329015463590618,
+    "maximum_abs_delta_jib_V": 0.7591630736723181,
+    "jib_command_sign_changes": 102,
+    "jib_command_sign_changes_per_second": 0.27755102040816326,
+    "episodes": 75,
+    "samples": 3750,
+    "failed_episodes": 0,
+    "nonfinite_episodes": 0,
+    "median_episode_RMSE_mm": 5.121687360999427,
+    "p95_episode_RMSE_mm": 16.67890208955765,
+    "worst_episode_RMSE_mm": 28.451048914690038
+  },
+  "MPC": {
+    "tip_position_RMSE_mm": 3.823171820292178,
+    "tip_position_MAE_mm": 2.6319142124892667,
+    "maximum_tip_error_mm": 34.26203817747094,
+    "final_tip_error_mm": 4.500163043286912,
+    "x_RMSE_m": 0.0019943615793307098,
+    "z_RMSE_m": 0.0032617732383422556,
+    "vx_RMSE_m_s": 0.0032265533928324775,
+    "vz_RMSE_m_s": 0.0025089488785933153,
+    "Euclidean_tip_velocity_RMSE_m_s": 0.004087232715688382,
+    "lift_angle_RMSE_rad": 0.0011244568638223821,
+    "jib_angle_RMSE_rad": 0.0010750974919393145,
+    "lift_velocity_RMSE_rad_s": 0.0008755101192739363,
+    "jib_velocity_RMSE_rad_s": 0.0016419846485111514,
+    "lift_saturation_percent": 17.599999999999998,
+    "jib_saturation_percent": 8.799999999999999,
+    "mean_abs_delta_lift_V": 0.1247748897195115,
+    "mean_abs_delta_jib_V": 0.1549558685285321,
+    "maximum_command_change_V": 2.0000015432214546,
+    "lift_command_delta_sign_changes": 1746,
+    "jib_command_delta_sign_changes": 2020,
+    "p95_abs_delta_lift_V": 0.46374609488963503,
+    "maximum_abs_delta_lift_V": 1.9551039389188478,
+    "lift_command_sign_changes": 189,
+    "lift_command_sign_changes_per_second": 0.5142857142857142,
+    "p95_abs_delta_jib_V": 0.5880233025153961,
+    "maximum_abs_delta_jib_V": 2.0000015432214546,
+    "jib_command_sign_changes": 569,
+    "jib_command_sign_changes_per_second": 1.5482993197278911,
+    "episodes": 75,
+    "samples": 3750,
+    "failed_episodes": 0,
+    "nonfinite_episodes": 0,
+    "median_episode_RMSE_mm": 2.5145349698947905,
+    "p95_episode_RMSE_mm": 6.365890117246085,
+    "worst_episode_RMSE_mm": 17.71484424284441
+  }
+}
+
+Realtime:
+{
+  "Baseline GRU": {
+    "calls": 10000,
+    "mean_ms": 0.04628734,
+    "median_ms": 0.0449,
+    "p95_ms": 0.0528,
+    "p99_ms": 0.07720600000000014,
+    "maximum_ms": 0.5054,
+    "deadline_miss_percent": 0.0,
+    "warmup_calls": 500,
+    "torch_threads": 2,
+    "parameter_count": 6898,
+    "simulation_loop": {
+      "calls": 3750,
+      "mean_ms": 21.535185333333335,
+      "median_ms": 21.14065,
+      "p95_ms": 23.77443,
+      "p99_ms": 26.438947999999986,
+      "maximum_ms": 41.632000000000005,
+      "deadline_miss_percent": 0.0
+    },
+    "included": "Assembly, checks, train-only normalization, recurrent-state reset/update, CPU inference, conversion, clipping",
+    "simulation_loop_context": "Saved baseline loop vs new improved loop; different run dates"
+  },
+  "Improved GRU": {
+    "calls": 10000,
+    "mean_ms": 0.04656017,
+    "median_ms": 0.0449,
+    "p95_ms": 0.0548,
+    "p99_ms": 0.07870300000000006,
+    "maximum_ms": 0.4841,
+    "deadline_miss_percent": 0.0,
+    "warmup_calls": 500,
+    "torch_threads": 2,
+    "parameter_count": 6898,
+    "simulation_loop": {
+      "calls": 3750,
+      "mean_ms": 22.074175893333333,
+      "median_ms": 21.62095,
+      "p95_ms": 23.822659999999996,
+      "p99_ms": 26.111212,
+      "maximum_ms": 427.28020000000004,
+      "deadline_miss_percent": 0.02666666666666667
+    },
+    "included": "Assembly, checks, train-only normalization, recurrent-state reset/update, CPU inference, conversion, clipping",
+    "simulation_loop_context": "Saved baseline loop vs new improved loop; different run dates"
+  },
+  "MPC": {
+    "calls": 3750,
+    "mean_ms": 1399.347270186649,
+    "median_ms": 1256.3634499674663,
+    "p95_ms": 2289.6751799271433,
+    "p99_ms": 2820.251442037988,
+    "maximum_ms": 3050.515800016001,
+    "deadline_miss_percent": 100.0
+  }
+}
+
+Bootstrap:
+{
+  "improved_minus_baseline_mm": {
+    "lower_95": -0.5356191195024484,
+    "upper_95": 1.8989371058846363
+  },
+  "improved_minus_MPC_mm": {
+    "lower_95": 2.3349550014194738,
+    "upper_95": 8.101089350308415
+  },
+  "resamples": 2000,
+  "seed": 20261012,
+  "clusters": 6
+}
+
+Decision:
+{
+  "improved": false,
+  "improvement_percent": -10.228535080675961,
+  "improved_over_baseline": 1.1022853508067596,
+  "improved_over_MPC": 2.351077064562663,
+  "degradation_vs_MPC_percent": 135.10770645626627,
+  "decision": "KEEP BASELINE",
+  "decision_rule": "Lower tracking RMSE, source-cluster CI below zero, no worse worst episode, no failures/nonfinite, no deadline misses; conservative recommendation only.",
+  "external_Test_files_opened": 0,
+  "external_Test_files_modified": 0
+}
+
+MPC timings are archived eight-worker generation timings, not matched-load architecture benchmarks.
+Rollout fine-tuning skipped: frozen deployed plant is NumPy/Numba and non-differentiable.
+Baseline/corpus unchanged; no external Test, MATLAB, Git commit or push.
+Output: [original local path; see provenance metadata]

@@ -1,0 +1,290 @@
+NEURAL CONTROLLER EXPERIMENT COMPLETE
+
+Teacher dataset: [original local path; see provenance metadata]
+Train samples: 17500
+Validation samples: 3750
+Internal-test samples: 3750
+Source leakage detected: NO
+
+MLP parameters: 8418
+MLP command RMSE: 0.181896 V
+MLP closed-loop tip RMSE: 9.534184 mm
+MLP mean / p95 / p99 latency: 0.036379 / 0.040600 / 0.054603 ms
+MLP deadline misses: 0.0000%
+
+GRU policy parameters: 6898
+GRU policy command RMSE: 0.174371 V
+GRU policy closed-loop tip RMSE: 8.154487 mm
+GRU policy mean / p95 / p99 latency: 0.069659 / 0.078400 / 0.110605 ms
+GRU policy deadline misses: 0.0000%
+
+Frozen MPC tip RMSE: 3.823172 mm
+Frozen MPC mean solve time: 1399.347 ms
+Selected controller: GRU policy
+Tracking degradation vs MPC: 113.291% (2.133x RMSE)
+Measured speed-up vs saved MPC: 20088.6x
+
+PAPER READINESS CHECK
+{
+  "teacher_imitation_successful": "YES",
+  "teacher_imitation_note": "Command R\u00b2 0.937/0.905 with held-out RMSE 0.178/0.171 V; approximate imitation, with occasional large command errors.",
+  "closed_loop_neural_control_stable": "YES",
+  "stability_scope": "75 internal five-second episodes: zero nonfinite/failing episodes, bounded commands and no observed excursions beyond training mechanical extrema; not an asymptotic stability proof.",
+  "tracking_close_to_MPC": "NO",
+  "tracking_note": "Selected GRU has 2.13x RMSE (+113.29%, +4.33 mm); no arbitrary prespecified error pass/fail threshold used.",
+  "deadline_100ms_satisfied": "YES",
+  "deadline_misses_percent": 0.0,
+  "meaningful_speedup_demonstrated": "YES",
+  "speedup_note": "About 20,089x ratio to saved teacher solve times; teacher timings were under concurrent generation, neural benchmarking was sequential.",
+  "selected_controller_frozen": "YES",
+  "ready_for_external_final_validation": "YES",
+  "external_validation_note": "Proceed only after review, to test generalization of this experimental policy. Accuracy equivalence to MPC and physical/high-fidelity validation remain unestablished."
+}
+
+Complete comparison:
+ tip_position_RMSE_mm  tip_position_MAE_mm  maximum_tip_error_mm  final_tip_error_mm  x_RMSE_m  z_RMSE_m  vx_RMSE_m_s  vz_RMSE_m_s  Euclidean_tip_velocity_RMSE_m_s  lift_angle_RMSE_rad  jib_angle_RMSE_rad  lift_velocity_RMSE_rad_s  jib_velocity_RMSE_rad_s  lift_saturation_percent  jib_saturation_percent  mean_abs_delta_lift_V  mean_abs_delta_jib_V  maximum_command_change_V  lift_command_delta_sign_changes  jib_command_delta_sign_changes              controller  episodes  samples  failed_episodes  median_episode_RMSE_mm  p95_episode_RMSE_mm  worst_episode_RMSE_mm  mean_solve_or_policy_ms  p95_solve_or_policy_ms  deadline_miss_percent  samples_outside_training_envelope_percent  mean_latency_ms  p95_latency_ms  p99_latency_ms  parameters  neural_RMSE_over_MPC_RMSE  tracking_degradation_percent  measured_speedup_vs_MPC
+             3.823172             2.631914             34.262038            4.500163  0.001994  0.003262     0.003227     0.002509                         0.004087             0.001124            0.001075                  0.000876                 0.001642                17.600000                8.800000               0.124775              0.154956                  2.000002                             1746                            2020                     MPC        75     3750                0                2.514535             6.365890              17.714844              1399.347270             2289.675180                  100.0                                        0.0      1399.347270      2289.67518             NaN         NaN                        NaN                           NaN                      NaN
+             9.534184             6.273265             82.050947           11.192580  0.007185  0.006267     0.003044     0.002893                         0.004199             0.002019            0.003682                  0.000967                 0.001540                 0.000000                0.000000               0.028212              0.017887                  0.635773                              375                             537                     MLP        75     3750                0                5.592219            17.204889              46.401105                 0.097556                0.259865                    0.0                                        0.0         0.036379         0.04060        0.054603      8418.0                   2.493789                    149.378906             38465.354043
+             8.154487             5.627090             47.670713            9.252368  0.005807  0.005725     0.002519     0.002929                         0.003863             0.002003            0.002978                  0.000996                 0.001281                 0.000000                0.000000               0.036165              0.023002                  0.759163                              423                             509              GRU policy        75     3750                0                5.121687            16.678902              28.451049                 0.154943                0.347010                    0.0                                        0.0         0.069659         0.07840        0.110605      6898.0                   2.132911                    113.291147             20088.552456
+             0.000000             0.000000              0.000000            0.000000  0.000000  0.000000     0.000000     0.000000                         0.000000             0.000000            0.000000                  0.000000                 0.000000                11.653333                5.413333               0.026673              0.015510                  0.550791                              419                             408 Recorded-command replay        75     3750                0                0.000000             0.000000               0.000000                 0.000717                0.001100                    0.0                                        0.0         0.000717         0.00110             NaN         NaN                        NaN                           NaN                      NaN
+
+Imitation metrics:
+{
+  "MLP": {
+    "original_actual_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11758962692498028,
+      "lift_RMSE_V": 0.18498453115738286,
+      "jib_MAE_V": 0.11573032161137525,
+      "jib_RMSE_V": 0.17875334931210282,
+      "combined_RMSE_V": 0.18189562482068033,
+      "R2_lift": 0.9315775931724248,
+      "R2_jib": 0.8959159266678653,
+      "maximum_absolute_error_V": 1.9104131959517823
+    },
+    "nominal_training_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11758946176952911,
+      "lift_RMSE_V": 0.18498437686631872,
+      "jib_MAE_V": 0.1157302630933011,
+      "jib_RMSE_V": 0.17875330467046366,
+      "combined_RMSE_V": 0.18189552442986584,
+      "R2_lift": 0.931577664516602,
+      "R2_jib": 0.8959159424829829,
+      "maximum_absolute_error_V": 1.9104099869728088
+    },
+    "subsets": {
+      "nonsaturated_teacher": {
+        "samples": 2536,
+        "lift_MAE_V": 0.10906755323184159,
+        "lift_RMSE_V": 0.16455434053070023,
+        "jib_MAE_V": 0.100439680554236,
+        "jib_RMSE_V": 0.14866794124377225,
+        "combined_RMSE_V": 0.15681244807277797,
+        "R2_lift": 0.9103847894718718,
+        "R2_jib": 0.8969733570003756,
+        "maximum_absolute_error_V": 1.5052316181213603
+      },
+      "near_boundary_teacher": {
+        "samples": 1214,
+        "lift_MAE_V": 0.1353919159577642,
+        "lift_RMSE_V": 0.22166835524023853,
+        "jib_MAE_V": 0.14767189139795286,
+        "jib_RMSE_V": 0.22919488779393005,
+        "combined_RMSE_V": 0.2254630305679678,
+        "R2_lift": 0.9380041410987651,
+        "R2_jib": 0.8903505198891,
+        "maximum_absolute_error_V": 1.9104131959517823
+      },
+      "low_velocity": {
+        "samples": 569,
+        "lift_MAE_V": 0.11827699524190753,
+        "lift_RMSE_V": 0.17713116889657468,
+        "jib_MAE_V": 0.11975637303492309,
+        "jib_RMSE_V": 0.17836880033634514,
+        "combined_RMSE_V": 0.17775106178036437,
+        "R2_lift": 0.9011149244338,
+        "R2_jib": 0.4742517468594667,
+        "maximum_absolute_error_V": 1.0204951564912876
+      },
+      "moving": {
+        "samples": 3181,
+        "lift_MAE_V": 0.11746667421440761,
+        "lift_RMSE_V": 0.18635440663794398,
+        "jib_MAE_V": 0.11501016340326502,
+        "jib_RMSE_V": 0.1788220481535834,
+        "combined_RMSE_V": 0.18262706505228446,
+        "R2_lift": 0.9347836613885029,
+        "R2_jib": 0.9081534603821758,
+        "maximum_absolute_error_V": 1.9104131959517823
+      }
+    }
+  },
+  "GRU policy": {
+    "original_actual_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11425748653132586,
+      "lift_RMSE_V": 0.1780633697035875,
+      "jib_MAE_V": 0.11292385846435081,
+      "jib_RMSE_V": 0.17059919419192396,
+      "combined_RMSE_V": 0.17437122567833585,
+      "R2_lift": 0.9366018337982794,
+      "R2_jib": 0.9051953028802728,
+      "maximum_absolute_error_V": 1.741402623886444
+    },
+    "nominal_training_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11425732137587472,
+      "lift_RMSE_V": 0.17806321756363577,
+      "jib_MAE_V": 0.11292379994627666,
+      "jib_RMSE_V": 0.17059913990055703,
+      "combined_RMSE_V": 0.17437112143919434,
+      "R2_lift": 0.9366019024826009,
+      "R2_jib": 0.9051953302737761,
+      "maximum_absolute_error_V": 1.741402623886444
+    },
+    "subsets": {
+      "nonsaturated_teacher": {
+        "samples": 2536,
+        "lift_MAE_V": 0.10501900021839061,
+        "lift_RMSE_V": 0.15658878659463177,
+        "jib_MAE_V": 0.09612507554790288,
+        "jib_RMSE_V": 0.14027308336507974,
+        "combined_RMSE_V": 0.1486549461066226,
+        "R2_lift": 0.9188507776808058,
+        "R2_jib": 0.9082800981817589,
+        "maximum_absolute_error_V": 1.5082771770508037
+      },
+      "near_boundary_teacher": {
+        "samples": 1214,
+        "lift_MAE_V": 0.1335563343810819,
+        "lift_RMSE_V": 0.21614560438132774,
+        "jib_MAE_V": 0.14801587944961603,
+        "jib_RMSE_V": 0.2209024079027714,
+        "combined_RMSE_V": 0.21853694894755427,
+        "R2_lift": 0.9410548469861115,
+        "R2_jib": 0.8981414185369805,
+        "maximum_absolute_error_V": 1.741402623886444
+      },
+      "low_velocity": {
+        "samples": 569,
+        "lift_MAE_V": 0.11972986628564837,
+        "lift_RMSE_V": 0.1766502032793329,
+        "jib_MAE_V": 0.12359214376659924,
+        "jib_RMSE_V": 0.1776582945981125,
+        "combined_RMSE_V": 0.17715496600171748,
+        "R2_lift": 0.9016512021679718,
+        "R2_jib": 0.47843188559564187,
+        "maximum_absolute_error_V": 0.9345091607548329
+      },
+      "moving": {
+        "samples": 3181,
+        "lift_MAE_V": 0.1132786169682295,
+        "lift_RMSE_V": 0.17831496841720082,
+        "jib_MAE_V": 0.1110155735423202,
+        "jib_RMSE_V": 0.16930547120435843,
+        "combined_RMSE_V": 0.17386858621004136,
+        "R2_lift": 0.9402892286699089,
+        "R2_jib": 0.9176691394880557,
+        "maximum_absolute_error_V": 1.741402623886444
+      }
+    }
+  }
+}
+
+CPU latency metrics:
+[
+  {
+    "controller": "MLP",
+    "calls": 10000,
+    "warmup_calls": 500,
+    "CPU": "Intel(R) Core(TM) Ultra 9 285",
+    "OS": "Windows-11-10.0.26100-SP0",
+    "torch_threads": 2,
+    "mean_ms": 0.03637942,
+    "median_ms": 0.0351,
+    "p95_ms": 0.0406,
+    "p99_ms": 0.05460300000000007,
+    "maximum_ms": 0.3417,
+    "std_ms": 0.007718014411984471,
+    "deadline_ms": 100.0,
+    "mean_real_time_factor_percent": 0.03637942,
+    "p95_real_time_factor_percent": 0.0406,
+    "maximum_real_time_factor_percent": 0.3417,
+    "deadline_miss_percent": 0.0,
+    "parameter_count": 8418,
+    "model_file_bytes": 40773,
+    "weight_storage_bytes": 33672,
+    "approximate_model_scaler_state_activation_bytes": 34952,
+    "approximate_MACs_per_call": 8256,
+    "memory_note": "Model/scaler/state/activation storage estimate; excludes Python/PyTorch framework RSS and allocator overhead.",
+    "included": "Input assembly and shape/finite checks, train-only normalization, CPU inference, own GRU state update/reset, output conversion and clipping.",
+    "excluded": "Simulated plant integration and frozen full-state observer propagation; state estimate is an input to the policy."
+  },
+  {
+    "controller": "GRU policy",
+    "calls": 10000,
+    "warmup_calls": 500,
+    "CPU": "Intel(R) Core(TM) Ultra 9 285",
+    "OS": "Windows-11-10.0.26100-SP0",
+    "torch_threads": 2,
+    "mean_ms": 0.06965894,
+    "median_ms": 0.067,
+    "p95_ms": 0.0784,
+    "p99_ms": 0.11060500000000012,
+    "maximum_ms": 0.5474,
+    "std_ms": 0.01496235396174011,
+    "deadline_ms": 100.0,
+    "mean_real_time_factor_percent": 0.06965894,
+    "p95_real_time_factor_percent": 0.0784,
+    "maximum_real_time_factor_percent": 0.5474,
+    "deadline_miss_percent": 0.0,
+    "parameter_count": 6898,
+    "model_file_bytes": 34629,
+    "weight_storage_bytes": 27592,
+    "approximate_model_scaler_state_activation_bytes": 28424,
+    "approximate_MACs_per_call": 6688,
+    "memory_note": "Model/scaler/state/activation storage estimate; excludes Python/PyTorch framework RSS and allocator overhead.",
+    "included": "Input assembly and shape/finite checks, train-only normalization, CPU inference, own GRU state update/reset, output conversion and clipping.",
+    "excluded": "Simulated plant integration and frozen full-state observer propagation; state estimate is an input to the policy."
+  }
+]
+
+Robustness and uncertainty:
+{
+  "episode_median_RMSE_mm": 5.121687360999427,
+  "episode_p95_RMSE_mm": 16.67890208955765,
+  "worst_episode_RMSE_mm": 28.451048914690038,
+  "failed_episodes": 0,
+  "source_bootstrap": {
+    "method": "Paired bootstrap of complete source recordings; 2,000 resamples, six held-out source clusters.",
+    "GRU_minus_MLP_RMSE_mm_95CI": [
+      -2.5592578279307094,
+      0.15325409614147242
+    ],
+    "GRU_over_MPC_RMSE_ratio_95CI": [
+      2.0401310583584205,
+      2.225737043917569
+    ],
+    "limitations": "Six source clusters give limited precision; these are internal simulated-plant results, not external validation."
+  },
+  "full_simulation_loop": {
+    "calls": 3750,
+    "mean_ms": 21.535185333333335,
+    "median_ms": 21.14065,
+    "p95_ms": 23.77443,
+    "p99_ms": 26.438947999999986,
+    "max_ms": 41.632000000000005,
+    "deadline_miss_percent": 0.0,
+    "includes": "Policy call plus frozen full-state observer advancement, mechanical-plant integration and feedback correction; conservative measured simulation-loop sum, not a hardware timing guarantee."
+  }
+}
+
+ORIGINAL TEST FILES OPENED: 0
+ORIGINAL TEST FILES MODIFIED: 0
+READY FOR EXTERNAL FINAL VALIDATION: YES — experimental policy, accuracy gap explicitly retained.
+No external Test, MATLAB, commit or push performed.
+
+
+MLP-vs-GRU scientific interpretation:
+GRU improved observed closed-loop mean RMSE by 14.5% and worst-episode error relative to this MLP. The six-source paired bootstrap interval for GRU-minus-MLP RMSE is [-2.56,+0.15] mm and includes zero: evidence for a general memory advantage is limited, not proof that the instantaneous 32-input mapping is insufficient.

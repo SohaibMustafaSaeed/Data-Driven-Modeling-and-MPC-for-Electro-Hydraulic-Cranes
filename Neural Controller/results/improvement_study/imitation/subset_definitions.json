@@ -1,0 +1,6 @@
+{
+  "nonsaturated": "Both actual teacher commands have magnitude < 1 - 1e-6 V",
+  "near_boundary": "Either command magnitude >= 0.8 V; may overlap nonsaturated",
+  "large_transition_train_threshold_V": 0.313204766103721,
+  "low_velocity_max_boom_speed_rad_s": 0.00825899509742653
+}

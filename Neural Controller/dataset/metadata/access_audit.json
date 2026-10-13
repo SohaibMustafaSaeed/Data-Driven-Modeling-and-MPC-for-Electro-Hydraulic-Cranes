@@ -1,0 +1,11 @@
+{
+  "test_files_opened": 0,
+  "test_files_modified": 0,
+  "test_inspected": false,
+  "prohibited_attempts": [],
+  "accepted_design_artifacts_unchanged": true,
+  "neural_training_started": false,
+  "git_commit_performed": false,
+  "git_push_performed": false,
+  "guard": "Main process and every worker reject Test opens, inspections and mutations; no Test metadata was queried."
+}

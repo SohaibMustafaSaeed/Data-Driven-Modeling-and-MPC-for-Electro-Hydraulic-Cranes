@@ -1,0 +1,12 @@
+{
+  "method": "Paired bootstrap of complete source recordings; 2,000 resamples, six held-out source clusters.",
+  "GRU_minus_MLP_RMSE_mm_95CI": [
+    -2.5592578279307094,
+    0.15325409614147242
+  ],
+  "GRU_over_MPC_RMSE_ratio_95CI": [
+    2.0401310583584205,
+    2.225737043917569
+  ],
+  "limitations": "Six source clusters give limited precision; these are internal simulated-plant results, not external validation."
+}

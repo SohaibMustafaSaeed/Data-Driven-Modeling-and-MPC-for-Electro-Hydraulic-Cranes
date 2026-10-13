@@ -1,0 +1,11 @@
+{
+  "architecture": "gru",
+  "seed": 2026,
+  "best_epoch": 160,
+  "validation_MSE": 0.025854138657450676,
+  "validation_RMSE": 0.16079222200545235,
+  "parameter_count": 6898,
+  "epochs_completed": 190,
+  "training_seconds": 13.659010500065051,
+  "checkpoint": "Neural Controller/models/gru/seed_2026/best_policy.pt"
+}

@@ -1,0 +1,10 @@
+{
+  "boundary_V": 0.8,
+  "transition_percentile": 75,
+  "transition_threshold_V": 0.313204766103721,
+  "rule": "1 + any(abs(raw_teacher)>=0.8) + max(abs(within-episode raw teacher delta))>=train p75",
+  "maximum_weight": 3,
+  "first_sample_transition_weight": false,
+  "threshold_partition": "train only",
+  "delta_loss": "unweighted MSE of k=1..49; no cross-episode delta"
+}

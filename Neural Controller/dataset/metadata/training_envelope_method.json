@@ -1,0 +1,47 @@
+{
+  "recordings": 43,
+  "full_training_rows": 292140000,
+  "exact_min": [
+    -0.3958192614580674,
+    -2.145764527035952,
+    -0.040682206591977084,
+    -0.055703859425776533,
+    1.8246487404835239,
+    -1.5738103174212943,
+    -0.11151773965249456,
+    -0.1290110760286055,
+    -1.0000236528279722,
+    -1.00003788870876
+  ],
+  "exact_max": [
+    0.40119187811674434,
+    -0.6468134746637619,
+    0.023703172812696176,
+    0.05678027970480825,
+    4.479305554491368,
+    0.5771225833359055,
+    0.13033467984934002,
+    0.09463080639720314,
+    1.0000267305499349,
+    1.0000180042147802
+  ],
+  "features": [
+    "lift_angle_rad",
+    "jib_angle_rad",
+    "lift_velocity_rad_s",
+    "jib_velocity_rad_s",
+    "tip_x_m",
+    "tip_z_m",
+    "tip_vx_m_s",
+    "tip_vz_m_s",
+    "lift_command_V",
+    "jib_command_V"
+  ],
+  "grid_samples": 292140,
+  "quantile_method": "Deterministic 10-ms grid within every training prefix; percentiles/densities approximate, exact min/max scan every row.",
+  "validation_suffix_excluded": true,
+  "grid_interval_s": 0.01,
+  "candidate_step_s": 2.5,
+  "episode_duration_s": 5.0,
+  "lookahead_s": 0.2
+}

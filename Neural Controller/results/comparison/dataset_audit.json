@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "input_shape": [
+    25000,
+    32
+  ],
+  "output_shape": [
+    25000,
+    2
+  ],
+  "finite_samples": 25000,
+  "episodes": 500,
+  "chronological_steps": true,
+  "duplicate_episode_steps": 0,
+  "source_leakage_detected": false,
+  "actual_applied_targets_verified": true,
+  "max_plant_replay_difference": 0.0,
+  "within_frozen_teacher_bounds": true,
+  "nominal_bound_excess_values": 2847,
+  "nominal_bound_max_excess_V": 3.2089789734346397e-06,
+  "neural_target_view": "Documented nominal [-1,1] projection; raw applied teacher targets retained for diagnostics and imitation scoring",
+  "teacher_dataset_modified": false,
+  "external_test_files_opened": 0,
+  "external_test_files_modified": 0
+}

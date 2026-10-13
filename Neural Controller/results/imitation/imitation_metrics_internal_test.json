@@ -1,0 +1,142 @@
+{
+  "MLP": {
+    "original_actual_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11758962692498028,
+      "lift_RMSE_V": 0.18498453115738286,
+      "jib_MAE_V": 0.11573032161137525,
+      "jib_RMSE_V": 0.17875334931210282,
+      "combined_RMSE_V": 0.18189562482068033,
+      "R2_lift": 0.9315775931724248,
+      "R2_jib": 0.8959159266678653,
+      "maximum_absolute_error_V": 1.9104131959517823
+    },
+    "nominal_training_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11758946176952911,
+      "lift_RMSE_V": 0.18498437686631872,
+      "jib_MAE_V": 0.1157302630933011,
+      "jib_RMSE_V": 0.17875330467046366,
+      "combined_RMSE_V": 0.18189552442986584,
+      "R2_lift": 0.931577664516602,
+      "R2_jib": 0.8959159424829829,
+      "maximum_absolute_error_V": 1.9104099869728088
+    },
+    "subsets": {
+      "nonsaturated_teacher": {
+        "samples": 2536,
+        "lift_MAE_V": 0.10906755323184159,
+        "lift_RMSE_V": 0.16455434053070023,
+        "jib_MAE_V": 0.100439680554236,
+        "jib_RMSE_V": 0.14866794124377225,
+        "combined_RMSE_V": 0.15681244807277797,
+        "R2_lift": 0.9103847894718718,
+        "R2_jib": 0.8969733570003756,
+        "maximum_absolute_error_V": 1.5052316181213603
+      },
+      "near_boundary_teacher": {
+        "samples": 1214,
+        "lift_MAE_V": 0.1353919159577642,
+        "lift_RMSE_V": 0.22166835524023853,
+        "jib_MAE_V": 0.14767189139795286,
+        "jib_RMSE_V": 0.22919488779393005,
+        "combined_RMSE_V": 0.2254630305679678,
+        "R2_lift": 0.9380041410987651,
+        "R2_jib": 0.8903505198891,
+        "maximum_absolute_error_V": 1.9104131959517823
+      },
+      "low_velocity": {
+        "samples": 569,
+        "lift_MAE_V": 0.11827699524190753,
+        "lift_RMSE_V": 0.17713116889657468,
+        "jib_MAE_V": 0.11975637303492309,
+        "jib_RMSE_V": 0.17836880033634514,
+        "combined_RMSE_V": 0.17775106178036437,
+        "R2_lift": 0.9011149244338,
+        "R2_jib": 0.4742517468594667,
+        "maximum_absolute_error_V": 1.0204951564912876
+      },
+      "moving": {
+        "samples": 3181,
+        "lift_MAE_V": 0.11746667421440761,
+        "lift_RMSE_V": 0.18635440663794398,
+        "jib_MAE_V": 0.11501016340326502,
+        "jib_RMSE_V": 0.1788220481535834,
+        "combined_RMSE_V": 0.18262706505228446,
+        "R2_lift": 0.9347836613885029,
+        "R2_jib": 0.9081534603821758,
+        "maximum_absolute_error_V": 1.9104131959517823
+      }
+    }
+  },
+  "GRU policy": {
+    "original_actual_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11425748653132586,
+      "lift_RMSE_V": 0.1780633697035875,
+      "jib_MAE_V": 0.11292385846435081,
+      "jib_RMSE_V": 0.17059919419192396,
+      "combined_RMSE_V": 0.17437122567833585,
+      "R2_lift": 0.9366018337982794,
+      "R2_jib": 0.9051953028802728,
+      "maximum_absolute_error_V": 1.741402623886444
+    },
+    "nominal_training_targets": {
+      "samples": 3750,
+      "lift_MAE_V": 0.11425732137587472,
+      "lift_RMSE_V": 0.17806321756363577,
+      "jib_MAE_V": 0.11292379994627666,
+      "jib_RMSE_V": 0.17059913990055703,
+      "combined_RMSE_V": 0.17437112143919434,
+      "R2_lift": 0.9366019024826009,
+      "R2_jib": 0.9051953302737761,
+      "maximum_absolute_error_V": 1.741402623886444
+    },
+    "subsets": {
+      "nonsaturated_teacher": {
+        "samples": 2536,
+        "lift_MAE_V": 0.10501900021839061,
+        "lift_RMSE_V": 0.15658878659463177,
+        "jib_MAE_V": 0.09612507554790288,
+        "jib_RMSE_V": 0.14027308336507974,
+        "combined_RMSE_V": 0.1486549461066226,
+        "R2_lift": 0.9188507776808058,
+        "R2_jib": 0.9082800981817589,
+        "maximum_absolute_error_V": 1.5082771770508037
+      },
+      "near_boundary_teacher": {
+        "samples": 1214,
+        "lift_MAE_V": 0.1335563343810819,
+        "lift_RMSE_V": 0.21614560438132774,
+        "jib_MAE_V": 0.14801587944961603,
+        "jib_RMSE_V": 0.2209024079027714,
+        "combined_RMSE_V": 0.21853694894755427,
+        "R2_lift": 0.9410548469861115,
+        "R2_jib": 0.8981414185369805,
+        "maximum_absolute_error_V": 1.741402623886444
+      },
+      "low_velocity": {
+        "samples": 569,
+        "lift_MAE_V": 0.11972986628564837,
+        "lift_RMSE_V": 0.1766502032793329,
+        "jib_MAE_V": 0.12359214376659924,
+        "jib_RMSE_V": 0.1776582945981125,
+        "combined_RMSE_V": 0.17715496600171748,
+        "R2_lift": 0.9016512021679718,
+        "R2_jib": 0.47843188559564187,
+        "maximum_absolute_error_V": 0.9345091607548329
+      },
+      "moving": {
+        "samples": 3181,
+        "lift_MAE_V": 0.1132786169682295,
+        "lift_RMSE_V": 0.17831496841720082,
+        "jib_MAE_V": 0.1110155735423202,
+        "jib_RMSE_V": 0.16930547120435843,
+        "combined_RMSE_V": 0.17386858621004136,
+        "R2_lift": 0.9402892286699089,
+        "R2_jib": 0.9176691394880557,
+        "maximum_absolute_error_V": 1.741402623886444
+      }
+    }
+  }
+}

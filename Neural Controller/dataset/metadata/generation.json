@@ -1,0 +1,35 @@
+{
+  "dataset_version": "mpc_teacher_v1",
+  "target_samples": 25000,
+  "planned_episodes": 500,
+  "steps_per_episode": 50,
+  "episode_duration_s": 5.0,
+  "workers": 8,
+  "frozen_sampling_sha256": "496c1f9ce2f9acb5faad5fe35d7adc49b4270557a6150458fff3a402b7383edb",
+  "planned_manifest_sha256": "71db36be3908d508c2a00286ac6d12f5fc1beba4e7342ed3a9383c62c0e96be6",
+  "training_only": true,
+  "inputs": 32,
+  "targets": 2,
+  "physical_values": true,
+  "fresh_episodes": true,
+  "pilot_samples_copied": false,
+  "sampler": {
+    "algorithm": "Pre-existing generate_corpus.py diversity/soft-motion-deficit ranking, unchanged coefficients.",
+    "available_candidates": 535,
+    "candidate_slots": "Disjoint five-second trajectories plus 200-ms lookahead and seed row.",
+    "overlap_within_corpus": 0.0,
+    "reject_near_identical_design_overlap_fraction": 0.8,
+    "design_overlap_note": "Older validation studies are not copied into the corpus; limited temporal overlap with them may occur. Corpus windows themselves are disjoint.",
+    "target_training_positive_lift_fraction": 0.5019716574245225,
+    "target_training_low_velocity_fraction": 0.15,
+    "fixed_weights": {
+      "missing_angle_bin": 8,
+      "missing_workspace_bin": 8,
+      "missing_command_pair": 1,
+      "motion_deficit": 20,
+      "recording_diversity": 4,
+      "dense_negative_penalty": 2
+    }
+  },
+  "timing_context": "Eight independent workers; numerical controller settings unchanged; solve latency measured under concurrent CPU load."
+}

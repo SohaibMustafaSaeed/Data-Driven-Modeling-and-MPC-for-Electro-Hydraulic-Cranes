@@ -1,0 +1,12 @@
+{
+  "original_test_files_opened": 0,
+  "original_test_files_modified": 0,
+  "original_test_inspected": false,
+  "teacher_dataset_and_frozen_artifacts_unchanged": true,
+  "no_source_leakage": true,
+  "no_internal_test_model_selection": true,
+  "no_teacher_dynamics_plant_cost_horizon_optimizer_geometry_preprocessing_changes": true,
+  "git_commit_performed": false,
+  "git_push_performed": false,
+  "matlab_run": false
+}

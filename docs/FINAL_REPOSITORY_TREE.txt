@@ -1,0 +1,1566 @@
+github_publication/
+.git/ (Git internals unchanged; initial audit includes metadata files)
+  .gitattributes
+  .gitignore
+  archive_working_repository/
+    __pycache__/
+      reproduce_mpc.cpython-312.pyc [ignored/local]
+    common/
+      __pycache__/
+        __init__.cpython-312.pyc [ignored/local]
+        data.cpython-312.pyc [ignored/local]
+        evaluation.cpython-312.pyc [ignored/local]
+        horizons.cpython-312.pyc [ignored/local]
+        project.cpython-312.pyc [ignored/local]
+        results.cpython-312.pyc [ignored/local]
+    consolidation_tools/
+      consolidate_research_local.cpython-312.pyc [ignored/local]
+      consolidate_research_local.py [ignored/local]
+      finalize_repository_local.py [ignored/local]
+      write_research_docs_local.py [ignored/local]
+    GRU Latent/
+      __pycache__/
+        gru.cpython-312.pyc [ignored/local]
+        gru.native_encode-81.py312.1.nbc [ignored/local]
+        gru.native_encode-81.py312.nbi [ignored/local]
+        gru.native_step-98.py312.1.nbc [ignored/local]
+        gru.native_step-98.py312.nbi [ignored/local]
+        gru.sigmoid-91.py312.1.nbc [ignored/local]
+        gru.sigmoid-91.py312.nbi [ignored/local]
+        gru2.cpython-312.pyc [ignored/local]
+    MPC offline Model/
+      __pycache__/
+        crane_kinematics.cpython-312.pyc [ignored/local]
+        offline_mpc.cpython-312.pyc [ignored/local]
+      plant/
+        __pycache__/
+          mechanical_compact.cpython-312.pyc [ignored/local]
+          mechanical_compact.held_command-216.py312.1.nbc [ignored/local]
+          mechanical_compact.held_command-216.py312.nbi [ignored/local]
+          mechanical_compact.native_encode-128.py312.1.nbc [ignored/local]
+          mechanical_compact.native_encode-128.py312.nbi [ignored/local]
+          mechanical_compact.native_step-138.py312.1.nbc [ignored/local]
+          mechanical_compact.native_step-138.py312.nbi [ignored/local]
+    verification_cache/
+      common/
+        __pycache__/
+          __init__.cpython-312.pyc [ignored/local]
+          project.cpython-312.pyc [ignored/local]
+        __pycache___additional/
+          __init__.cpython-312.pyc [ignored/local]
+          project.cpython-312.pyc [ignored/local]
+      Neural Controller/
+        scripts/
+          __pycache__/
+            teacher_engine.cpython-312.pyc [ignored/local]
+  check_setup.py
+  common/
+    __init__.py
+    data.py
+    evaluate.py
+    evaluation.py
+    horizons.py
+    project.py
+    recording_view.py
+    reset_evaluation.py
+    results.py
+  Compact Recurrent/
+    artifacts/
+      best_model.pt
+      best_numba_weights.npz
+      config.json
+      latest_model.pt
+      training_history.json
+    results/
+      Simulation_Output_53/
+        checkpoint_e9954c5988083ce0/
+          measured_one_step/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          method_comparison.csv [ignored/local]
+          recursive/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit20/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            end_effector_metrics.csv [ignored/local]
+            end_effector_physical.npy [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200000/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            ctrl_c20_b10000_v1.csv [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit500/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+    test.py
+    trainCompactLatent.py
+  compare_models.py
+  consolidate_mpc.py
+  Data Preprocessing/
+    preprocess_dataset.py
+  docs/
+    ACTIVITY_SELECTION_AB.md
+    CARTESIAN_MPC.md
+    CONTROLLER_HORIZON_VALIDATION.md
+    EXPERIMENT_MAP.md
+    figures/
+      activity_selector_ab.png
+      controller20_endpoint_errors.png [ignored/local]
+      controller20_full_csv_angles.png [ignored/local]
+      controller20_full_csv_velocities.png [ignored/local]
+      controller20_interval_errors.png [ignored/local]
+      full_state_accuracy_timing.png [ignored/local]
+      full_state_recursive_angles.png [ignored/local]
+      full_state_recursive_velocities.png [ignored/local]
+      improvement_episode_rmse_distribution_baseline_vs_improved.png
+      model_comparison_2s_angles.png
+      model_comparison_2s_velocities.png
+      mpc_both_boom_trajectories_full_csv.png [ignored/local]
+      mpc_both_booms_full_csv.png [ignored/local]
+      mpc_commands_tracking_mismatch.png [ignored/local]
+      mpc_end_effector_error_full_csv.png [ignored/local]
+      mpc_end_effector_full_csv.png [ignored/local]
+      mpc_jib_boom_trajectory_full_csv.png [ignored/local]
+      mpc_jib_full_csv.png [ignored/local]
+      mpc_lift_boom_trajectory_full_csv.png [ignored/local]
+      mpc_lift_full_csv.png [ignored/local]
+      mpc_pipeline.png
+      mpc_predictor_comparison.png
+      mpc_reachable_both_booms.png
+      mpc_reachable_tip_error.png
+      mpc_reachable_tip_path.png
+      mpc_reachable_tip_tracking.png
+      mpc_recorded_both_booms.png
+      mpc_recorded_tip_error.png
+      mpc_recorded_tip_path.png
+      mpc_recorded_tip_tracking.png
+      mpc_reference_prediction_plant.png [ignored/local]
+      mpc_selected_prediction_horizon.png [ignored/local]
+      mpc_solve_time_and_cost.png [ignored/local]
+      neural_accuracy_latency_comparison.png
+      neural_closed_loop_tip_trajectory_xy_or_xz.png
+      neural_episode_rmse_distribution.png
+      neural_latency_distribution.png
+      neural_representative_command_episode.png
+      neural_training_validation_loss_gru.png
+      prediction_error_vs_lead.png
+      recorded_replay_vs_mpc.png
+      reset200_error_by_lead.png [ignored/local]
+      reset200_full_csv_angles.png [ignored/local]
+      reset200_full_csv_velocities.png [ignored/local]
+      reset200_mechanical_persistence.png [ignored/local]
+      reset20_accuracy_timing.png [ignored/local]
+      reset20_end_effector_full_csv_time.png [ignored/local]
+      reset20_end_effector_trajectory.png [ignored/local]
+      reset20_full_csv_angles.png [ignored/local]
+      reset20_full_csv_velocities.png [ignored/local]
+      slsqp_iteration_study.png
+      supplementary/
+        improvement_accuracy_latency_baseline_vs_improved.png
+        improvement_closed_loop_tip_trajectory_baseline_vs_improved.png
+        improvement_command_delta_teacher_vs_policies.png
+        improvement_command_error_histograms_baseline_vs_improved.png
+        improvement_large_transition_command_error.png
+        improvement_latency_distribution_baseline_vs_improved.png
+        improvement_near_boundary_command_error.png
+        improvement_per_source_rmse_baseline_vs_improved.png
+        improvement_teacher_vs_baseline_vs_improved_commands.png
+        improvement_tracking_error_vs_time_baseline_vs_improved.png
+        improvement_training_validation_loss_improved_gru.png
+        neural_closed_loop_tracking_error_vs_time.png
+        neural_command_comparison_vs_time.png
+        neural_command_error_histograms.png
+        neural_command_teacher_vs_policy.png
+        neural_training_validation_loss_mlp.png
+        teacher_joint_state_coverage.png
+        teacher_reference_preview_coverage.png
+        teacher_representative_teacher_episode.png
+        teacher_source_recording_distribution.png
+        teacher_teacher_jib_distribution.png
+        teacher_teacher_lift_distribution.png
+      teacher_cartesian_workspace_coverage.png
+      teacher_teacher_command_pair_distribution.png
+    FINAL_PIPELINE.md
+    FINAL_REPOSITORY_TREE.txt
+    FULL_RECORDING.md
+    repository_audit_initial.csv
+    repository_cleanup_summary.json
+    repository_verification.json
+    results/
+      consolidation_provenance.json
+      controller20_all_state_metrics.csv
+      controller20_checks.json
+      controller20_metrics_by_interval.csv
+      controller20_model_summary.csv
+      controller20_protocol.json
+      controller20_recording_coverage.csv
+      dynamics_recursive_results.csv
+      figure_provenance.json
+      final_gru_reference_comparison.csv
+      final_gru_reference_verification.json
+      forecast_duration_comparison.csv
+      full_recording_coverage.csv
+      full_recording_error_over_time.csv
+      full_state_all_metrics.csv
+      full_state_model_summary.csv
+      improvement_study_results.csv
+      model_mechanical_comparison_2s.csv
+      mpc_final_results.csv
+      mpc_full_csv_end_effector_metrics.csv
+      mpc_full_csv_recording_coverage.json
+      mpc_full_csv_reproduction_metrics.csv
+      mpc_full_csv_summary.json
+      mpc_full_csv_tracking_metrics.csv
+      mpc_model_mismatch_metrics.csv
+      mpc_predictor_comparison.csv
+      mpc_predictor_differences.csv
+      mpc_reachable_cartesian_metrics.csv
+      mpc_reachable_config.json
+      mpc_reachable_coverage.json
+      mpc_reachable_mechanical_metrics.csv
+      mpc_reachable_replay_distance.csv
+      mpc_reachable_replay_metrics.csv
+      mpc_reachable_summary.json
+      mpc_recorded_cartesian_metrics.csv
+      mpc_recorded_config.json
+      mpc_recorded_coverage.json
+      mpc_recorded_mechanical_metrics.csv
+      mpc_recorded_replay_distance.csv
+      mpc_recorded_replay_metrics.csv
+      mpc_recorded_summary.json
+      mpc_summary.json
+      mpc_tracking_metrics.csv
+      neural_controller_results.csv
+      neural_latency_results.csv
+      recorded_replay_vs_mpc.csv
+      reset200_all_state_metrics.csv
+      reset200_kernel_checks.json
+      reset200_metrics_by_prediction_step.csv
+      reset200_model_summary.csv
+      reset200_provenance.json
+      reset200_recording_coverage.csv
+      reset20_all_state_metrics.csv
+      reset20_end_effector_metrics.csv
+      reset20_metrics_by_prediction_step.csv
+      reset20_model_summary.csv
+      reset20_provenance.json
+      reset20_recording_coverage.csv
+      slsqp_iteration_study.csv
+      teacher_dataset_summary.csv
+    RUNNING.md
+    SUPERVISOR_GUIDE.md
+  evaluate_controller_horizon.py
+  GRU Latent/
+    artifacts/
+      best_model.pt
+      best_numba_weights.npz
+      config.json
+      latest_model.pt
+      training_history.json
+    gru.py
+    gru2.py
+    results/
+      Simulation_Output_53/
+        checkpoint_b9264f31b3731f5f/
+          measured_one_step/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          method_comparison.csv [ignored/local]
+          recursive/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit20/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            end_effector_metrics.csv [ignored/local]
+            end_effector_physical.npy [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200000/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            ctrl_c20_b10000_v1.csv [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit500/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+    test.py
+  LSTM/
+    artifacts/
+      best_model.pt
+      best_numba_weights.npz
+      config.json
+      latest_model.pt
+      training_history.json
+    LSTM.py
+    lstm4.py
+    results/
+      Simulation_Output_53/
+        checkpoint_86a34da358160202/
+          measured_one_step/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          method_comparison.csv [ignored/local]
+          recursive/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit20/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            end_effector_metrics.csv [ignored/local]
+            end_effector_physical.npy [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200000/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            ctrl_c20_b10000_v1.csv [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit500/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+    test.py
+  MPC offline Model/
+    artifacts/
+      mechanical_plant/
+        best_model.pt
+        best_numba_weights.npz
+        config.json
+        latest_model.pt
+        scaler.json
+        training_history.json
+    compare_activity_selection.py
+    configs/
+      final_gru_mpc.json
+    crane_kinematics.py
+    full_recording_mpc.py
+    geometry_patu.json
+    offline_mpc.py
+    plant/
+      mechanical_compact.py
+      testMechanicalCompact.py
+      trainMechanicalCompact.py
+    reference_replay.py
+    results/
+      20261008T124105_070293Z/
+        commands.csv [ignored/local]
+        commands_tracking_mismatch.png [ignored/local]
+        config.json [ignored/local]
+        model_mismatch_metrics.csv [ignored/local]
+        mpc_mechanical_plant_arrays.npz [ignored/local]
+        reference_prediction_plant.png [ignored/local]
+        results.txt [ignored/local]
+        selected_prediction_horizon.png [ignored/local]
+        solve_time_and_cost.png [ignored/local]
+        solver_history.csv [ignored/local]
+        summary.json [ignored/local]
+        teacher_dataset.csv [ignored/local]
+        tracking_metrics.csv [ignored/local]
+        trajectory.csv [ignored/local]
+      activity_ab/
+        end_effector_axis_metrics.csv [ignored/local]
+        matched_start_verification.json [ignored/local]
+        old_auto/
+          activity_selector_source.py [ignored/local]
+          boom_tip_metrics.csv [ignored/local]
+          both_boom_trajectories.png [ignored/local]
+          commands.csv [ignored/local]
+          commands_tracking_mismatch.png [ignored/local]
+          config.json [ignored/local]
+          end_effector_metrics.csv [ignored/local]
+          end_effector_mismatch_metrics.csv [ignored/local]
+          end_effector_tracking.png [ignored/local]
+          jib_boom_states.png [ignored/local]
+          jib_boom_trajectory.png [ignored/local]
+          kinematic_trajectories.npz [ignored/local]
+          kinematics_config.json [ignored/local]
+          kinematics_results.txt [ignored/local]
+          kinematics_summary.json [ignored/local]
+          lift_boom_states.png [ignored/local]
+          lift_boom_trajectory.png [ignored/local]
+          model_mismatch_metrics.csv [ignored/local]
+          mpc_mechanical_plant_arrays.npz [ignored/local]
+          mpc_surrogate_mechanical_plant_source.py [ignored/local]
+          mpc_vs_recorded_commands.csv [ignored/local]
+          recorded_command_statistics.csv [ignored/local]
+          reference_prediction_plant.png [ignored/local]
+          reference_reproduction/
+            recorded_reference_reproduction.png [ignored/local]
+            replay_arrays.npz [ignored/local]
+            reproduction_metrics.csv [ignored/local]
+            results.txt [ignored/local]
+            summary.json [ignored/local]
+          results.txt [ignored/local]
+          selected_prediction_horizon.png [ignored/local]
+          solve_time_and_cost.png [ignored/local]
+          solver_history.csv [ignored/local]
+          summary.json [ignored/local]
+          teacher_dataset.csv [ignored/local]
+          tracking_metrics.csv [ignored/local]
+          trajectory.csv [ignored/local]
+          trajectory_cartesian.csv [ignored/local]
+        physical_auto/
+          activity_selector_source.py [ignored/local]
+          boom_tip_metrics.csv [ignored/local]
+          both_boom_trajectories.png [ignored/local]
+          commands.csv [ignored/local]
+          commands_tracking_mismatch.png [ignored/local]
+          config.json [ignored/local]
+          end_effector_metrics.csv [ignored/local]
+          end_effector_mismatch_metrics.csv [ignored/local]
+          end_effector_tracking.png [ignored/local]
+          jib_boom_states.png [ignored/local]
+          jib_boom_trajectory.png [ignored/local]
+          kinematic_trajectories.npz [ignored/local]
+          kinematics_config.json [ignored/local]
+          kinematics_results.txt [ignored/local]
+          kinematics_summary.json [ignored/local]
+          lift_boom_states.png [ignored/local]
+          lift_boom_trajectory.png [ignored/local]
+          model_mismatch_metrics.csv [ignored/local]
+          mpc_mechanical_plant_arrays.npz [ignored/local]
+          mpc_surrogate_mechanical_plant_source.py [ignored/local]
+          mpc_vs_recorded_commands.csv [ignored/local]
+          recorded_command_statistics.csv [ignored/local]
+          reference_prediction_plant.png [ignored/local]
+          reference_reproduction/
+            recorded_reference_reproduction.png [ignored/local]
+            replay_arrays.npz [ignored/local]
+            reproduction_metrics.csv [ignored/local]
+            results.txt [ignored/local]
+            summary.json [ignored/local]
+          results.txt [ignored/local]
+          selected_prediction_horizon.png [ignored/local]
+          solve_time_and_cost.png [ignored/local]
+          solver_history.csv [ignored/local]
+          summary.json [ignored/local]
+          teacher_dataset.csv [ignored/local]
+          tracking_metrics.csv [ignored/local]
+          trajectory.csv [ignored/local]
+          trajectory_cartesian.csv [ignored/local]
+        physical_fixed_old_start/
+          activity_selector_source.py [ignored/local]
+          boom_tip_metrics.csv [ignored/local]
+          both_boom_trajectories.png [ignored/local]
+          commands.csv [ignored/local]
+          commands_tracking_mismatch.png [ignored/local]
+          config.json [ignored/local]
+          end_effector_metrics.csv [ignored/local]
+          end_effector_mismatch_metrics.csv [ignored/local]
+          end_effector_tracking.png [ignored/local]
+          jib_boom_states.png [ignored/local]
+          jib_boom_trajectory.png [ignored/local]
+          kinematic_trajectories.npz [ignored/local]
+          kinematics_config.json [ignored/local]
+          kinematics_results.txt [ignored/local]
+          kinematics_summary.json [ignored/local]
+          lift_boom_states.png [ignored/local]
+          lift_boom_trajectory.png [ignored/local]
+          model_mismatch_metrics.csv [ignored/local]
+          mpc_mechanical_plant_arrays.npz [ignored/local]
+          mpc_surrogate_mechanical_plant_source.py [ignored/local]
+          mpc_vs_recorded_commands.csv [ignored/local]
+          recorded_command_statistics.csv [ignored/local]
+          reference_prediction_plant.png [ignored/local]
+          reference_reproduction/
+            recorded_reference_reproduction.png [ignored/local]
+            replay_arrays.npz [ignored/local]
+            reproduction_metrics.csv [ignored/local]
+            results.txt [ignored/local]
+            summary.json [ignored/local]
+          results.txt [ignored/local]
+          selected_prediction_horizon.png [ignored/local]
+          solve_time_and_cost.png [ignored/local]
+          solver_history.csv [ignored/local]
+          summary.json [ignored/local]
+          teacher_dataset.csv [ignored/local]
+          tracking_metrics.csv [ignored/local]
+          trajectory.csv [ignored/local]
+          trajectory_cartesian.csv [ignored/local]
+        segment_selection_comparison.csv [ignored/local]
+        summary.csv [ignored/local]
+      full_csv_patu_100ms/
+        boom_tip_metrics.csv [ignored/local]
+        both_boom_trajectories.png [ignored/local]
+        both_boom_trajectories_full_csv.png [ignored/local]
+        both_booms_full_csv.png [ignored/local]
+        commands.csv [ignored/local]
+        commands_tracking_mismatch.png [ignored/local]
+        config.json [ignored/local]
+        end_effector_error_full_csv.png [ignored/local]
+        end_effector_full_csv.png [ignored/local]
+        end_effector_metrics.csv [ignored/local]
+        end_effector_metrics_control_endpoints.csv [ignored/local]
+        end_effector_mismatch_metrics.csv [ignored/local]
+        end_effector_mismatch_metrics_control_endpoints.csv [ignored/local]
+        end_effector_tracking.png [ignored/local]
+        full_recording_kinematics_summary.json [ignored/local]
+        jib_boom_states.png [ignored/local]
+        jib_boom_trajectory.png [ignored/local]
+        jib_boom_trajectory_full_csv.png [ignored/local]
+        jib_full_csv.png [ignored/local]
+        kinematic_trajectories.npz [ignored/local]
+        kinematics_config.json [ignored/local]
+        kinematics_results.txt [ignored/local]
+        kinematics_results_control_endpoints.txt [ignored/local]
+        kinematics_summary.json [ignored/local]
+        lift_boom_states.png [ignored/local]
+        lift_boom_trajectory.png [ignored/local]
+        lift_boom_trajectory_full_csv.png [ignored/local]
+        lift_full_csv.png [ignored/local]
+        micro_plant_states.npy [ignored/local]
+        micro_plant_tip.npy [ignored/local]
+        micro_predictor_states.npy [ignored/local]
+        micro_predictor_tip.npy [ignored/local]
+        micro_reference_states.npy [ignored/local]
+        micro_reference_tip.npy [ignored/local]
+        model_mismatch_control_endpoints.csv [ignored/local]
+        model_mismatch_metrics.csv [ignored/local]
+        mpc_mechanical_plant_arrays.npz [ignored/local]
+        mpc_surrogate_mechanical_plant_source.py [ignored/local]
+        mpc_vs_recorded_commands.csv [ignored/local]
+        predictor_horizons_full_state.npy [ignored/local]
+        recorded_command_statistics.csv [ignored/local]
+        recording_coverage.json [ignored/local]
+        reference_prediction_plant.png [ignored/local]
+        reference_reproduction/
+          reproduction_metrics.csv [ignored/local]
+          summary.json [ignored/local]
+        results.txt [ignored/local]
+        solve_time_and_cost.png [ignored/local]
+        solver_history.csv [ignored/local]
+        summary.json [ignored/local]
+        teacher_dataset.csv [ignored/local]
+        tracking_metrics.csv [ignored/local]
+        tracking_metrics_control_endpoints.csv [ignored/local]
+        trajectory.csv [ignored/local]
+        trajectory_cartesian.csv [ignored/local]
+      verified_one_second/
+        config.json [ignored/local]
+      verified_one_second_v2/
+        commands.csv [ignored/local]
+        commands_tracking_mismatch.png [ignored/local]
+        config.json [ignored/local]
+        model_mismatch_metrics.csv [ignored/local]
+        mpc_mechanical_plant_arrays.npz [ignored/local]
+        mpc_vs_recorded_commands.csv [ignored/local]
+        recorded_command_statistics.csv [ignored/local]
+        reference_prediction_plant.png [ignored/local]
+        reference_reproduction/
+          recorded_reference_reproduction.png [ignored/local]
+          replay_arrays.npz [ignored/local]
+          reproduction_metrics.csv [ignored/local]
+          results.txt [ignored/local]
+          summary.json [ignored/local]
+        results.txt [ignored/local]
+        selected_prediction_horizon.png [ignored/local]
+        solve_time_and_cost.png [ignored/local]
+        solver_history.csv [ignored/local]
+        summary.json [ignored/local]
+        teacher_dataset.csv [ignored/local]
+        tracking_metrics.csv [ignored/local]
+        trajectory.csv [ignored/local]
+  Neural Controller/
+    configs/
+      example_inputs.json
+      input_scaler.json
+      release_checkpoint_manifest.json
+      runtime_versions.json
+      training.json
+    data_splits/
+      episode_membership.csv
+      internal_test_indices.npy
+      source_split.json
+      target_projection.json
+      train_indices.npy
+      validation_indices.npy
+    dataset/
+      manifests/
+        episode_manifest.csv
+        planned_episode_manifest.csv
+        planned_episode_manifest.json
+      metadata/
+        access_audit.json
+        corpus_sha256.json
+        coverage_bin_edges.json
+        data_validation.json
+        dataset_info.json
+        engine_sha256.json
+        feature_schema.json
+        frozen_sampling_strategy.json
+        frozen_teacher.json
+        generation.json
+        low_velocity_definition.json
+        normalization_stats.json
+        runtime_versions.json
+        scientific_engine_sha256.json
+        training_envelope_method.json
+      summaries/
+        command_distribution.csv
+        dataset_summary.json
+        dataset_summary.txt
+        occupied_bin_coverage.csv
+        reference_coverage_statistics.csv
+        state_coverage_statistics.csv
+    figures/
+      accuracy_latency_comparison.png
+      closed_loop_tip_trajectory_xy_or_xz.png
+      closed_loop_tracking_error_vs_time.png
+      command_comparison_vs_time.png
+      command_error_histograms.png
+      command_teacher_vs_policy.png
+      episode_rmse_distribution.png
+      latency_distribution.png
+      representative_command_episode.png
+      training_validation_loss_gru.png
+      training_validation_loss_mlp.png
+    improvement_study/
+      config/
+        selection_protocol.json
+        study.json
+        weighting.json
+      figures/
+        accuracy_latency_baseline_vs_improved.png
+        closed_loop_tip_trajectory_baseline_vs_improved.png
+        command_delta_teacher_vs_policies.png
+        command_error_histograms_baseline_vs_improved.png
+        episode_rmse_distribution_baseline_vs_improved.png
+        large_transition_command_error.png
+        latency_distribution_baseline_vs_improved.png
+        near_boundary_command_error.png
+        per_source_rmse_baseline_vs_improved.png
+        teacher_vs_baseline_vs_improved_commands.png
+        tracking_error_vs_time_baseline_vs_improved.png
+        training_validation_loss_improved_gru.png
+      models/
+        selected_improved_gru.pt
+        selection.json
+        weighted_delta_0.05_seed_123/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.05_seed_2026/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.05_seed_42/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.1_seed_123/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.1_seed_2026/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.1_seed_42/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.2_seed_123/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.2_seed_2026/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0.2_seed_42/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0_seed_123/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0_seed_2026/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+        weighted_delta_0_seed_42/
+          best_command.pt
+          best_objective.pt
+          training_history.csv
+      README.md
+      scripts/
+        figures.py
+        run_study.py
+    models/
+      architecture_selection.json
+      gru/
+        config.json
+        policy.pt
+        seed_123/
+          best_policy.pt
+          complete.json
+          training_history.csv
+        seed_2026/
+          best_policy.pt
+          complete.json
+          training_history.csv
+        seed_42/
+          best_policy.pt
+          complete.json
+          training_history.csv
+        selection.json
+      mlp/
+        config.json
+        policy.pt
+        seed_123/
+          best_policy.pt
+          complete.json
+          training_history.csv
+        seed_2026/
+          best_policy.pt
+          complete.json
+          training_history.csv
+        seed_42/
+          best_policy.pt
+          complete.json
+          training_history.csv
+        selection.json
+      selected_controller.json
+    README.md
+    results/
+      closed_loop/
+        closed_loop_metrics.json
+        internal_test/
+          aggregate_metrics.json
+          per_episode_metrics.csv
+        operation_category_robustness.csv
+        per_recording_robustness.csv
+        validation/
+          aggregate_metrics.json
+          per_episode_metrics.csv
+        workspace_region_robustness.csv
+        worst_episodes.csv
+      comparison/
+        access_audit.json
+        applied_command_replay_audit.csv
+        dataset_audit.json
+        final_summary.json
+        inference_validation.json
+        paired_source_bootstrap.json
+        paper_readiness.json
+        source_paired_errors.csv
+        training_seed_summary.csv
+        training_seed_summary.json
+      final_comparison.csv
+      imitation/
+        imitation_metrics.json
+        imitation_metrics_internal_test.json
+        seed_metrics_internal_test.csv
+        seed_variation_internal_test.csv
+      improvement_study/
+        bootstrap_metrics.json
+        closed_loop/
+          internal_test/
+            per_episode_metrics.csv
+          screen/
+            weighted_delta_0.05_seed_123/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.05_seed_2026/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.05_seed_42/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.1_seed_123/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.1_seed_2026/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.1_seed_42/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.2_seed_123/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.2_seed_2026/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0.2_seed_42/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0_seed_123/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0_seed_2026/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+            weighted_delta_0_seed_42/
+              best_command/
+                per_episode_metrics.csv
+              best_objective/
+                per_episode_metrics.csv
+          validation/
+            weighted_delta_0.05_seed_123/
+              per_episode_metrics.csv
+            weighted_delta_0.05_seed_2026/
+              per_episode_metrics.csv
+            weighted_delta_0.05_seed_42/
+              per_episode_metrics.csv
+            weighted_delta_0.1_seed_123/
+              per_episode_metrics.csv
+            weighted_delta_0.1_seed_2026/
+              per_episode_metrics.csv
+            weighted_delta_0.1_seed_42/
+              per_episode_metrics.csv
+            weighted_delta_0.2_seed_123/
+              per_episode_metrics.csv
+            weighted_delta_0.2_seed_2026/
+              per_episode_metrics.csv
+            weighted_delta_0.2_seed_42/
+              per_episode_metrics.csv
+            weighted_delta_0_seed_123/
+              per_episode_metrics.csv
+            weighted_delta_0_seed_2026/
+              per_episode_metrics.csv
+            weighted_delta_0_seed_42/
+              per_episode_metrics.csv
+        closed_loop_metrics.json
+        comparison/
+          access_audit.json
+          decision.json
+          per_source_RMSE.csv
+          split_array_verification.json
+          training_runs.json
+          validation_candidates.csv
+          validation_candidates.json
+          weighted_delta_0.05_seed_123_validation.json
+          weighted_delta_0.05_seed_2026_validation.json
+          weighted_delta_0.05_seed_42_validation.json
+          weighted_delta_0.1_seed_123_validation.json
+          weighted_delta_0.1_seed_2026_validation.json
+          weighted_delta_0.1_seed_42_validation.json
+          weighted_delta_0.2_seed_123_validation.json
+          weighted_delta_0.2_seed_2026_validation.json
+          weighted_delta_0.2_seed_42_validation.json
+          weighted_delta_0_seed_123_validation.json
+          weighted_delta_0_seed_2026_validation.json
+          weighted_delta_0_seed_42_validation.json
+        final_improvement_comparison.csv
+        imitation/
+          imitation_metrics.json
+          subset_definitions.json
+        imitation_metrics.json
+        realtime/
+          archived_baseline_realtime_metrics.json
+        realtime_metrics.json
+        RESULTS.txt
+      realtime/
+        observer_plus_simulation_loop_metrics.json
+        realtime_metrics.json
+      RESULTS.txt
+    scripts/
+      environment.py
+      evaluate_policies.py
+      experiment.py
+      finalize_results.py
+      generate_teacher_dataset.py
+      policy_figures.py
+      policy_runtime.py
+      run_experiment.py
+      run_policy_inference.py
+      teacher_engine.py
+      train_policies.py
+  package_manifest.json
+  README.md
+  report_results.py
+  repository_cleanup_manifest.csv
+  reproduce_mpc.py
+  requirements-lock.txt
+  requirements.txt
+  results/
+    comparison/
+      Simulation_Output_53/
+        b17a6a363d/
+          r20/
+            accuracy_timing_comparison.png [ignored/local]
+            all_metrics.csv [ignored/local]
+            all_timing.csv [ignored/local]
+            comparison.txt [ignored/local]
+            error_over_time.csv [ignored/local]
+            feature_plot_manifest.json [ignored/local]
+            model_summary.csv [ignored/local]
+            provenance.json [ignored/local]
+            recording_coverage.csv [ignored/local]
+            recursive_reinit20/
+              control_metrics.csv [ignored/local]
+              error_over_time.png [ignored/local]
+              feature_plots/
+                Compact_Recurrent/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                GRU/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                LSTM/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                Transformer/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+              metric_differences.csv [ignored/local]
+              metrics.csv [ignored/local]
+              timing.csv [ignored/local]
+          r200/
+            accuracy_timing_comparison.png [ignored/local]
+            all_metrics.csv [ignored/local]
+            all_timing.csv [ignored/local]
+            comparison.txt [ignored/local]
+            error_over_time.csv [ignored/local]
+            feature_plot_manifest.json [ignored/local]
+            model_summary.csv [ignored/local]
+            provenance.json [ignored/local]
+            recording_coverage.csv [ignored/local]
+            recursive_reinit200/
+              control_metrics.csv [ignored/local]
+              error_over_time.png [ignored/local]
+              feature_plots/
+                Compact_Recurrent/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                GRU/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                LSTM/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                Transformer/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+              metric_differences.csv [ignored/local]
+              metrics.csv [ignored/local]
+              timing.csv [ignored/local]
+          r200000/
+            accuracy_timing_comparison.png [ignored/local]
+            all_metrics.csv [ignored/local]
+            all_timing.csv [ignored/local]
+            comparison.txt [ignored/local]
+            error_over_time.csv [ignored/local]
+            feature_plot_manifest.json [ignored/local]
+            model_summary.csv [ignored/local]
+            provenance.json [ignored/local]
+            recording_coverage.csv [ignored/local]
+            recursive_reinit200000/
+              control_metrics.csv [ignored/local]
+              error_over_time.png [ignored/local]
+              feature_plots/
+                Compact_Recurrent/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                GRU/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                LSTM/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                Transformer/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+              metric_differences.csv [ignored/local]
+              metrics.csv [ignored/local]
+              timing.csv [ignored/local]
+          r500/
+            accuracy_timing_comparison.png [ignored/local]
+            all_metrics.csv [ignored/local]
+            all_timing.csv [ignored/local]
+            comparison.txt [ignored/local]
+            error_over_time.csv [ignored/local]
+            feature_plot_manifest.json [ignored/local]
+            measured_one_step/
+              control_metrics.csv [ignored/local]
+              metric_differences.csv [ignored/local]
+              metrics.csv [ignored/local]
+              timing.csv [ignored/local]
+            model_summary.csv [ignored/local]
+            provenance.json [ignored/local]
+            recording_coverage.csv [ignored/local]
+            recursive/
+              control_metrics.csv [ignored/local]
+              metric_differences.csv [ignored/local]
+              metrics.csv [ignored/local]
+              timing.csv [ignored/local]
+            recursive_reinit500/
+              control_metrics.csv [ignored/local]
+              error_over_time.png [ignored/local]
+              feature_plots/
+                Compact_Recurrent/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                GRU2/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                LSTM4/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+                Transformer/
+                  feature_01.png [ignored/local]
+                  feature_02.png [ignored/local]
+                  feature_03.png [ignored/local]
+                  feature_04.png [ignored/local]
+                  feature_05.png [ignored/local]
+                  feature_06.png [ignored/local]
+                  feature_07.png [ignored/local]
+                  feature_08.png [ignored/local]
+                  feature_09.png [ignored/local]
+                  feature_10.png [ignored/local]
+                  feature_11.png [ignored/local]
+                  feature_12.png [ignored/local]
+                  feature_13.png [ignored/local]
+                  feature_14.png [ignored/local]
+                  feature_15.png [ignored/local]
+                  feature_16.png [ignored/local]
+                  feature_17.png [ignored/local]
+                  feature_18.png [ignored/local]
+                  feature_19.png [ignored/local]
+                  feature_20.png [ignored/local]
+                  feature_21.png [ignored/local]
+                  feature_22.png [ignored/local]
+              metric_differences.csv [ignored/local]
+              metrics.csv [ignored/local]
+              timing.csv [ignored/local]
+    controller_horizon/
+      Simulation_Output_53/
+        c20_b10000/
+          all_state_metrics.csv [ignored/local]
+          metrics_by_interval.csv [ignored/local]
+          model_summary.csv [ignored/local]
+          protocol.json [ignored/local]
+          recording_coverage.csv [ignored/local]
+    reset20/
+      Simulation_Output_53/
+        actual_end_effector.npy [ignored/local]
+        all_state_metrics.csv [ignored/local]
+        end_effector_metrics.csv [ignored/local]
+        metrics_by_prediction_step.csv [ignored/local]
+        model_summary.csv [ignored/local]
+        recording_coverage.csv [ignored/local]
+    reset200/
+      Simulation_Output_53/
+        all_state_metrics.csv [ignored/local]
+        metrics_by_prediction_step.csv [ignored/local]
+        model_summary.csv [ignored/local]
+        recording_coverage.csv [ignored/local]
+  summarize_comparison.py
+  Transformers/
+    artifacts/
+      best_model.pt
+      best_numba_weights.npz
+      config.json
+      latest_model.pt
+      STATUS.json
+      training_history.json
+    results/
+      .gitkeep [ignored/local]
+      Simulation_Output_53/
+        checkpoint_ac2b53cfda13bb02/
+          measured_one_step/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          method_comparison.csv [ignored/local]
+          recursive/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit20/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            end_effector_metrics.csv [ignored/local]
+            end_effector_physical.npy [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            metrics_by_prediction_step.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit200000/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            ctrl_c20_b10000_v1.csv [ignored/local]
+            error_over_time.csv [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            recording_coverage.json [ignored/local]
+            results.txt [ignored/local]
+          recursive_reinit500/
+            actual_vs_predicted_1.png [ignored/local]
+            actual_vs_predicted_2.png [ignored/local]
+            evaluation.json [ignored/local]
+            latency.png [ignored/local]
+            metrics.csv [ignored/local]
+            predictions_physical.npy [ignored/local]
+            results.txt [ignored/local]
+    test.py
+    transformer.py
+  verify_repository.py
+  view_results.py

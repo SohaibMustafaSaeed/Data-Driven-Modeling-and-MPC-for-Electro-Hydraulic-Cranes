@@ -1,0 +1,20 @@
+{
+  "files_checked": 1308,
+  "broken_markdown_links": [],
+  "missing_readme_scripts": [],
+  "syntax_errors": [],
+  "hard_coded_runtime_local_paths": [],
+  "missing_dependencies": [],
+  "raw_external_Test_files": [],
+  "source_leakage": 0,
+  "split_samples": [
+    17500,
+    3750,
+    3750
+  ],
+  "numerical_tables_match_authority": true,
+  "checkpoint_hashes_match": true,
+  "new_scientific_experiments_run": false,
+  "git_commit": false,
+  "git_push": false
+}

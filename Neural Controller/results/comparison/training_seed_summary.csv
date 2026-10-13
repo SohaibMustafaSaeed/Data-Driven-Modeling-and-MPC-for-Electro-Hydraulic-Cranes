@@ -1,0 +1,7 @@
+architecture,seed,best_epoch,validation_MSE,validation_RMSE,parameter_count,epochs_completed,training_seconds,checkpoint
+mlp,42,77,0.027900418266654015,0.16703418292868683,8418,107,2.0163748000049964,Neural Controller/models/mlp/seed_42/best_policy.pt
+mlp,123,121,0.027022022753953934,0.1643837666983998,8418,151,2.8103983000619337,Neural Controller/models/mlp/seed_123/best_policy.pt
+mlp,2026,108,0.027885185554623604,0.16698857911433226,8418,138,2.600984500022605,Neural Controller/models/mlp/seed_2026/best_policy.pt
+gru,42,178,0.024815306067466736,0.15752874679710602,6898,208,14.914286799961701,Neural Controller/models/gru/seed_42/best_policy.pt
+gru,123,165,0.025153914466500282,0.15859985645170138,6898,195,13.950141099980101,Neural Controller/models/gru/seed_123/best_policy.pt
+gru,2026,160,0.025854138657450676,0.16079222200545235,6898,190,13.659010500065051,Neural Controller/models/gru/seed_2026/best_policy.pt

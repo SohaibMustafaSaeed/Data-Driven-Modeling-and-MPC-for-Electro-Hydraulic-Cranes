@@ -1,0 +1,13 @@
+{
+  "architecture": "mlp",
+  "seed": 123,
+  "best_epoch": 121,
+  "validation_MSE": 0.027022022753953934,
+  "validation_RMSE": 0.1643837666983998,
+  "parameter_count": 8418,
+  "epochs_completed": 151,
+  "training_seconds": 2.8103983000619337,
+  "checkpoint": "Neural Controller/models/mlp/seed_123/best_policy.pt",
+  "selection_basis": "Lowest validation command MSE only; internal test not used.",
+  "frozen": true
+}

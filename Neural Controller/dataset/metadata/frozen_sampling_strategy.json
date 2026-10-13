@@ -1,0 +1,23 @@
+{
+  "status": "frozen",
+  "basis": "User-defined workspace coverage criterion satisfied by measured closed-loop states",
+  "accepted_base": "workspace_coverage_pass/combined/teacher_samples.npz",
+  "samples": 2350,
+  "episodes": 47,
+  "recordings": 42,
+  "supervised_inputs": 32,
+  "targets": 2,
+  "predictor_memory_supervised": false,
+  "teacher_configuration": "workspace_coverage_pass/teacher_configuration.json",
+  "teacher_configuration_sha256": "ed02045bd2ff635336e6c7cd4be970c8a9621afde43ffe36b377e20099a835a3",
+  "bin_definitions": "coverage_study/coverage_bin_edges.json",
+  "bin_definitions_sha256": "afa427a0801d5a8221fd1538192ebe5ad179823a82634a0f5f3d0dbca29b50aa",
+  "strategy": "Training-prefix-only realistic operating regions; motion/workspace diversity, preserve temporal information, avoid duplicate overlapping windows, target missing joint bins using finite candidate reference screening and compact set cover, validate actual teacher states, retain finite bounded status-9 actions.",
+  "workspace_bins_covered_percent": 100.0,
+  "workspace_uncovered_grid_mass_percent": 0.0,
+  "angle_bins_covered_percent": 89.0,
+  "remaining_angle_grid_mass_percent": 9.131238447319776,
+  "remaining_angle_bins": "workspace_coverage_pass/remaining_missing_bins.csv",
+  "large_generation_started": false,
+  "neural_training_started": false
+}

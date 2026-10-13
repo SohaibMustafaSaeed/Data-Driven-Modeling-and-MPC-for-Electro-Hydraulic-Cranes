@@ -1,0 +1,14 @@
+{
+  "GRU policy": {
+    "checkpoint": "Neural Controller/models/gru/policy.pt",
+    "sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76"
+  },
+  "MLP policy": {
+    "checkpoint": "Neural Controller/models/mlp/policy.pt",
+    "sha256": "1990e862b648ddafe011ddb3fdc8d97a72a21b8d25ad1cee10718784747e6c0e"
+  },
+  "Ablation candidate": {
+    "checkpoint": "Neural Controller/improvement_study/models/selected_improved_gru.pt",
+    "sha256": "91bfca24f761b31e7ac2b6aef2e1615e9694ee0874894fc528edafd07013c827"
+  }
+}

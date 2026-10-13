@@ -1,0 +1,39 @@
+{
+  "seeds": [
+    42,
+    123,
+    2026
+  ],
+  "max_epochs": 300,
+  "patience": 30,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "optimizer": "AdamW",
+  "loss": "physical command MSE",
+  "mlp_batch_samples": 1024,
+  "gru_batch_episodes": 32,
+  "architectures": {
+    "mlp": [
+      32,
+      64,
+      64,
+      32,
+      2
+    ],
+    "gru": {
+      "input": 32,
+      "hidden": 32,
+      "head": [
+        16,
+        2
+      ]
+    }
+  },
+  "output": "tanh plus final [-1,1] clipping",
+  "teacher_memory_supervised": false,
+  "epoch_selection": "validation command MSE",
+  "seed_selection": "validation command MSE",
+  "architecture_selection": "validation closed-loop tracking, before internal-test evaluation",
+  "internal_test_tuning": false,
+  "hyperparameter_search": false
+}

@@ -1,0 +1,57 @@
+{
+  "Baseline GRU": {
+    "calls": 10000,
+    "mean_ms": 0.04628734,
+    "median_ms": 0.0449,
+    "p95_ms": 0.0528,
+    "p99_ms": 0.07720600000000014,
+    "maximum_ms": 0.5054,
+    "deadline_miss_percent": 0.0,
+    "warmup_calls": 500,
+    "torch_threads": 2,
+    "parameter_count": 6898,
+    "simulation_loop": {
+      "calls": 3750,
+      "mean_ms": 21.535185333333335,
+      "median_ms": 21.14065,
+      "p95_ms": 23.77443,
+      "p99_ms": 26.438947999999986,
+      "maximum_ms": 41.632000000000005,
+      "deadline_miss_percent": 0.0
+    },
+    "included": "Assembly, checks, train-only normalization, recurrent-state reset/update, CPU inference, conversion, clipping",
+    "simulation_loop_context": "Saved baseline loop vs new improved loop; different run dates"
+  },
+  "Improved GRU": {
+    "calls": 10000,
+    "mean_ms": 0.04656017,
+    "median_ms": 0.0449,
+    "p95_ms": 0.0548,
+    "p99_ms": 0.07870300000000006,
+    "maximum_ms": 0.4841,
+    "deadline_miss_percent": 0.0,
+    "warmup_calls": 500,
+    "torch_threads": 2,
+    "parameter_count": 6898,
+    "simulation_loop": {
+      "calls": 3750,
+      "mean_ms": 22.074175893333333,
+      "median_ms": 21.62095,
+      "p95_ms": 23.822659999999996,
+      "p99_ms": 26.111212,
+      "maximum_ms": 427.28020000000004,
+      "deadline_miss_percent": 0.02666666666666667
+    },
+    "included": "Assembly, checks, train-only normalization, recurrent-state reset/update, CPU inference, conversion, clipping",
+    "simulation_loop_context": "Saved baseline loop vs new improved loop; different run dates"
+  },
+  "MPC": {
+    "calls": 3750,
+    "mean_ms": 1399.347270186649,
+    "median_ms": 1256.3634499674663,
+    "p95_ms": 2289.6751799271433,
+    "p99_ms": 2820.251442037988,
+    "maximum_ms": 3050.515800016001,
+    "deadline_miss_percent": 100.0
+  }
+}

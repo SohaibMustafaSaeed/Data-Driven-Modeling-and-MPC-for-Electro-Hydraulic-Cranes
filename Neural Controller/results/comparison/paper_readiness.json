@@ -1,0 +1,15 @@
+{
+  "teacher_imitation_successful": "YES",
+  "teacher_imitation_note": "Command R\u00b2 0.937/0.905 with held-out RMSE 0.178/0.171 V; approximate imitation, with occasional large command errors.",
+  "closed_loop_neural_control_stable": "YES",
+  "stability_scope": "75 internal five-second episodes: zero nonfinite/failing episodes, bounded commands and no observed excursions beyond training mechanical extrema; not an asymptotic stability proof.",
+  "tracking_close_to_MPC": "NO",
+  "tracking_note": "Selected GRU has 2.13x RMSE (+113.29%, +4.33 mm); no arbitrary prespecified error pass/fail threshold used.",
+  "deadline_100ms_satisfied": "YES",
+  "deadline_misses_percent": 0.0,
+  "meaningful_speedup_demonstrated": "YES",
+  "speedup_note": "About 20,089x ratio to saved teacher solve times; teacher timings were under concurrent generation, neural benchmarking was sequential.",
+  "selected_controller_frozen": "YES",
+  "ready_for_external_final_validation": "YES",
+  "external_validation_note": "Proceed only after review, to test generalization of this experimental policy. Accuracy equivalence to MPC and physical/high-fidelity validation remain unestablished."
+}

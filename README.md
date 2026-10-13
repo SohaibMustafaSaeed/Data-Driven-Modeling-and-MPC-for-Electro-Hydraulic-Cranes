@@ -1,16 +1,38 @@
-# Learned Dynamics and Offline MPC for an Electro-Hydraulic Forestry Crane
+# Data-Driven Modeling and Real-Time Neural Control of an Electro-Hydraulic Forestry Crane
 
-This project compares four learned full-state dynamics models and tests them in offline model predictive control (MPC). The control target is the Cartesian crane-tip trajectory: **x, z, vx, vz**.
+## Overview
 
-**Final selected controller: a 4,098-parameter full-state GRU predicts inside MPC; a separate 1,060-parameter mechanical Compact Recurrent model is the independent simulated plant.** LSTM, Transformer and full-state Compact remain comparison models. The neural control policy described at the end has not been trained.
+This repository contains the completed study: learned full-state dynamics, offline learned-model Cartesian MPC, an independent learned mechanical validation plant, a 25,000-sample MPC teacher corpus, compact neural-policy distillation, held-out closed-loop evaluation and CPU timing.
 
-![Offline MPC architecture and mechanical feedback](docs/figures/mpc_pipeline.png)
+**Final neural controller: the baseline 6,898-parameter GRU policy.** The 4,098-parameter full-state GRU inside MPC and the 1,060-parameter mechanical Compact plant have separate roles. LSTM, Transformer and full-state Compact remain dynamics comparison models. A weighted/delta-loss ablation was rejected after its validation gain failed to transfer to internal test.
 
-The optimizer evaluates candidate commands using the full-state predictor. Only after selecting a command does the independent mechanical plant advance. Its current mechanical state feeds back to the next solve; future measured recording states are not used to refresh the controller. Plant-generated reference replay uses the mechanical plant before optimization, but optimizer trials do not use it.
+These are learned-model simulation results and computational-feasibility measurements. Physical crane, Simulink and hardware-controller validation remain future work.
 
-## Start here: reproduce the workflow
+## Research pipeline
 
-Use Python **3.12**. From the cloned repository root:
+See [the pipeline](docs/FINAL_PIPELINE.md), [the supervisor guide](docs/SUPERVISOR_GUIDE.md) and [the experiment map](docs/EXPERIMENT_MAP.md) for the complete study and evidence paths.
+
+![Offline MPC architecture](docs/figures/mpc_pipeline.png)
+
+## Repository structure
+
+```text
+Data Preprocessing/       raw CSV preparation and training-only scaler
+GRU Latent/               selected full-state dynamics predictor
+LSTM/                     comparison dynamics model
+Transformers/             comparison dynamics model
+Compact Recurrent/        full-state comparison model
+MPC offline Model/        Cartesian MPC, PATU geometry, independent mechanical plant
+Neural Controller/        teacher generation, policies, frozen splits, results, ablation
+common/                   shared loading and evaluation utilities
+docs/figures/             curated supervisor/publication figures
+docs/results/             lightweight authoritative result tables
+archive_working_repository/ local ignored development archive; retained for review
+```
+
+## Installation
+
+Use Python 3.12 and fetch the Git LFS checkpoints:
 
 ```powershell
 git lfs install
@@ -19,72 +41,25 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python check_setup.py
-python report_results.py
-python view_results.py --experiment recorded
 ```
 
-The last two commands show the bundled findings without the dataset or expensive optimization. `requirements-lock.txt` records the exact tested environment. For that environment, including the CPU Torch build, use `python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-lock.txt` instead of the unpinned requirements command.
+`requirements-lock.txt` records the original measured environment. To reproduce its CPU Torch build, use `python -m pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-lock.txt`.
 
-Place the raw dataset in `data/Train/` and `data/Test/`, or point the environment variables to the equivalent folders:
+## Dataset setup
+
+Raw data is not distributed. Use `data/Train/Simulation_Output_00.csv` through `Simulation_Output_42.csv`. The existing dynamics/MPC test is `data/Test/Simulation_Output_53.csv`. Neural teacher generation and neural internal validation use only the training recordings, with separate complete source-recording groups. External Test is prohibited in neural-stage scripts.
+
+For another data location:
 
 ```powershell
-$env:IMOTION_DATA_ROOT = (Resolve-Path ".\data").Path
-$env:IMOTION_PREPROCESSED_DIR = Join-Path $env:IMOTION_DATA_ROOT "preprocessed"
-python check_setup.py --data --test-only
+$env:IMOTION_DATA_ROOT = "D:\crane_data"
+$env:IMOTION_PREPROCESSED_DIR = "D:\crane_data\preprocessed"
 ```
 
-For inference with the shipped checkpoints, only `data/Test/Simulation_Output_53.csv` is needed. Evaluation/MPC automatically prepares that recording with the checkpoint's training-only scaler and reuses a shared test cache. Full preprocessing of the training set is optional unless training new models.
+The root must contain `Train/`; `Test/` is required only for the separate existing surrogate/MPC test. Neural scripts also accept `--data-root`, `--preprocessed-dir`, `--dataset-dir` or `--output-dir` as listed by `--help`. Set `MPC_TEACHER_DATASET_DIR` for an existing complete teacher corpus. Original recording names, columns and sample ordering are required for numerical reproduction. Embedded checkpoint training paths are historical provenance; loaders resolve recording basenames under the configured directories.
 
-To reproduce the shipped checkpoints' training setup, use the original data split: training recordings `Simulation_Output_00.csv` through `Simulation_Output_42.csv`, with `Simulation_Output_53.csv` held out in `Test/`. The preflight checks original training filenames and required headers. Other test recordings can be evaluated with `--test-file`. A different training dataset will not reproduce the numerical tables below merely by using the same code.
+## Data preprocessing
 
-To evaluate the models over the whole retained test recording:
-
-```powershell
-python evaluate_controller_horizon.py --controller-horizon 20 --no-show
-python compare_models.py --controller-config "MPC offline Model/configs/final_gru_mpc.json" --controller-horizon 20 --saved-only
-```
-
-The first command computes missing local forecasts; the second loads them and opens individual model/state figures. Omit `--no-show` to open the overview and persistence figures. New generated results are ignored by Git.
-
-The short **200 internal-step / 2-ms diagnostic** is separate:
-
-```powershell
-python compare_models.py --reinit-every 200 --no-show
-python summarize_comparison.py --reinit-every 200
-```
-
-Run the final experiments with every frozen controller setting, including exact command bounds:
-
-```powershell
-python reproduce_mpc.py --experiment reachable --no-show
-python reproduce_mpc.py --experiment recorded --no-show
-python consolidate_mpc.py --runs "MPC offline Model/results/reachable" "MPC offline Model/results/recorded" --comparison references
-```
-
-`recorded` passes `--allow-reference-mismatch`; the reproduction diagnostic is still saved. These full runs take roughly 15-20 minutes each on the measured CPU and generate about 2.8 GB per run. Runtime depends on the machine and solver behaviour. Run serially for comparable timing. Existing nonempty output folders are refused; choose a fresh `--output-dir` rather than overwrite artifacts.
-
-The corresponding core commands are:
-
-```powershell
-python "MPC offline Model/offline_mpc.py" --checkpoint "GRU Latent/artifacts/best_model.pt" --full-recording --tracking-space cartesian --reference-mode plant-generated --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --lift-bounds -0.9999999723274773 1.0000032089789734 --jib-bounds -0.9999999978489263 1.00000154537254 --output-dir "MPC offline Model/results/reachable" --no-show
-python "MPC offline Model/offline_mpc.py" --checkpoint "GRU Latent/artifacts/best_model.pt" --full-recording --tracking-space cartesian --reference-mode recorded --allow-reference-mismatch --block-steps 10000 --horizon 2 --moves 2 --maxiter 5 --lift-bounds -0.9999999723274773 1.0000032089789734 --jib-bounds -0.9999999978489263 1.00000154537254 --output-dir "MPC offline Model/results/recorded" --no-show
-```
-
-The remaining core defaults now match the selected configuration. `reproduce_mpc.py --experiment recorded --print-command-only` prints all flags explicitly without launching optimization.
-
-Reopen results without solving again:
-
-```powershell
-python report_results.py --section final
-python report_results.py --section replay
-python view_results.py --experiment reachable
-python view_results.py --experiment recorded
-python "MPC offline Model/offline_mpc.py" --plot-results "MPC offline Model/results/recorded"
-```
-
-The first four use small bundled tables/figure exports. The last requires a completed local run and its generated arrays, and supports full-resolution interactive time plots. Plot windows remain open until closed.
-
-## Data and system
 
 | Setting | Value |
 | --- | --- |
@@ -107,19 +82,15 @@ Normalization is fitted on training portions only. Physical reconstruction is **
 
 [Dataset columns, setup and training](docs/RUNNING.md) describes the CSV schema and optional training entrypoints. No models were retrained during experimental consolidation.
 
-## PATU crane geometry
 
-```text
-base = (-0.09, 1.4261) m
-lift_vector = (2.886080943, 0.019892554) m
-jib_vector = (2.035, 0.245) m
-elbow = base + R(lift_absolute_angle) @ lift_vector
-tip = elbow + R(jib_absolute_angle) @ jib_vector
-```
+The preprocessing script retains the original 18-second trim, 24-signal normalization, command smoothing and per-recording 90% training prefix. Its new `--training-only` switch skips Test inspection and conversion without changing training preprocessing. Centered command smoothing is an offline preparation step and has a causality limitation for deployment.
 
-Lift and jib angles are absolute world-horizontal orientations. The full local vectors contain the geometric offsets; no extra offset is added. Forward kinematics produces elbow and tip x/z, and the analytic velocity transformation produces vx/vz. Geometry is stored in `MPC offline Model/geometry_patu.json`. Slew, flexibility and physical-hardware calibration are outside this planar experiment.
+## Learned dynamics models
 
-## Main surrogate comparison: two-second recursive prediction
+All four predictors reconstruct 22 next states through residual prediction from current state, state/command changes and temporal memory. Final trainers and exported inference weights remain in their original folders. The full-state Compact comparison model (4,246 parameters) is distinct from the independent mechanical-only Compact plant (1,060 parameters).
+
+## Two-second recursive model evaluation
+
 
 The saved controller interval is **100 ms**. Validation spans **20 controller intervals = 2 s = 200,000 internal samples**. Each block starts from two measured rows and reset memory, with no measured-state refresh inside the block. All retained targets are scored: 41 reset blocks, including a 199,999-prediction final block. The Transformer uses causal attention and a capped history window; no future states are provided.
 
@@ -143,7 +114,9 @@ Exact endpoint statistics use 819 complete control intervals: 41 endpoints at le
 
 The 200-internal-step test is only **2 ms**, and the earlier 20-sample test only **0.2 ms**. Frequent measured resets leave little time for error growth; R2 values rounded near one do not establish useful long-horizon accuracy. [All three durations](docs/results/forecast_duration_comparison.csv) show this using unchanged checkpoints. The two-second test is conditional dynamics validation, not a new two-second MPC optimization experiment.
 
-## Selecting the MPC prediction model
+
+## MPC predictor selection
+
 
 GRU and full-state Compact were tested with identical initial conditions, byte-identical reachable references and the same independent mechanical plant. Both full-recording runs used 100-ms commands, a 200-ms horizon, two move blocks, maxiter=5, and identical geometry, cost/scales and exact bounds.
 
@@ -162,7 +135,6 @@ Compact was 13.4% faster on average, but its Cartesian position RMSE was 116% hi
 
 Mechanical RMS NRMSE is the RMS of four per-state RMSE/training-standard-deviation ratios, not a mixture of radians and rad/s. [Complete predictor comparison](docs/results/mpc_predictor_comparison.csv) and [percentage differences](docs/results/mpc_predictor_differences.csv) include timing, saturation and mismatch metrics.
 
-## Optimizer iteration study
 
 The GRU study used the same five-second segment for all three limits: `--start-seconds 38.10001` relative to retained data, corresponding to CSV time 56.10001-61.10001 s. Both booms move meaningfully. Existing short-episode metrics score control endpoints; the scope is identical across these three runs.
 
@@ -186,7 +158,32 @@ python reproduce_mpc.py --experiment iteration10 --no-show
 python reproduce_mpc.py --experiment iteration20 --no-show
 ```
 
-## Final Cartesian MPC experiments
+
+![GRU versus Compact MPC](docs/figures/mpc_predictor_comparison.png)
+
+## Cartesian MPC
+
+
+```text
+base = (-0.09, 1.4261) m
+lift_vector = (2.886080943, 0.019892554) m
+jib_vector = (2.035, 0.245) m
+elbow = base + R(lift_absolute_angle) @ lift_vector
+tip = elbow + R(jib_absolute_angle) @ jib_vector
+```
+
+Lift and jib angles are absolute world-horizontal orientations. The full local vectors contain the geometric offsets; no extra offset is added. Forward kinematics produces elbow and tip x/z, and the analytic velocity transformation produces vx/vz. Geometry is stored in `MPC offline Model/geometry_patu.json`. Slew, flexibility and physical-hardware calibration are outside this planar experiment.
+
+
+**Predictor: full-state GRU, 4,098 parameters. Plant: independent mechanical Compact Recurrent, 1,060 parameters. Tracking: Cartesian x,z,vx,vz. Internal timestep: 10 microseconds. Command interval: 100 ms. Horizon: 200 ms. Move blocks: two. Optimizer: bounded SLSQP, maxiter=5.**
+
+Position/velocity scales are 0.01 m and 0.1 m/s. Cartesian position, velocity, terminal-position and terminal-velocity weights are 1, 0.1, 5 and 1. Effort is 0.0001, smoothness 0.001, finite-difference step 0.03 and ftol 1e-8. Joint objective weights are zero in Cartesian mode. [The portable frozen configuration](MPC%20offline%20Model/configs/final_gru_mpc.json) records all exact bounds and checkpoint hashes.
+
+**This is an offline MPC teacher, not a real-time online controller. Every solve exceeded the 100-ms interval.** Formal convergence and predicted-cost improvement over holding the previous command are separate from plant tracking accuracy. Optimizer timing excludes kernel compilation and does not imply deadline compliance.
+
+
+## Final MPC experiments
+
 
 Both final experiments use the selected GRU and fixed controller settings. Each completes 820 updates and scores all 8,199,999 internal samples. Controller settings, initialization and replay conditions were verified identical; only the desired reference and its reproduction-gate override differ.
 
@@ -232,54 +229,121 @@ Lift- and jib-angle RMSE improved 76.3% and 77.2%. Lift-velocity RMSE improved o
 
 [Final full table](docs/results/final_gru_reference_comparison.csv), [matching endpoint replay comparison](docs/results/recorded_replay_vs_mpc.csv), [reachable coverage](docs/results/mpc_reachable_coverage.json) and [recorded coverage](docs/results/mpc_recorded_coverage.json) contain the full numerical evidence.
 
-## Final frozen MPC configuration
 
-**Predictor: full-state GRU, 4,098 parameters. Plant: independent mechanical Compact Recurrent, 1,060 parameters. Tracking: Cartesian x,z,vx,vz. Internal timestep: 10 microseconds. Command interval: 100 ms. Horizon: 200 ms. Move blocks: two. Optimizer: bounded SLSQP, maxiter=5.**
+## MPC teacher dataset
 
-Position/velocity scales are 0.01 m and 0.1 m/s. Cartesian position, velocity, terminal-position and terminal-velocity weights are 1, 0.1, 5 and 1. Effort is 0.0001, smoothness 0.001, finite-difference step 0.03 and ftol 1e-8. Joint objective weights are zero in Cartesian mode. [The portable frozen configuration](MPC%20offline%20Model/configs/final_gru_mpc.json) records all exact bounds and checkpoint hashes.
+`mpc_teacher_v1` contains **25,000 samples, 500 complete five-second episodes and 43 training recordings**. Each episode contains 50 controller updates at 100 ms. Rejected samples, invalid accepted samples and duplicate episode-step pairs are zero. The frozen sampler used realistic training regions with motion, command, joint-angle and workspace coverage checks; its accepted manifest is shipped.
 
-**This is an offline MPC teacher, not a real-time online controller. Every solve exceeded the 100-ms interval.** Formal convergence and predicted-cost improvement over holding the previous command are separate from plant tracking accuracy. Optimizer timing excludes kernel compilation and does not imply deadline compliance.
+The generator uses the frozen GRU MPC teacher: 100-ms interval, 200-ms horizon, two move blocks, SLSQP maxiter=5, unchanged costs/bounds/PATU geometry and the independent mechanical plant. Recorded training commands generate reachable references; selected MPC commands are the targets. Predictor memory and previous-full-input history remain diagnostics, not policy inputs.
 
-## Repository map and result policy
+[Schema](Neural%20Controller/dataset/metadata/feature_schema.json), [episode manifest](Neural%20Controller/dataset/manifests/planned_episode_manifest.json), [coverage statistics](Neural%20Controller/dataset/summaries/dataset_summary.json) and [train-only policy scaler](Neural%20Controller/configs/input_scaler.json) are included. Large episode NPZ/master arrays are ignored and reproducible from the manifest. Historical dataset-generation status flags describe that stage, not the current completion status.
 
-```text
-project/
-  Data Preprocessing/preprocess_dataset.py
-  GRU Latent/                 final GRU predictor, trainer, test, artifacts
-  LSTM/                       comparison model, trainer, test, artifacts
-  Transformers/               comparison model, trainer, test, artifacts
-  Compact Recurrent/          full-state comparison model and artifacts
-  MPC offline Model/
-    offline_mpc.py             Cartesian MPC
-    crane_kinematics.py        FK and analytic velocities
-    geometry_patu.json         exact PATU vectors
-    configs/final_gru_mpc.json frozen scientific settings
-    plant/                    independent mechanical model, trainer and test
-    artifacts/mechanical_plant/
-  compare_models.py
-  evaluate_controller_horizon.py
-  summarize_comparison.py
-  reproduce_mpc.py            explicit frozen experiment profiles
-  consolidate_mpc.py          summarize regenerated local runs
-  check_setup.py              dependencies, checkpoints and dataset preflight
-  report_results.py           print bundled tables without the dataset
-  view_results.py             open bundled publication figures
-  docs/figures/               curated final figures
-  docs/results/               lightweight published numerical evidence
-  README.md
+![Teacher workspace coverage](docs/figures/teacher_cartesian_workspace_coverage.png)
+
+## Neural controller
+
+The 32 physical inputs are: 22 current full-state estimates, two previous applied commands, and x/z/vx/vz reference previews at +0.1 and +0.2 s. Targets are the first selected lift/jib commands. The authoritative schema lists every state in order; [the neural README](Neural%20Controller/README.md) provides all 32 names. No teacher hidden memory is supervised.
+
+The frozen source split contains **17,500 train / 3,750 validation / 3,750 internal-test samples**, from 31/6/6 distinct source recordings, with zero source leakage. All episodes remain intact and chronological. Policy normalization is fitted only on train. Both policies use tanh outputs and nominal [-1,1] clipping. Actual teacher targets are retained; training uses the documented nominal-bound projection, differing by at most approximately 3.21 microvolts.
+
+## MLP versus GRU
+
+The MLP is 32→64→64→32→2 (8,418 parameters). The stateful GRU is input 32, hidden 32, head 16→2 (6,898 parameters). Both used seeds 42, 123 and 2026, AdamW and validation-only selection. The final baseline GRU uses seed 42, checkpoint epoch 178. It was selected for lower validation closed-loop tracking error.
+
+| Metric | MPC | MLP | GRU |
+| --- | --- | --- | --- |
+| Parameters | 4098 | 8418 | 6898 |
+| Tip RMSE [mm] | 3.823172 | 9.534184 | 8.154487 |
+| Tip MAE [mm] | 2.631914 | 6.273265 | 5.627090 |
+| Maximum tip error [mm] | 34.262038 | 82.050947 | 47.670713 |
+| Median episode RMSE [mm] | 2.514535 | 5.592219 | 5.121687 |
+| P95 episode RMSE [mm] | 6.365890 | 17.204889 | 16.678902 |
+| Worst episode RMSE [mm] | 17.714844 | 46.401105 | 28.451049 |
+| Deadline miss [%] | 100.000000 | 0.000000 | 0.000000 |
+
+The MPC parameter count identifies its full-state predictor, not a standalone neural policy. These are the **75 internal five-second episodes**, scored at matching controller endpoints. Their MPC RMSE of 3.823172 mm is a different cohort from the 82-second full-recording experiment (18.674311 mm).
+
+## Closed-loop neural-controller evaluation
+
+Policies run recursively on the frozen mechanical Compact plant with the frozen full-state GRU observer. Mechanical feedback corrects four state fields after each selected action; other state estimates and memory carry forward. Measured recording states initialize an episode but never refresh it afterward. MPC references and trajectories are reused without new solves.
+
+The selected GRU achieved command RMSE **0.174371 V**, tip RMSE **8.154487 mm** and zero failed/nonfinite episodes. Its GRU/MPC tracking-RMSE ratio is **2.132911**. Six-source paired bootstrap intervals show limited precision; the observed GRU-over-MLP advantage is not proof of universal recurrent superiority. Recorded-command replay is an oracle diagnostic for these plant-generated references, with zero error by construction.
+
+![Neural closed-loop trajectory](docs/figures/neural_closed_loop_tip_trajectory_xy_or_xz.png)
+
+## Real-time performance
+
+Benchmarking used CPU only, two Torch threads, 500 warm-up calls and 10,000 measured calls. Policy-only timing includes input assembly, finite checks, train-only normalization, recurrent-state handling, inference, conversion and clipping.
+
+| Policy | Mean [ms] | P95 [ms] | P99 [ms] | Maximum [ms] | Deadline misses [%] |
+| --- | --- | --- | --- | --- | --- |
+| MLP | 0.036379 | 0.040600 | 0.054603 | 0.341700 | 0.0 |
+| GRU policy | 0.069659 | 0.078400 | 0.110605 | 0.547400 | 0.0 |
+
+The MLP is faster; GRU was selected for better tracking. Both had zero misses at the 100-ms policy deadline. The baseline GRU full simulated loop—policy + observer + mechanical integration + correction—averaged **21.535185 ms**, p95 **23.774430 ms**, with zero deadline misses. Internal integration remains 10 microseconds; the control interval is 100 ms.
+
+Teacher solves averaged approximately **1.399 s** under eight-worker corpus generation and exceeded the deadline. Saved MPC timing and sequential neural timing have different CPU-load contexts; their ratio is not a matched-load architecture speedup or a hardware deployment guarantee.
+
+![Accuracy versus latency](docs/figures/neural_accuracy_latency_comparison.png)
+
+## Focused improvement study
+
+Boundary/transition-weighted imitation and small delta-action losses (0.05, 0.10, 0.20) used the same 6,898-parameter GRU, three seeds, split and scaler. Validation selected delta=0.20, seed 123, tip RMSE 6.873895 mm. Internal-test RMSE was **8.988572 mm**, **10.23% worse** than baseline; worst-episode RMSE increased from 28.451049 to 44.148859 mm. The candidate-minus-baseline bootstrap 95% interval was [-0.535619, 1.898937] mm. Validation improvement did not generalize. **KEEP BASELINE GRU.** Rollout fine-tuning was skipped because the frozen NumPy/Numba plant is non-differentiable.
+
+[Ablation results](Neural%20Controller/results/improvement_study/RESULTS.txt) preserve all numerical evidence. Fresh ablation timing sessions are separate from the authoritative baseline benchmark. The candidate full simulation loop included one first-step 427.2802-ms outlier (1/3750 calls); policy-only deadlines were met.
+
+![Ablation episode errors](docs/figures/improvement_episode_rmse_distribution_baseline_vs_improved.png)
+
+## Final selected system
+
+1. Compact Recurrent gave the strongest standalone two-second mechanical prediction.
+2. GRU produced substantially better MPC closed-loop tracking than full-state Compact.
+3. Cartesian MPC exceeded the 100-ms decision interval, requiring about 1.4 s per teacher decision.
+4. The frozen MPC was used offline as a teacher.
+5. The accepted corpus contains 25,000 samples in 500 episodes.
+6. Compact MLP and GRU neural controllers were trained.
+7. GRU gave better closed-loop tracking and was selected.
+8. Its tip RMSE was 8.154487 mm versus MPC's 3.823172 mm on internal episodes.
+9. The selected GRU had zero policy-call misses at 100 ms.
+10. The focused weighted/delta-loss ablation failed to improve held-out tracking; the original GRU was retained.
+
+Final artifacts: [GRU policy](Neural%20Controller/models/gru/policy.pt), [MLP policy](Neural%20Controller/models/mlp/policy.pt), [GRU dynamics](GRU%20Latent/artifacts/best_model.pt), [mechanical plant](MPC%20offline%20Model/artifacts/mechanical_plant/best_model.pt).
+
+## Reproducing the results
+
+Run from the repository root. Reporting and viewing commands require only the released evidence; regeneration commands require the original raw dataset and substantial compute.
+
+```powershell
+python check_setup.py
+python report_results.py --section final
+python view_results.py --experiment neural
+python view_results.py --experiment neural-latency
+python verify_repository.py
 ```
 
-Checkpoint files and existing exported inference weights retain Git LFS tracking. Raw data, prepared caches, environments, Python caches, generated prediction arrays, local experiments and archived overwritten runs are ignored. Large generated result trees are no longer part of the current publication tree; their original local copies and Git history remain intact. A new clone downloads the trained artifacts and curated summaries/figures, then regenerates arrays from the dataset when needed. Historical LFS objects in prior commits are not rewritten or deleted by this cleanup.
+Prepare training recordings without opening external Test, then regenerate the frozen teacher manifest:
 
-## What happens next
+```powershell
+python "Data Preprocessing/preprocess_dataset.py" --training-only
+python "Neural Controller/scripts/generate_teacher_dataset.py" --plan-only
+python "Neural Controller/scripts/generate_teacher_dataset.py" --workers 8
+python "Neural Controller/scripts/run_experiment.py" --stage all
+python "Neural Controller/improvement_study/scripts/run_study.py"
+```
 
-The MPC configuration is now frozen. The next research stage is to:
+The teacher generator replays the accepted 500-window manifest, rather than rerunning exploratory sampling studies. It writes ignored `Neural Controller/dataset/generated/`. Baseline reproduction writes `results/neural_reproduction/`; the ablation writes `results/neural_improvement/`. Released checkpoints and accepted tables remain read-only. Regeneration retains physical targets and diagnostics; timing and solver numerics can vary by platform. The original generated corpus is not bundled.
 
-1. Generate many MPC-controlled trajectories under varied initial states and references.
-2. Save teacher examples: current state, desired future trajectory, previous command and selected command.
-3. Train a lightweight neural policy to approximate the MPC mapping.
-4. Compare its commands against MPC commands.
-5. Test the learned controller on the independent mechanical plant.
-6. Later validate against a higher-fidelity simulator and physical crane.
+The existing held-out dynamics/MPC workflow uses the separate external Test recording:
 
-The aim is to replace expensive online optimization with a fast learned policy while retaining behaviour learned from the offline MPC teacher. **No neural controller has been trained or validated yet.**
+```powershell
+python evaluate_controller_horizon.py --controller-horizon 20 --no-show
+python compare_models.py --controller-config "MPC offline Model/configs/final_gru_mpc.json" --controller-horizon 20 --saved-only
+python reproduce_mpc.py --experiment reachable --no-show
+python reproduce_mpc.py --experiment recorded --no-show
+```
+
+These expensive commands are documented, not run during repository consolidation. Model training commands and preparation details remain in [docs/RUNNING.md](docs/RUNNING.md).
+
+## Limitations
+
+Validation uses learned-model simulation. Hardware responses, Simulink validation and guaranteed stability have not been demonstrated. Neural tracking remains about twice MPC RMSE. The independent mechanical plant shares the broad training distribution, and its recorded-command mismatch limits interpretation. Neural internal test comprises six source-recording clusters and five-second episodes; external neural Test and higher-fidelity evaluation remain unperformed. Offline smoothing has a causality limitation, and measured CPU timing depends on software, load and initialization. Raw data and large regenerated arrays are not included.

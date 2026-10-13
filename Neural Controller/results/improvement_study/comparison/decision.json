@@ -1,0 +1,11 @@
+{
+  "improved": false,
+  "improvement_percent": -10.228535080675961,
+  "improved_over_baseline": 1.1022853508067596,
+  "improved_over_MPC": 2.351077064562663,
+  "degradation_vs_MPC_percent": 135.10770645626627,
+  "decision": "KEEP BASELINE",
+  "decision_rule": "Lower tracking RMSE, source-cluster CI below zero, no worse worst episode, no failures/nonfinite, no deadline misses; conservative recommendation only.",
+  "external_Test_files_opened": 0,
+  "external_Test_files_modified": 0
+}

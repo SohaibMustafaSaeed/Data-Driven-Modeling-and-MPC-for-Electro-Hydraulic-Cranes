@@ -1,0 +1,63 @@
+{
+  "source_leakage": 0,
+  "split_counts": [
+    17500,
+    3750,
+    3750
+  ],
+  "seeds": [
+    42,
+    123,
+    2026
+  ],
+  "lambda_delta": [
+    0,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "parameter_count": 6898,
+  "architecture_changed": false,
+  "optimizer": {
+    "seeds": [
+      42,
+      123,
+      2026
+    ],
+    "max_epochs": 300,
+    "patience": 30,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "optimizer": "AdamW",
+    "loss": "physical command MSE",
+    "mlp_batch_samples": 1024,
+    "gru_batch_episodes": 32,
+    "architectures": {
+      "mlp": [
+        32,
+        64,
+        64,
+        32,
+        2
+      ],
+      "gru": {
+        "input": 32,
+        "hidden": 32,
+        "head": [
+          16,
+          2
+        ]
+      }
+    },
+    "output": "tanh plus final [-1,1] clipping",
+    "teacher_memory_supervised": false,
+    "epoch_selection": "validation command MSE",
+    "seed_selection": "validation command MSE",
+    "architecture_selection": "validation closed-loop tracking, before internal-test evaluation",
+    "internal_test_tuning": false,
+    "hyperparameter_search": false
+  },
+  "baseline_checkpoint_sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76",
+  "scaler_sha256": "24fbd4dfbf415f12730f925c7a5e2141c17e0ac36e80e471de7707d63ee93190",
+  "rollout_fine_tuning": "Skipped: frozen deployed plant non-differentiable NumPy/Numba"
+}

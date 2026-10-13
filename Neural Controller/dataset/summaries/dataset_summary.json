@@ -1,0 +1,261 @@
+{
+  "dataset_version": "mpc_teacher_v1",
+  "dataset_root": "provenance:Neural Controller Dataset",
+  "accepted_samples": 25000,
+  "episodes": 500,
+  "source_recordings_represented": 43,
+  "input_shape": [
+    25000,
+    32
+  ],
+  "output_shape": [
+    25000,
+    2
+  ],
+  "finite_sample_count": 25000,
+  "invalid_accepted_samples": 0,
+  "rejected_samples": 0,
+  "failed_episodes": 0,
+  "duplicate_episode_step_count": 0,
+  "physical_values": true,
+  "target_command_distribution": [
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "[-1,-0.8]",
+      "count": 4159,
+      "percent": 16.636
+    },
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "(-0.8,-0.4]",
+      "count": 3705,
+      "percent": 14.82
+    },
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "(-0.4,-0.1]",
+      "count": 2245,
+      "percent": 8.98
+    },
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "(-0.1,0.1)",
+      "count": 1924,
+      "percent": 7.696
+    },
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "[0.1,0.4)",
+      "count": 3145,
+      "percent": 12.58
+    },
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "[0.4,0.8)",
+      "count": 5957,
+      "percent": 23.828
+    },
+    {
+      "signal": "target_command",
+      "boom": "lift",
+      "bin": "[0.8,1]",
+      "count": 3865,
+      "percent": 15.459999999999999
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "[-1,-0.8]",
+      "count": 1695,
+      "percent": 6.78
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "(-0.8,-0.4]",
+      "count": 3156,
+      "percent": 12.623999999999999
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "(-0.4,-0.1]",
+      "count": 3316,
+      "percent": 13.264000000000001
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "(-0.1,0.1)",
+      "count": 5721,
+      "percent": 22.884
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "[0.1,0.4)",
+      "count": 4373,
+      "percent": 17.492
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "[0.4,0.8)",
+      "count": 3858,
+      "percent": 15.432000000000002
+    },
+    {
+      "signal": "target_command",
+      "boom": "jib",
+      "bin": "[0.8,1]",
+      "count": 2881,
+      "percent": 11.524
+    }
+  ],
+  "state_space_coverage": [
+    {
+      "feature": "lift_angle_rad",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "jib_angle_rad",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "lift_velocity_rad_s",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "jib_velocity_rad_s",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "tip_x_m",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "tip_z_m",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "tip_vx_m_s",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "tip_vz_m_s",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "lift_command_V",
+      "occupied_training_bins": 10,
+      "covered_training_bins": 10,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "jib_command_V",
+      "occupied_training_bins": 9,
+      "covered_training_bins": 9,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "angle_configuration",
+      "occupied_training_bins": 100,
+      "covered_training_bins": 100,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "Cartesian_workspace",
+      "occupied_training_bins": 100,
+      "covered_training_bins": 100,
+      "coverage_percent": 100.0
+    },
+    {
+      "feature": "previous_command_pair",
+      "occupied_training_bins": 90,
+      "covered_training_bins": 90,
+      "coverage_percent": 100.0
+    }
+  ],
+  "Cartesian_workspace_coverage_percent": 100.0,
+  "reference_coverage": "See summaries/reference_coverage_statistics.csv; generated physical previews compared with existing training-prefix FK grid.",
+  "teacher_metrics": {
+    "samples": 25000,
+    "episodes": 500,
+    "recordings": 43,
+    "position_RMSE_mm": 3.8605972554010584,
+    "position_MAE_mm": 2.495511383825256,
+    "position_max_mm": 70.40305274055481,
+    "tip_x_RMSE_m": 0.0022841285301607034,
+    "tip_z_RMSE_m": 0.0031123894399827418,
+    "tip_vx_RMSE_m_s": 0.0034366618876956858,
+    "tip_vz_RMSE_m_s": 0.002716621690534349,
+    "mechanical_RMSE": [
+      0.0011056813715336516,
+      0.00124000023082736,
+      0.0009999399360574792,
+      0.0019623746413627487
+    ],
+    "predictor_plant_mismatch_RMSE": [
+      0.00021219025177696856,
+      0.0005502990304319408,
+      0.0011679534369808291,
+      0.003390746878207676
+    ],
+    "solver_success_percent": 15.928,
+    "solver_status9_percent": 84.072,
+    "maxiter_reached_percent": 88.844,
+    "solve_mean_ms": 1392.4347650198918,
+    "solve_median_ms": 1256.975149968639,
+    "solve_p95_ms": 2236.7966350167985,
+    "solve_max_ms": 3050.515800016001,
+    "commit_mean_ms": 24.43294613997452,
+    "deadline_miss_percent": 100.0,
+    "saturation_lift_percent": 14.899999999999999,
+    "saturation_jib_percent": 7.672,
+    "invalid_candidates": 0,
+    "invalid_teacher_samples": 0,
+    "rejected_status9_samples": 0,
+    "improvement_over_hold_percent": 96.528,
+    "duplicate_episode_steps": 0
+  },
+  "motion": {
+    "lift_positive_percent": 48.152,
+    "lift_negative_percent": 47.812,
+    "jib_positive_percent": 36.5,
+    "jib_negative_percent": 54.884,
+    "hold_percent": 0.372,
+    "low_velocity_percent": 18.895999999999997
+  },
+  "generation_time_seconds": 4492.186782300007,
+  "timing_context": "Eight independent CPU workers; solve latencies reflect concurrent generation, not isolated deployment benchmarking.",
+  "test_files_opened": 0,
+  "test_files_modified": 0,
+  "neural_training_started": false,
+  "train_validation_split_created": false,
+  "git_commit_performed": false,
+  "git_push_performed": false,
+  "master_globally_shuffled": false,
+  "design_samples_copied": false
+}

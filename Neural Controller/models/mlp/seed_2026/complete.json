@@ -1,0 +1,11 @@
+{
+  "architecture": "mlp",
+  "seed": 2026,
+  "best_epoch": 108,
+  "validation_MSE": 0.027885185554623604,
+  "validation_RMSE": 0.16698857911433226,
+  "parameter_count": 8418,
+  "epochs_completed": 138,
+  "training_seconds": 2.600984500022605,
+  "checkpoint": "Neural Controller/models/mlp/seed_2026/best_policy.pt"
+}

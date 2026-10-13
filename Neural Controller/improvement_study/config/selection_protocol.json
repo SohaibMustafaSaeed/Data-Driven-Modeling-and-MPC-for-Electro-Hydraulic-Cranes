@@ -1,0 +1,19 @@
+{
+  "screen_episode_ids": [
+    "episode_000009",
+    "episode_000043",
+    "episode_000018",
+    "episode_000044",
+    "episode_000019",
+    "episode_000079",
+    "episode_000023",
+    "episode_000066",
+    "episode_000026",
+    "episode_000048",
+    "episode_000031",
+    "episode_000062"
+  ],
+  "screening": "Two fixed validation episodes per source, two loss-selected checkpoints per seed/config; checkpoint chosen by closed-loop tip RMSE.",
+  "final_selection": "All 75 validation episodes select seed and lambda by closed-loop tip RMSE; ties use imitation RMSE.",
+  "internal_test_used": false
+}

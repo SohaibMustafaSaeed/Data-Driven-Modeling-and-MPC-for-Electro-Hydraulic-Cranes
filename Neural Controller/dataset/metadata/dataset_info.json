@@ -1,0 +1,25 @@
+{
+  "dataset_name": "Frozen MPC neural-controller teacher demonstrations",
+  "version": "mpc_teacher_v1",
+  "generation_date": "2026-10-12",
+  "source": "training only",
+  "teacher_model": {
+    "name": "GRU",
+    "parameters": 4098
+  },
+  "simulated_plant": {
+    "name": "Mechanical Compact Recurrent",
+    "parameters": 1060
+  },
+  "controller_configuration": "config/frozen_teacher.json",
+  "input_dimension": 32,
+  "target_dimension": 2,
+  "control_interval_s": 0.1,
+  "planning_horizon_s": 0.2,
+  "sample_count": 25000,
+  "episode_count": 500,
+  "physical_values": true,
+  "status": "complete",
+  "preprocessing_caveat": "Existing centered offline command smoothing is retained; fully causal deployment is not demonstrated.",
+  "source_recordings_represented": 43
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "architecture": "mlp",
+    "seed": 42,
+    "best_epoch": 77,
+    "validation_MSE": 0.027900418266654015,
+    "validation_RMSE": 0.16703418292868683,
+    "parameter_count": 8418,
+    "epochs_completed": 107,
+    "training_seconds": 2.0163748000049964,
+    "checkpoint": "Neural Controller/models/mlp/seed_42/best_policy.pt"
+  },
+  {
+    "architecture": "mlp",
+    "seed": 123,
+    "best_epoch": 121,
+    "validation_MSE": 0.027022022753953934,
+    "validation_RMSE": 0.1643837666983998,
+    "parameter_count": 8418,
+    "epochs_completed": 151,
+    "training_seconds": 2.8103983000619337,
+    "checkpoint": "Neural Controller/models/mlp/seed_123/best_policy.pt"
+  },
+  {
+    "architecture": "mlp",
+    "seed": 2026,
+    "best_epoch": 108,
+    "validation_MSE": 0.027885185554623604,
+    "validation_RMSE": 0.16698857911433226,
+    "parameter_count": 8418,
+    "epochs_completed": 138,
+    "training_seconds": 2.600984500022605,
+    "checkpoint": "Neural Controller/models/mlp/seed_2026/best_policy.pt"
+  },
+  {
+    "architecture": "gru",
+    "seed": 42,
+    "best_epoch": 178,
+    "validation_MSE": 0.024815306067466736,
+    "validation_RMSE": 0.15752874679710602,
+    "parameter_count": 6898,
+    "epochs_completed": 208,
+    "training_seconds": 14.914286799961701,
+    "checkpoint": "Neural Controller/models/gru/seed_42/best_policy.pt"
+  },
+  {
+    "architecture": "gru",
+    "seed": 123,
+    "best_epoch": 165,
+    "validation_MSE": 0.025153914466500282,
+    "validation_RMSE": 0.15859985645170138,
+    "parameter_count": 6898,
+    "epochs_completed": 195,
+    "training_seconds": 13.950141099980101,
+    "checkpoint": "Neural Controller/models/gru/seed_123/best_policy.pt"
+  },
+  {
+    "architecture": "gru",
+    "seed": 2026,
+    "best_epoch": 160,
+    "validation_MSE": 0.025854138657450676,
+    "validation_RMSE": 0.16079222200545235,
+    "parameter_count": 6898,
+    "epochs_completed": 190,
+    "training_seconds": 13.659010500065051,
+    "checkpoint": "Neural Controller/models/gru/seed_2026/best_policy.pt"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "improved_minus_baseline_mm": {
+    "lower_95": -0.5356191195024484,
+    "upper_95": 1.8989371058846363
+  },
+  "improved_minus_MPC_mm": {
+    "lower_95": 2.3349550014194738,
+    "upper_95": 8.101089350308415
+  },
+  "resamples": 2000,
+  "seed": 20261012,
+  "clusters": 6
+}

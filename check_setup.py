@@ -17,7 +17,8 @@ def main():
     import scipy
     import numba
     import matplotlib
-    print('Dependencies:', {module.__name__: module.__version__ for module in [torch, numpy, pandas, scipy, numba, matplotlib]})
+    import pyarrow
+    print('Dependencies:', {module.__name__: module.__version__ for module in [torch, numpy, pandas, scipy, numba, matplotlib, pyarrow]})
     print('Project:', ROOT)
     print('Raw data:', RAW_DATA_DIR)
     print('Prepared arrays:', PREPARED_DIR)
@@ -36,6 +37,15 @@ def main():
         ck = torch.load(path, map_location='cpu', weights_only=True)
         required_training.update(basename(entry['source_csv']) for entry in ck['training_config']['training_manifest'])
         print('Verified:', path.relative_to(ROOT), 'epoch', ck['epoch'])
+    policies=ROOT/'Neural Controller/configs/release_checkpoint_manifest.json'
+    if policies.exists():
+        for name,artifact in json.loads(policies.read_text()).items():
+            path=ROOT/artifact['checkpoint']
+            if hashlib.sha256(path.read_bytes()).hexdigest()!=artifact['sha256']:raise ValueError(f'Policy checkpoint changed: {path}')
+            ck=torch.load(path,map_location='cpu',weights_only=True)
+            print('Verified policy:',name,'parameters',ck['parameter_count'])
+        schema=json.loads((ROOT/'Neural Controller/dataset/metadata/feature_schema.json').read_text())
+        assert len(schema['supervised_inputs'])==32 and len(schema['supervised_targets'])==2
     if args.data:
         from common.data import INPUT_COLS
         for folder in (['Test'] if args.test_only else ['Train', 'Test']):

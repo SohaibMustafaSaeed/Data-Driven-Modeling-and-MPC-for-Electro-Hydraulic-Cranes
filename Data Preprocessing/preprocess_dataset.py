@@ -151,6 +151,7 @@ def main():
     parser.add_argument('--skip-initial-rows', type=int, default=1800000)
     parser.add_argument('--train-fraction', type=float, default=0.9, help='Per-recording prefix used for training and scaler fitting')
     parser.add_argument('--chunksize', type=int, default=100000)
+    parser.add_argument('--training-only',action='store_true',help='Prepare only Train; do not inspect or open Test')
     args = parser.parse_args()
     if args.skip_initial_rows < 0 or args.chunksize < 1:
         parser.error('skip-initial-rows must be nonnegative and chunksize positive')
@@ -161,8 +162,8 @@ def main():
     if train_dir == test_dir:
         parser.error('Training and testing directories must be different')
     train_paths = sorted(train_dir.glob('*.csv'))
-    test_paths = sorted(test_dir.glob('*.csv'))
-    if not train_paths or not test_paths:
+    test_paths = [] if args.training_only else sorted(test_dir.glob('*.csv'))
+    if not train_paths or (not args.training_only and not test_paths):
         raise FileNotFoundError('Expected CSV recordings in both --train-dir and --test-dir')
     if set(train_paths) & set(test_paths):
         raise ValueError('A CSV cannot be in both training and testing splits')
@@ -175,7 +176,7 @@ def main():
     scaler = fit_training_scaler(train_paths, retained_rows, args.train_fraction, args.skip_initial_rows, args.chunksize)
     write_json(output_dir / 'scaler.json', scaler)
     training = prepare_split('training', train_paths, retained_rows, args.skip_initial_rows, args.chunksize, scaler, output_dir, args.train_fraction)
-    testing = prepare_split('testing', test_paths, retained_rows, args.skip_initial_rows, args.chunksize, scaler, output_dir)
+    testing = [] if args.training_only else prepare_split('testing', test_paths, retained_rows, args.skip_initial_rows, args.chunksize, scaler, output_dir)
     manifest = dict(format=FORMAT, training_records=len(training), testing_records=len(testing), scaler='scaler.json', test_used_for_fitting=False, test_used_for_training=False)
     write_json(output_dir / 'dataset_manifest.json', manifest)
     print(f'Preprocessing complete: {output_dir}', flush=True)

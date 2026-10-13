@@ -1,0 +1,5 @@
+{
+  "maximum_boom_speed_rad_s": 0.00825899509742653,
+  "definition": "Training-grid 15th percentile of max(abs(lift_velocity),abs(jib_velocity)); descriptive low-motion coverage, not a true-hold claim.",
+  "true_hold_deadband_rad_s": 0.001
+}

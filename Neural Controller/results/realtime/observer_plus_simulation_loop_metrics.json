@@ -1,0 +1,10 @@
+{
+  "calls": 3750,
+  "mean_ms": 21.535185333333335,
+  "median_ms": 21.14065,
+  "p95_ms": 23.77443,
+  "p99_ms": 26.438947999999986,
+  "max_ms": 41.632000000000005,
+  "deadline_miss_percent": 0.0,
+  "includes": "Policy call plus frozen full-state observer advancement, mechanical-plant integration and feedback correction; conservative measured simulation-loop sum, not a hardware timing guarantee."
+}

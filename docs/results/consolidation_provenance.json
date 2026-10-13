@@ -1,0 +1,51 @@
+{
+  "dynamics_recursive_results.csv": {
+    "source": "docs/results/model_mechanical_comparison_2s.csv",
+    "table_sha256": "e3aae71612ef949054235aa93d600205ed35ff60f7bf95c7d4e0a7268f4a2ca2",
+    "numerical_values_changed": false,
+    "original_source_sha256": "e3aae71612ef949054235aa93d600205ed35ff60f7bf95c7d4e0a7268f4a2ca2",
+    "source_sha256": "e3aae71612ef949054235aa93d600205ed35ff60f7bf95c7d4e0a7268f4a2ca2"
+  },
+  "mpc_predictor_comparison.csv": {
+    "source": "docs/results/mpc_predictor_comparison.csv",
+    "table_sha256": "b42f66053440980b028ac20f11b82896b8cca1338d511219602b12ef35d2980e",
+    "numerical_values_changed": false,
+    "original_source_sha256": "b42f66053440980b028ac20f11b82896b8cca1338d511219602b12ef35d2980e",
+    "source_sha256": "b42f66053440980b028ac20f11b82896b8cca1338d511219602b12ef35d2980e"
+  },
+  "mpc_final_results.csv": {
+    "source": "docs/results/final_gru_reference_comparison.csv",
+    "table_sha256": "490955aeb3ae135f18b3045a9f5510b0daefed16bd02c08dc24c2a91d1203876",
+    "numerical_values_changed": false,
+    "original_source_sha256": "490955aeb3ae135f18b3045a9f5510b0daefed16bd02c08dc24c2a91d1203876",
+    "source_sha256": "490955aeb3ae135f18b3045a9f5510b0daefed16bd02c08dc24c2a91d1203876"
+  },
+  "teacher_dataset_summary.csv": {
+    "source": "Neural Controller/dataset/summaries/dataset_summary.json",
+    "table_sha256": "e710d6e4236213a324c2d3d7246e76375e01cfcd0c20b40d59f3cc143145cdd0",
+    "numerical_values_changed": false,
+    "original_source_sha256": "c5d72722e508ad293f2d3dfdcc1dd9266a82c887095c50e675f3d45805735067",
+    "source_sha256": "b7b15fdc72d95cd1cdd4bf712e371af99ee8f5f09ec3db30e464421bcc5e0978"
+  },
+  "neural_controller_results.csv": {
+    "source": "Neural Controller/results/final_comparison.csv",
+    "table_sha256": "18a34d6cc1a4ff901e7e6bbd9edde5c10ef60ee1fef275ccc40e85470f61cb51",
+    "numerical_values_changed": false,
+    "original_source_sha256": "18a34d6cc1a4ff901e7e6bbd9edde5c10ef60ee1fef275ccc40e85470f61cb51",
+    "source_sha256": "18a34d6cc1a4ff901e7e6bbd9edde5c10ef60ee1fef275ccc40e85470f61cb51"
+  },
+  "neural_latency_results.csv": {
+    "source": "Neural Controller/results/realtime/realtime_metrics.json",
+    "table_sha256": "fde6e555143fb31c1fb5c2e04e2ae4a17c06cbe45c6794702e9ea74fe6becfa5",
+    "numerical_values_changed": false,
+    "original_source_sha256": "9bb38408b43c7edea7e89d5ddfb21866efd5505a74c9941d7c0bcc8e044687ab",
+    "source_sha256": "df2c0ecd089f01ff222b11a7e3f8a518380bb438fe6036cbbeaa2c19dc4edb27"
+  },
+  "improvement_study_results.csv": {
+    "source": "Neural Controller/results/improvement_study/final_improvement_comparison.csv",
+    "table_sha256": "a9545563c054f4482da4aba4628a11cddc6db7a1d4f8011d69477f83cb9ecc49",
+    "numerical_values_changed": false,
+    "original_source_sha256": "a9545563c054f4482da4aba4628a11cddc6db7a1d4f8011d69477f83cb9ecc49",
+    "source_sha256": "a9545563c054f4482da4aba4628a11cddc6db7a1d4f8011d69477f83cb9ecc49"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "validated_samples": 25000,
+  "validated_episodes": 500,
+  "physical_X_Y": true,
+  "episode_shapes_32x2": true,
+  "finite": true,
+  "bounded": true,
+  "reference_preview_complete": true,
+  "temporal_order": true,
+  "duplicates": 0,
+  "NPZ_NPY_Parquet_agree": true,
+  "normalization_training_teacher_only": true,
+  "no_row_level_split": true
+}

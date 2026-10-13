@@ -1,0 +1,10 @@
+{
+  "original_unchanged": true,
+  "raw_targets_are_actual_teacher_commands": true,
+  "reason": "Neural interface has exact nominal [-1,1] limits; frozen teacher bounds have tiny numerical excess. This is a documented projection, not a claim the teacher plant clipped its input.",
+  "changed_values": 2847,
+  "max_absolute_change_V": 3.2089789734346397e-06,
+  "original_target_path": "Neural Controller/dataset/generated/arrays/Y_command.npy",
+  "derived_target_path": "Neural Controller/data_splits/Y_command_nominal.npy",
+  "imitation_metrics_include_original_actual_targets": true
+}

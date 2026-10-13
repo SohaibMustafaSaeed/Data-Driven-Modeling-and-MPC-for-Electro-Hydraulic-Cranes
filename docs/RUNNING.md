@@ -74,3 +74,7 @@ Inspect --help and the shipped artifacts/config.json and training_history.json f
 ## Generated results
 
 Model prediction arrays go to each model's results/<recording>/checkpoint_<hash>/<mode>/ tree. MPC experiments go to MPC offline Model/results/<profile>/. These are local, regenerable and ignored. Publication tables and figures live in docs/results and docs/figures. Use report_results.py and view_results.py to inspect bundled evidence without raw arrays.
+
+## Completed neural-controller stage
+
+See the [neural reproduction guide](../Neural%20Controller/README.md), [supervisor guide](SUPERVISOR_GUIDE.md) and [experiment map](EXPERIMENT_MAP.md). The baseline GRU policy is final; the weighted/delta candidate is an ablation. Teacher and neural stages use only Train recordings. Fresh reproduction outputs never overwrite shipped evidence.

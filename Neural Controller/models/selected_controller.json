@@ -1,0 +1,25 @@
+{
+  "selected_controller": "GRU policy",
+  "selection_basis": "Validation closed-loop tracking selected this candidate before internal testing. Internal test confirms better tracking and worst-case robustness than MLP.",
+  "architecture": "32-input GRU hidden 32, 16-unit ReLU head, two tanh outputs",
+  "parameters": 6898,
+  "training_seed": 42,
+  "best_epoch": 178,
+  "checkpoint": "models/gru/policy.pt",
+  "checkpoint_sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76",
+  "architecture_frozen": true,
+  "output_bounds": [
+    -1.0,
+    1.0
+  ],
+  "own_hidden_state_only": true,
+  "teacher_hidden_state_supervised": false,
+  "tracking_RMSE_ratio_to_MPC": 2.132911466928156,
+  "tracking_degradation_percent": 113.29114669281562,
+  "tracking_RMSE_increase_mm": 4.331315195245601,
+  "mean_tracking_improvement_over_MLP_percent": 14.471055162934954,
+  "speedup_vs_saved_MPC": 20088.55245553046,
+  "accuracy_caveat": "Tracking is not equivalent to MPC: 8.154 mm versus 3.823 mm, about twice the RMSE. Treat this as an experimentally frozen fast controller, not a demonstrated MPC-quality replacement.",
+  "readiness_for_external_final_validation": true,
+  "scope": "Ready to evaluate the frozen experimental architecture independently; physical/high-fidelity validation is not complete."
+}

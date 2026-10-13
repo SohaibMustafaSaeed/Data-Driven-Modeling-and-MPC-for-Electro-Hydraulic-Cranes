@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "stateful_GRU_matches_episode_batch": true,
+  "reset_reproduces_first_step": true,
+  "teacher_artifacts_unchanged": true,
+  "original_test_files_opened": 0,
+  "original_test_files_modified": 0
+}

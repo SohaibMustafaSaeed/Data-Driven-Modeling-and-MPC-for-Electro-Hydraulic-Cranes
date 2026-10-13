@@ -43,3 +43,32 @@ __pycache__/
 !/docs/results/
 !/docs/results/*.csv
 !/docs/results/*.json
+
+# Completed neural-controller release: retain small evidence and split indices.
+!/Neural Controller/results/
+!/Neural Controller/results/**
+/Neural Controller/results/**/*.npy
+/Neural Controller/results/**/*.npz
+/Neural Controller/results/**/*.parquet
+!/Neural Controller/data_splits/*.npy
+/Neural Controller/dataset/generated/
+/Neural Controller/logs/
+/Neural Controller/improvement_study/logs/
+
+# Curated and supplementary publication figures are intentionally released.
+!/docs/figures/neural_*.png
+!/docs/figures/teacher_*.png
+!/docs/figures/improvement_*.png
+!/docs/figures/mpc_predictor_comparison.png
+!/docs/figures/supplementary/
+!/docs/figures/supplementary/*.png
+
+/archive_working_repository/
+.vscode/
+.idea/
+*.parquet
+*.csv.tmp
+Train/
+Test/
+preprocessed/
+Dataset preprocessed/

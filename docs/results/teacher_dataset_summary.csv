@@ -1,0 +1,2 @@
+dataset_version,accepted_samples,episodes,source_recordings_represented,rejected_samples,duplicate_episode_step_count,invalid_accepted_samples,input_dimension,output_dimension
+mpc_teacher_v1,25000,500,43,0,0,0,32,2
