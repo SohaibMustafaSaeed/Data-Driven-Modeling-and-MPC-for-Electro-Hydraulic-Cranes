@@ -166,7 +166,6 @@ github_publication/
       mpc_jib_full_csv.png [ignored/local]
       mpc_lift_boom_trajectory_full_csv.png [ignored/local]
       mpc_lift_full_csv.png [ignored/local]
-      mpc_pipeline.png
       mpc_predictor_comparison.png
       mpc_reachable_both_booms.png
       mpc_reachable_tip_error.png

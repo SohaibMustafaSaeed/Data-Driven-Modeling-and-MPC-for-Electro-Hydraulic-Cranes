@@ -12,8 +12,6 @@ These are learned-model simulation results and computational-feasibility measure
 
 See [the pipeline](docs/FINAL_PIPELINE.md), [the supervisor guide](docs/SUPERVISOR_GUIDE.md) and [the experiment map](docs/EXPERIMENT_MAP.md) for the complete study and evidence paths.
 
-![Offline MPC architecture](docs/figures/mpc_pipeline.png)
-
 ## Repository structure
 
 ```text
