@@ -4,7 +4,7 @@
 
 This repository contains the completed study: learned full-state dynamics, offline learned-model Cartesian MPC, an independent learned mechanical validation plant, a 25,000-sample MPC teacher corpus, compact neural-policy distillation, held-out closed-loop evaluation and CPU timing.
 
-**Final neural controller: the baseline 6,898-parameter GRU policy.** The 4,098-parameter full-state GRU inside MPC and the 1,060-parameter mechanical Compact plant have separate roles. LSTM, Transformer and full-state Compact remain dynamics comparison models. A weighted/delta-loss ablation was rejected after its validation gain failed to transfer to internal test.
+**Final neural controller: the baseline 6,898-parameter GRU policy.** The 4,098-parameter full-state GRU inside MPC and the 1,060-parameter mechanical Compact plant have separate roles. LSTM, Transformer and full-state Compact remain dynamics comparison models. 
 
 These are learned-model simulation results and computational-feasibility measurements. Physical crane, Simulink and hardware-controller validation remain future work.
 
