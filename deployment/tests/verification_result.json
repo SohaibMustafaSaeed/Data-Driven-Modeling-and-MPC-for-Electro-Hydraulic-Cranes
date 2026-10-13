@@ -1,0 +1,29 @@
+{
+  "scope": "Implementation equivalence and lightweight smoke checks only; no new scientific benchmark or plant experiment",
+  "MATLAB_Simulink_validation_performed": false,
+  "external_Test_files_opened": 0,
+  "invalid_input_checks_passed": 21,
+  "latency_smoke": {
+    "warmup_calls": 50,
+    "calls": 200,
+    "mean_ms": 0.08566900000000001,
+    "p95_ms": 0.09602,
+    "maximum_ms": 0.2445,
+    "deadline_ms": 100,
+    "purpose": "Deployment overhead smoke check; paper timing remains unchanged"
+  },
+  "named_input_previous_cache_and_override_passed": true,
+  "persistent_bridge_passed": true,
+  "reset_and_sequential_memory_passed": true,
+  "dataset_MPC_observer_plant_independence_passed": true,
+  "equivalence": {
+    "steps": 24,
+    "episodes": 2,
+    "saved_commands_max_absolute_error_V": 0.0,
+    "authoritative_runtime_bit_exact": true,
+    "saved_command_tolerance_V": 1e-07
+  },
+  "all_tests_passed": true,
+  "tests_run": 7,
+  "policy_checkpoint_sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76"
+}

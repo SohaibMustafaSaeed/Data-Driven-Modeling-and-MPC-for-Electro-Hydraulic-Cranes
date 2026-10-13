@@ -344,6 +344,19 @@ python reproduce_mpc.py --experiment recorded --no-show
 
 These expensive commands are documented, not run during repository consolidation. Model training commands and preparation details remain in [docs/RUNNING.md](docs/RUNNING.md).
 
+## High-fidelity simulator controller interface
+
+[deployment/neural_controller.py](deployment/neural_controller.py) packages the selected frozen baseline GRU for an external plant such as MATLAB/Simulink. It accepts 22 current physical state signals, the actual previous lift/jib commands and x/z/vx/vz reference previews at +0.1/+0.2 s, then returns two actuator commands. Recurrent memory, train-only normalization and existing command clipping are managed internally through the authoritative policy runtime.
+
+Simulink supplies all 22 signals directly; the wrapper requires no dataset, MPC, learned observer or Compact plant. Evaluate once every **100 ms / 10 Hz**, holding the command between control instants while the external plant uses its own finer integration steps. The first call requires the actual previous applied command; no zero startup is assumed.
+
+See the [deployment guide](deployment/README.md), [persistent MATLAB bridge](deployment/matlab_bridge.py) and [equivalence verification](deployment/tests/verification_result.json). Python equivalence/reset/input checks and a latency smoke check verify the interface. **MATLAB/Simulink and high-fidelity plant validation have not yet been performed.** Existing scientific results and conclusions remain unchanged.
+
+```powershell
+python -B deployment/tests/test_controller_interface.py
+python -B deployment/example_runtime.py
+```
+
 ## Limitations
 
 Validation uses learned-model simulation. Hardware responses, Simulink validation and guaranteed stability have not been demonstrated. Neural tracking remains about twice MPC RMSE. The independent mechanical plant shares the broad training distribution, and its recorded-command mismatch limits interpretation. Neural internal test comprises six source-recording clusters and five-second episodes; external neural Test and higher-fidelity evaluation remain unperformed. Offline smoothing has a causality limitation, and measured CPU timing depends on software, load and initialization. Raw data and large regenerated arrays are not included.

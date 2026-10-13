@@ -1,0 +1,38 @@
+{
+  "controller_interval_s": 0.1,
+  "reference_preview_s": [0.1, 0.2],
+  "state_dimension": 22,
+  "input_dimension": 32,
+  "output_dimension": 2,
+  "policy_type": "GRU",
+  "hidden_size": 32,
+  "head_size": 16,
+  "parameters": 6898,
+  "seed": 42,
+  "checkpoint_epoch": 178,
+  "device": "cpu",
+  "torch_threads": 2,
+  "normalized_dtype": "float32",
+  "physical_dtype": "float64",
+  "command_units": "V",
+  "command_bounds": [-1.0, 1.0],
+  "initial_previous_command": "Require the actual previously applied command on first step or reset; no assumed zero command",
+  "artifacts": {
+    "checkpoint": {
+      "path": "Neural Controller/models/gru/policy.pt",
+      "sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76"
+    },
+    "normalization": {
+      "path": "Neural Controller/configs/input_scaler.json",
+      "sha256": "aa40e4dc3d7112d3eab4a3cdc3abb5e1feb953acc1fce990927738698d0eb2e1"
+    },
+    "schema": {
+      "path": "Neural Controller/dataset/metadata/feature_schema.json",
+      "sha256": "24fe523d4be12b909a4ffe6b209972ca37361b405be65d9bec5971ebbc2c1dd1"
+    },
+    "model_configuration": {
+      "path": "Neural Controller/models/gru/config.json",
+      "sha256": "27c84a9ed0f07e9795ea42c207cc6dd2f4ba20ec35e8edaf6b99b93cb702b0f3"
+    }
+  }
+}
