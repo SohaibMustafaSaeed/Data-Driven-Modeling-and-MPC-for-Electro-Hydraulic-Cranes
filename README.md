@@ -355,6 +355,12 @@ python -B deployment/tests/test_controller_interface.py
 python -B deployment/example_runtime.py
 ```
 
+## Native MATLAB controller package
+
+[MATLAB Controller/](MATLAB%20Controller/README.md) contains a self-contained native MATLAB implementation of the frozen baseline GRU for future high-fidelity Simulink evaluation. It includes exact exported weights/scaler, the feature schema, a stateful class, persistent function wrappers and a 1,000-call Python reference sequence. MATLAB runtime requires core MATLAB only, with no Python, PyTorch, dataset, MPC, observer or Compact plant.
+
+The package passed copied-folder completeness/hash/array checks and a Python/NumPy equation diagnostic within **1e-6 V**. **Actual MATLAB execution, MATLAB equivalence/reset tests and high-fidelity Simulink validation are NOT RUN.** Run `validate_controller_package` and `verify_python_equivalence` in MATLAB before connecting the external plant; [the verification summary](MATLAB%20Controller/verification/verification_summary.json) records the precise status. Existing scientific results and conclusions are unchanged.
+
 ## Limitations
 
 Validation uses learned-model simulation. Hardware responses, Simulink validation and guaranteed stability have not been demonstrated. Neural tracking remains about twice MPC RMSE. The independent mechanical plant shares the broad training distribution, and its recorded-command mismatch limits interpretation. Neural internal test comprises six source-recording clusters and five-second episodes; external neural Test and higher-fidelity evaluation remain unperformed. Offline smoothing has a causality limitation, and measured CPU timing depends on software, load and initialization. Raw data and large regenerated arrays are not included.

@@ -1,0 +1,415 @@
+{
+  "dataset_version": "mpc_teacher_v1",
+  "supervised_input_dimension": 32,
+  "target_dimension": 2,
+  "physical_values": true,
+  "supervised_inputs": [
+    {
+      "index": 0,
+      "name": "speedref[rad/s]",
+      "unit": "rad/s",
+      "description": "Motor speed reference; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 1,
+      "name": "speedpmsm[rad/s]",
+      "unit": "rad/s",
+      "description": "Permanent-magnet motor angular speed; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 2,
+      "name": "iqref[A]",
+      "unit": "A",
+      "description": "q-axis current reference; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 3,
+      "name": "udref[V]",
+      "unit": "V",
+      "description": "d-axis voltage reference; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 4,
+      "name": "uqref[V]",
+      "unit": "V",
+      "description": "q-axis voltage reference; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 5,
+      "name": "id[A]",
+      "unit": "A",
+      "description": "d-axis motor current; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 6,
+      "name": "iq[A]",
+      "unit": "A",
+      "description": "q-axis motor current; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 7,
+      "name": "psid[Wb]",
+      "unit": "Wb",
+      "description": "d-axis flux linkage; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 8,
+      "name": "psiq[Wb]",
+      "unit": "Wb",
+      "description": "q-axis flux linkage; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 9,
+      "name": "pumppressure[Pa]",
+      "unit": "Pa",
+      "description": "Hydraulic pump pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 10,
+      "name": "plinepistonlift[Pa]",
+      "unit": "Pa",
+      "description": "Lift piston-line pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 11,
+      "name": "plinerodlift[Pa]",
+      "unit": "Pa",
+      "description": "Lift rod-line pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 12,
+      "name": "ppistonsidelift[Pa]",
+      "unit": "Pa",
+      "description": "Lift piston-chamber pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 13,
+      "name": "prodsidelift[Pa]",
+      "unit": "Pa",
+      "description": "Lift rod-chamber pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 14,
+      "name": "thetalift[rad]",
+      "unit": "rad",
+      "description": "Absolute lift-boom angle; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 15,
+      "name": "plinepistonjib[Pa]",
+      "unit": "Pa",
+      "description": "Jib piston-line pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 16,
+      "name": "plinerodjib[Pa]",
+      "unit": "Pa",
+      "description": "Jib rod-line pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 17,
+      "name": "ppistonjib[Pa]",
+      "unit": "Pa",
+      "description": "Jib piston-chamber pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 18,
+      "name": "prodjib[Pa]",
+      "unit": "Pa",
+      "description": "Jib rod-chamber pressure; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 19,
+      "name": "thetajib[rad]",
+      "unit": "rad",
+      "description": "Absolute jib-boom angle; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 20,
+      "name": "thetaliftdot[rad/s]",
+      "unit": "rad/s",
+      "description": "Lift angular velocity; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 21,
+      "name": "thetajibdot[rad/s]",
+      "unit": "rad/s",
+      "description": "Jib angular velocity; physical-valued current controller estimate.",
+      "source": "Frozen GRU state estimator with mechanical-plant correction",
+      "role": "supervised_input"
+    },
+    {
+      "index": 22,
+      "name": "previous_ulift[V]",
+      "unit": "V",
+      "description": "Previous applied command; initialization uses the training seed command.",
+      "source": "Previous selected teacher action or episode initialization",
+      "role": "supervised_input"
+    },
+    {
+      "index": 23,
+      "name": "previous_ujib[V]",
+      "unit": "V",
+      "description": "Previous applied command; initialization uses the training seed command.",
+      "source": "Previous selected teacher action or episode initialization",
+      "role": "supervised_input"
+    },
+    {
+      "index": 24,
+      "name": "reference_1_x[m]",
+      "unit": "m",
+      "description": "Cartesian reference preview at +0.1 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 25,
+      "name": "reference_1_z[m]",
+      "unit": "m",
+      "description": "Cartesian reference preview at +0.1 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 26,
+      "name": "reference_1_vx[m/s]",
+      "unit": "m/s",
+      "description": "Cartesian reference preview at +0.1 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 27,
+      "name": "reference_1_vz[m/s]",
+      "unit": "m/s",
+      "description": "Cartesian reference preview at +0.1 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 28,
+      "name": "reference_2_x[m]",
+      "unit": "m",
+      "description": "Cartesian reference preview at +0.2 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 29,
+      "name": "reference_2_z[m]",
+      "unit": "m",
+      "description": "Cartesian reference preview at +0.2 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 30,
+      "name": "reference_2_vx[m/s]",
+      "unit": "m/s",
+      "description": "Cartesian reference preview at +0.2 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    },
+    {
+      "index": 31,
+      "name": "reference_2_vz[m/s]",
+      "unit": "m/s",
+      "description": "Cartesian reference preview at +0.2 s.",
+      "source": "PATU kinematics of training-command-driven mechanical plant reference",
+      "role": "supervised_input"
+    }
+  ],
+  "supervised_targets": [
+    {
+      "index": 0,
+      "name": "target_ulift[V]",
+      "unit": "V",
+      "description": "First applied move from the best finite bounded MPC candidate; not the recorded operator command.",
+      "source": "Frozen Cartesian GRU-MPC",
+      "role": "supervised_target"
+    },
+    {
+      "index": 1,
+      "name": "target_ujib[V]",
+      "unit": "V",
+      "description": "First applied move from the best finite bounded MPC candidate; not the recorded operator command.",
+      "source": "Frozen Cartesian GRU-MPC",
+      "role": "supervised_target"
+    }
+  ],
+  "auxiliary": [
+    {
+      "name": "predictor_memory",
+      "unit": "dimensionless",
+      "description": "Internal GRU memory, excluded from the 32 inputs",
+      "source": "GRU",
+      "role": "diagnostic"
+    },
+    {
+      "name": "previous_full_input",
+      "unit": "per signal",
+      "description": "Previous physical input row, excluded from the 32 inputs",
+      "source": "Controller history",
+      "role": "diagnostic"
+    },
+    {
+      "name": "recorded_command",
+      "unit": "V",
+      "description": "Recorded commands used to generate the reference; never targets",
+      "source": "Prepared Train recording",
+      "role": "auxiliary"
+    },
+    {
+      "name": "second_move",
+      "unit": "V",
+      "description": "Second planned command; not applied at this update",
+      "source": "MPC plan",
+      "role": "auxiliary"
+    },
+    {
+      "name": "episode_id",
+      "unit": "identifier",
+      "description": "Sequence boundary identifier",
+      "source": "Planned manifest",
+      "role": "auxiliary"
+    },
+    {
+      "name": "step",
+      "unit": "integer",
+      "description": "Chronological controller step within episode",
+      "source": "Controller",
+      "role": "auxiliary"
+    },
+    {
+      "name": "source_time_s",
+      "unit": "s",
+      "description": "Original CSV time including the existing startup trim",
+      "source": "Train source index",
+      "role": "auxiliary"
+    },
+    {
+      "name": "solver_status",
+      "unit": "integer",
+      "description": "SLSQP status, including valid status-9 samples",
+      "source": "SLSQP",
+      "role": "diagnostic"
+    },
+    {
+      "name": "solve_seconds",
+      "unit": "s",
+      "description": "Solve timing under eight-worker concurrent generation",
+      "source": "Measured timer",
+      "role": "diagnostic"
+    }
+  ],
+  "full_state_order": [
+    "speedref[rad/s]",
+    "speedpmsm[rad/s]",
+    "iqref[A]",
+    "udref[V]",
+    "uqref[V]",
+    "id[A]",
+    "iq[A]",
+    "psid[Wb]",
+    "psiq[Wb]",
+    "pumppressure[Pa]",
+    "plinepistonlift[Pa]",
+    "plinerodlift[Pa]",
+    "ppistonsidelift[Pa]",
+    "prodsidelift[Pa]",
+    "thetalift[rad]",
+    "plinepistonjib[Pa]",
+    "plinerodjib[Pa]",
+    "ppistonjib[Pa]",
+    "prodjib[Pa]",
+    "thetajib[rad]",
+    "thetaliftdot[rad/s]",
+    "thetajibdot[rad/s]"
+  ],
+  "previous_full_input_order": [
+    "ulift[V]",
+    "speedref[rad/s]",
+    "speedpmsm[rad/s]",
+    "iqref[A]",
+    "udref[V]",
+    "uqref[V]",
+    "id[A]",
+    "iq[A]",
+    "psid[Wb]",
+    "psiq[Wb]",
+    "pumppressure[Pa]",
+    "plinepistonlift[Pa]",
+    "plinerodlift[Pa]",
+    "ppistonsidelift[Pa]",
+    "prodsidelift[Pa]",
+    "thetalift[rad]",
+    "ujib[V]",
+    "plinepistonjib[Pa]",
+    "plinerodjib[Pa]",
+    "ppistonjib[Pa]",
+    "prodjib[Pa]",
+    "thetajib[rad]",
+    "thetaliftdot[rad/s]",
+    "thetajibdot[rad/s]"
+  ],
+  "mechanical_order": [
+    "thetalift[rad]",
+    "thetajib[rad]",
+    "thetaliftdot[rad/s]",
+    "thetajibdot[rad/s]"
+  ],
+  "cartesian_order": [
+    "x[m]",
+    "z[m]",
+    "vx[m/s]",
+    "vz[m/s]"
+  ],
+  "reference_preview_lead_seconds": [
+    0.1,
+    0.2
+  ],
+  "predictor_memory_is_supervised": false,
+  "sequence_policy": "Master arrays sorted by planned episode ID then step, never globally shuffled; no row-level split."
+}

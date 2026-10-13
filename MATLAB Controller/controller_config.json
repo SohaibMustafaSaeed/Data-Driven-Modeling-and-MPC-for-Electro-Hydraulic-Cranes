@@ -1,0 +1,85 @@
+{
+  "input_size": 32,
+  "state_size": 22,
+  "hidden_size": 32,
+  "head_size": 16,
+  "output_size": 2,
+  "parameter_count": 6898,
+  "controller_interval_s": 0.1,
+  "checkpoint_sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76",
+  "scaler_sha256": "aa40e4dc3d7112d3eab4a3cdc3abb5e1feb953acc1fce990927738698d0eb2e1",
+  "schema_sha256": "24fe523d4be12b909a4ffe6b209972ca37361b405be65d9bec5971ebbc2c1dd1",
+  "seed": 42,
+  "checkpoint_epoch": 178,
+  "gate_order": "reset,update,new",
+  "normalized_dtype": "single",
+  "physical_dtype": "double",
+  "command_units": "V",
+  "reference_preview_s": [
+    0.1,
+    0.2
+  ],
+  "command_lower_bounds": [
+    -1.0,
+    -1.0
+  ],
+  "command_upper_bounds": [
+    1.0,
+    1.0
+  ],
+  "source_policy": "Frozen baseline GRU; exact exported tensors, no retraining",
+  "startup": "Explicit actual previously applied command required on first step or reset",
+  "runtime_requires_python": false,
+  "runtime_requires_dataset": false,
+  "required_runtime_files": [
+    "CraneNeuralController.m",
+    "controller_instance.m",
+    "controller_step.m",
+    "reset_controller.m",
+    "initialize_controller.m",
+    "controller_file_sha256.m",
+    "validate_controller_package.m",
+    "controller_weights.mat",
+    "controller_config.mat",
+    "controller_config.json",
+    "feature_schema.json"
+  ],
+  "weight_shapes": {
+    "gru_weight_ih": [
+      96,
+      32
+    ],
+    "gru_weight_hh": [
+      96,
+      32
+    ],
+    "gru_bias_ih": [
+      96
+    ],
+    "gru_bias_hh": [
+      96
+    ],
+    "head_weight_1": [
+      16,
+      32
+    ],
+    "head_bias_1": [
+      16
+    ],
+    "head_weight_out": [
+      2,
+      16
+    ],
+    "head_bias_out": [
+      2
+    ]
+  },
+  "package_sha256": {
+    "controller_weights.mat": "5ae2cde7bb2c7825f98339c85e75c97bc76413750d72763928460783c3c951b1",
+    "controller_config.mat": "ad240373f3b056777a2af27eddd58503a5a28631862e6e42c0766ef317f6ffe1",
+    "feature_schema.json": "24fe523d4be12b909a4ffe6b209972ca37361b405be65d9bec5971ebbc2c1dd1"
+  },
+  "weights_mat_sha256": "5ae2cde7bb2c7825f98339c85e75c97bc76413750d72763928460783c3c951b1",
+  "config_mat_sha256": "ad240373f3b056777a2af27eddd58503a5a28631862e6e42c0766ef317f6ffe1",
+  "packaged_schema_sha256": "24fe523d4be12b909a4ffe6b209972ca37361b405be65d9bec5971ebbc2c1dd1"
+}

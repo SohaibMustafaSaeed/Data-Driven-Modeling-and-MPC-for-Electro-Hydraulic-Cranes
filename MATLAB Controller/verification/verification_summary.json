@@ -1,0 +1,47 @@
+{
+  "python_checkpoint_sha256": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76",
+  "parameter_count": 6898,
+  "sequence_length": 1000,
+  "matlab_executed": false,
+  "matlab_version": null,
+  "max_abs_output_difference": null,
+  "mean_abs_output_difference": null,
+  "rmse_output_difference": null,
+  "tolerance": 1e-06,
+  "equivalence_pass": null,
+  "reset_repeatability_pass": null,
+  "portable_folder_pass": true,
+  "portable_folder_validation_scope": "File completeness, hashes, MAT-array reload and static runtime dependency inspection only; MATLAB not executed",
+  "portable_folder_matlab_pass": null,
+  "controller_interval_s": 0.1,
+  "high_fidelity_plant_tested": false,
+  "frozen_checkpoint_hashes_before": {
+    "Neural Controller/models/gru/policy.pt": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76",
+    "GRU Latent/artifacts/best_model.pt": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+    "MPC offline Model/artifacts/mechanical_plant/best_model.pt": "ee47597d91ff0460528020c1d2e6bfb31516604300ba8913b40d532711c28a94"
+  },
+  "frozen_checkpoint_hashes_after": {
+    "Neural Controller/models/gru/policy.pt": "5f2ff5174e121848fd65ab21de0740d7aa062e07300ab33fcd523bbed80d2e76",
+    "GRU Latent/artifacts/best_model.pt": "b9264f31b3731f5f911d280b544e469a235efb97b8138d6da790817717800f25",
+    "MPC offline Model/artifacts/mechanical_plant/best_model.pt": "ee47597d91ff0460528020c1d2e6bfb31516604300ba8913b40d532711c28a94"
+  },
+  "frozen_checkpoint_hashes_unchanged": true,
+  "numpy_equation_diagnostic": {
+    "max_abs_error": 2.980232238769531e-07,
+    "mean_abs_error": 4.124641418457031e-08,
+    "RMSE": 6.388063673220725e-08,
+    "per_output_max_error": [
+      2.980232238769531e-07,
+      1.7881393432617188e-07
+    ],
+    "passed": true,
+    "scope": "Python/NumPy diagnostic only; not MATLAB verification"
+  },
+  "reloaded_MAT_numpy_diagnostic": {
+    "max_abs_error": 2.384185791015625e-07,
+    "passed": true,
+    "scope": "Exported MAT arrays in column-major layout; NumPy execution, not MATLAB execution"
+  },
+  "matlab_availability": "No executable found on PATH or in the standard Windows installation directory",
+  "sequence_scope": "Cyclic repetition of 24 existing internal Train-source fixture inputs; 1000 uninterrupted calls; numerical stress test, not a physical trajectory"
+}
